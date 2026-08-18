@@ -54,6 +54,22 @@
             <h3>Fully Standalone AI</h3>
             <p>The "Predict Reaction" and "Research Chemical" AI features are fully bundled inside the simulator. You don't need to install any external dependencies or run any command line scripts. Just launch the game and the AI server will automatically boot up in the background!</p>
         </div>
+    <section id="reviews" class="reviews-section">
+        <h2>Community Ratings & Reviews</h2>
+        <div class="reviews-container">
+            <div class="review-form-container">
+                <h3>Leave a Review</h3>
+                <div class="star-rating" id="star-rating">
+                    <span data-value="1">★</span><span data-value="2">★</span><span data-value="3">★</span><span data-value="4">★</span><span data-value="5">★</span>
+                </div>
+                <input type="text" id="reviewer-name" placeholder="Your Name" required>
+                <textarea id="review-text" placeholder="What do you think about the simulator?" rows="4" required></textarea>
+                <button id="submit-review" class="cta-btn">Post Review</button>
+            </div>
+            <div class="reviews-list" id="reviews-list">
+                <!-- Reviews will be loaded here -->
+            </div>
+        </div>
     </section>
 
     <footer>
