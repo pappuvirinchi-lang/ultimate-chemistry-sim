@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Chemistry Simulator | The first reaction and molecular simulator online!</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="top-banner">
+        Please read the full page to find out what else you need to run the AI features!
+    </div>
+    <nav class="navbar">
+        <div class="logo">Ultimate Chemistry</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#download" class="nav-btn">Download</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>The first reaction and molecular simulator online!</h1>
+            <p>Experience real-time VSEPR geometry, true physical interactions, and an AI-powered reaction predictor right on your desktop.</p>
+            <a href="#download" class="cta-btn">Download for Windows</a>
+        </div>
+    </header>
+
+    <section id="features" class="features-section">
+        <h2>Unleash Your Inner Chemist</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>Real-Time VSEPR</h3>
+                <p>Spawn atoms and watch them bond and auto-relax into their true geometric shapes instantly based on physical repulsion forces.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Predict Reaction AI</h3>
+                <p>Drop two molecules together and let our integrated, intelligent AI predictor tell you exactly what will happen and how.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Limitless Sandbox</h3>
+                <p>Built on Unreal Engine 5. Combine endless elements, test varying temperatures and solvents, and explore the microscopic world.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="download" class="download-section">
+        <h2>Ready to start experimenting?</h2>
+        <p>Download the latest release for Windows. Completely free.</p>
+        <a href="../UltimateChemistrySimulator_Release.zip" class="cta-btn download-btn">Download .ZIP (Windows)</a>
+        
+        <div class="requirements">
+            <h3>Important Requirements for AI Features</h3>
+            <p>To use the "Predict Reaction" and "Research Chemical" features, you must run the AI locally on your machine. You will need:</p>
+            <ul style="list-style-type: none; padding: 0; color: var(--text-secondary); margin-top: 1rem; line-height: 2;">
+                <li>1. Install <a href="https://ollama.com/" target="_blank" style="color: var(--accent-cyan);">Ollama</a></li>
+                <li>2. Open your command prompt and run: <code>ollama run gemma4</code></li>
+                <li>3. Launch the included <code>research_server.exe</code> inside the .zip folder.</li>
+                <li>4. Leave both the Ollama terminal and the server running in the background while using the simulator!</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Ultimate Chemistry Simulator. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
