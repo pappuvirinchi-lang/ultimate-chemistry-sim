@@ -15,6 +15,7 @@
         <div class="logo">Ultimate Chemistry</div>
         <div class="nav-links">
             <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
             <a href="#download" class="nav-btn">Download</a>
         </div>
     </nav>
@@ -42,17 +43,145 @@
                 <h3>Limitless Sandbox</h3>
                 <p>Built on Unreal Engine 5. Combine endless elements, test varying temperatures and solvents, and explore the microscopic world.</p>
             </div>
+            <div class="feature-card">
+                <h3>Chemistry Minigames</h3>
+                <p>Test your chemical mastery through fast-paced, interactive educational minigames designed to challenge your synthesis, nomenclature, and balancing skills.</p>
+            </div>
+            <div class="feature-card">
+                <h3>AI Voice Professor</h3>
+                <p>An intelligent, integrated neural voice assistant that speaks reaction mechanisms, element trivia, and scientific explanations aloud in real time.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Best for Education</h3>
+                <p>Designed primarily for students and visual learners. Safely explore complex chemical concepts, predict reactions, and master 3D molecular structures without laboratory hazards.</p>
+            </div>
         </div>
     </section>
+
+    <section id="pricing" class="pricing-section" style="padding: 6rem 5%; background-color: var(--bg-secondary); text-align: center;">
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem; font-weight: 800; letter-spacing: -1px;">Flexible, Student-Friendly Plans</h2>
+        <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 2.5rem; font-size: 1.1rem;">Get started for free or supercharge your chemistry research for pocket change.</p>
+
+        <!-- Billing Toggle -->
+        <div style="display: inline-flex; align-items: center; gap: 0.8rem; background: rgba(255, 255, 255, 0.05); padding: 0.4rem 1rem; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 3rem;">
+            <span id="label-monthly" style="font-size: 0.95rem; font-weight: 600; color: var(--accent-cyan);">Monthly</span>
+            <label style="position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; margin: 0;">
+                <input type="checkbox" id="pricing-toggle" onchange="togglePricing(this.checked)" style="opacity: 0; width: 0; height: 0;">
+                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2a2a35; transition: .3s; border-radius: 24px;"></span>
+                <span id="toggle-circle" style="position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%;"></span>
+            </label>
+            <span id="label-yearly" style="font-size: 0.95rem; font-weight: 600; color: var(--text-secondary);">Yearly <span style="background: var(--accent-gradient); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; margin-left: 4px;">SAVE UP TO 41%</span></span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1100px; margin: 0 auto; text-align: left;">
+            <!-- Free Plan -->
+            <div style="background: var(--bg-primary); border-radius: 12px; padding: 2.5rem 2rem; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column;">
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Free Starter</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Essential 3D molecular modeling for every student.</p>
+                <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 2rem; color: #fff;">£0 <span style="font-size: 0.9rem; font-weight: 400; color: var(--text-secondary);">/ forever</span></div>
+                <ul style="list-style: none; padding: 0; margin-bottom: 2rem; flex-grow: 1; color: var(--text-secondary); font-size: 0.95rem; line-height: 2;">
+                    <li>✓ 3D Molecular Builder</li>
+                    <li>✓ Real-Time VSEPR Auto-Relaxation</li>
+                    <li>✓ Core Molecule Analyzer & Formula ID</li>
+                    <li>✓ Standard Element Library & 3D Sandbox</li>
+                    <li style="color: rgba(255, 255, 255, 0.25);">✗ AI Reaction Predictor</li>
+                    <li style="color: rgba(255, 255, 255, 0.25);">✗ Research Lab & Chemistry Chat</li>
+                    <li style="color: rgba(255, 255, 255, 0.25);">✗ Piper Neural Voice AI</li>
+                </ul>
+                <a href="#download" class="cta-btn" style="text-align: center; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">Get Started Free</a>
+            </div>
+
+            <!-- Pro Bundle -->
+            <div style="background: var(--bg-primary); border-radius: 12px; padding: 2.5rem 2rem; border: 1px solid var(--accent-cyan); position: relative; display: flex; flex-direction: column; box-shadow: 0 0 25px rgba(0, 240, 255, 0.15);">
+                <div style="position: absolute; top: -12px; right: 20px; background: var(--accent-cyan); color: #000; font-weight: 800; font-size: 0.75rem; padding: 3px 12px; border-radius: 12px; text-transform: uppercase;">Most Popular</div>
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--accent-cyan);">Pro Bundle</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Unlock the intelligent AI lab & reaction prediction.</p>
+                <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 2rem; color: #fff;">
+                    <span id="pro-price">£0.25</span> <span id="pro-period" style="font-size: 0.9rem; font-weight: 400; color: var(--text-secondary);">/ month</span>
+                </div>
+                <ul style="list-style: none; padding: 0; margin-bottom: 2rem; flex-grow: 1; color: var(--text-secondary); font-size: 0.95rem; line-height: 2;">
+                    <li>✓ <strong>Everything in Free Starter</strong></li>
+                    <li>✓ <strong>Predict Reaction AI</strong> (Real-time outcomes)</li>
+                    <li>✓ <strong>Research Chemical Button</strong> (Deep PubChem data)</li>
+                    <li>✓ <strong>AI Chemistry Chat</strong> (Guided tutoring)</li>
+                    <li>✓ Automatic Mechanism Synthesis</li>
+                    <li style="color: rgba(255, 255, 255, 0.25);">✗ Chemistry Minigames</li>
+                    <li style="color: rgba(255, 255, 255, 0.25);">✗ Piper Neural Voice AI Professor</li>
+                </ul>
+                <a href="#download" class="cta-btn" style="text-align: center;">Upgrade to Pro</a>
+            </div>
+
+            <!-- Expert Bundle -->
+            <div style="background: var(--bg-primary); border-radius: 12px; padding: 2.5rem 2rem; border: 1px solid var(--accent-purple); display: flex; flex-direction: column; box-shadow: 0 0 25px rgba(176, 38, 255, 0.15);">
+                <div style="position: absolute; top: -12px; right: 20px; background: var(--accent-purple); color: #fff; font-weight: 800; font-size: 0.75rem; padding: 3px 12px; border-radius: 12px; text-transform: uppercase;">All-Inclusive</div>
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--accent-purple);">Expert Bundle</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Full interactive suite with voice synthesis & games.</p>
+                <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 2rem; color: #fff;">
+                    <span id="expert-price">£0.50</span> <span id="expert-period" style="font-size: 0.9rem; font-weight: 400; color: var(--text-secondary);">/ month</span>
+                </div>
+                <ul style="list-style: none; padding: 0; margin-bottom: 2rem; flex-grow: 1; color: var(--text-secondary); font-size: 0.95rem; line-height: 2;">
+                    <li>✓ <strong>Everything in Pro Bundle</strong></li>
+                    <li>✓ <strong>Piper Neural Voice AI Professor</strong> (Speaks mechanisms & trivia aloud)</li>
+                    <li>✓ <strong>Chemistry Minigames</strong> & Challenges</li>
+                    <li>✓ <strong>Periodic Warfare Arena</strong> (Multiplayer combat & Fog of War)</li>
+                    <li>✓ <strong>100,000+ Compendium & Alloy Forger</strong></li>
+                    <li>✓ <strong>All Future Features & Updates Included</strong></li>
+                </ul>
+                <a href="#download" class="cta-btn" style="text-align: center; background: linear-gradient(135deg, var(--accent-purple), #ff0077);">Upgrade to Expert</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function togglePricing(isYearly) {
+            const proPrice = document.getElementById('pro-price');
+            const proPeriod = document.getElementById('pro-period');
+            const expertPrice = document.getElementById('expert-price');
+            const expertPeriod = document.getElementById('expert-period');
+            const labelMonthly = document.getElementById('label-monthly');
+            const labelYearly = document.getElementById('label-yearly');
+            const toggleCircle = document.getElementById('toggle-circle');
+
+            if (isYearly) {
+                proPrice.textContent = '£2.00';
+                proPeriod.textContent = '/ year';
+                expertPrice.textContent = '£3.50';
+                expertPeriod.textContent = '/ year';
+                labelMonthly.style.color = 'var(--text-secondary)';
+                labelYearly.style.color = 'var(--accent-cyan)';
+                toggleCircle.style.transform = 'translateX(20px)';
+            } else {
+                proPrice.textContent = '£0.25';
+                proPeriod.textContent = '/ month';
+                expertPrice.textContent = '£0.50';
+                expertPeriod.textContent = '/ month';
+                labelMonthly.style.color = 'var(--accent-cyan)';
+                labelYearly.style.color = 'var(--text-secondary)';
+                toggleCircle.style.transform = 'translateX(0px)';
+            }
+        }
+    </script>
 
     <section id="download" class="download-section">
         <h2>Ready to start experimenting?</h2>
         <p>Download the latest release for Windows. Completely free.</p>
-        <a href="https://drive.google.com/file/d/176fGH4SpfUCLuiABqYfaLCkwn9iShNFT/view?usp=drive_link" target="_blank" class="cta-btn download-btn">Download .ZIP (Windows)</a>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
+            <a href="https://drive.google.com/file/d/176fGH4SpfUCLuiABqYfaLCkwn9iShNFT/view?usp=drive_link" target="_blank" class="cta-btn download-btn">Download for Windows (.ZIP)</a>
+        </div>
         
+        <div style="max-width: 650px; margin: 0 auto 2rem; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 8px; padding: 1.2rem; text-align: left;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; color: var(--accent-cyan); font-weight: 600;">
+                <span style="font-size: 1.2rem;">🛡️</span> First-Time Launch on Windows (SmartScreen Note):
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">
+                Because this is an independently developed educational release, Windows SmartScreen may show a blue prompt: <em>"Windows protected your PC"</em>.<br>
+                Simply click <strong>"More info"</strong> and then <strong>"Run anyway"</strong>. The software is 100% safe, contains no telemetry or ads, and runs all AI locally on your device.
+            </p>
+        </div>
+
         <div class="requirements">
-            <h3>Fully Standalone AI</h3>
-            <p>The "Predict Reaction" and "Research Chemical" AI features are fully bundled inside the simulator. You don't need to install any external dependencies or run any command line scripts. Just launch the game and the AI server will automatically boot up in the background!</p>
+            <h3>Fully Standalone AI & Offline Architecture</h3>
+            <p>The "Predict Reaction", "Research Chemical", and "Piper Voice AI" features are completely self-contained. You do not need to install Python, run command line scripts, or create any API keys. Just run the installer and the local neural backend initializes automatically!</p>
         </div>
 
         <div class="specs-section" style="margin-top: 3rem; background: var(--bg-card); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); text-align: left;">
@@ -65,7 +194,7 @@
                         <li><strong>Processor:</strong> Quad-core Intel or AMD, 2.5 GHz or faster</li>
                         <li><strong>Memory:</strong> 8 GB RAM (Required for local AI)</li>
                         <li><strong>Graphics:</strong> DirectX 11 or 12 compatible graphics card</li>
-                        <li><strong>Storage:</strong> 5 GB available space</li>
+                        <li><strong>Storage:</strong> 35 GB available space (14 GB download + extraction)</li>
                     </ul>
                 </div>
                 <div>
@@ -75,7 +204,7 @@
                         <li><strong>Processor:</strong> 6-core Intel or AMD, 3.0 GHz or faster</li>
                         <li><strong>Memory:</strong> 16 GB RAM (For smooth AI inference)</li>
                         <li><strong>Graphics:</strong> NVIDIA RTX 2060 or AMD Radeon RX 5600 XT</li>
-                        <li><strong>Storage:</strong> 5 GB available space (SSD recommended)</li>
+                        <li><strong>Storage:</strong> 40+ GB available space (SSD strongly recommended)</li>
                     </ul>
                 </div>
             </div>
