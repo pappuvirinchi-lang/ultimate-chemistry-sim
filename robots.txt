@@ -1,0 +1,4 @@
+﻿User-agent: *
+Allow: /
+
+Sitemap: https://pappuvirinchi-lang.github.io/ultimate-chemistry-sim/sitemap.xml
