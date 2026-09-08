@@ -61,109 +61,50 @@
         </div>
     </section>
 
-    <section id="pricing" class="pricing-section" style="padding: 6rem 5%; background-color: var(--bg-secondary); text-align: center;">
-        <h2 style="font-size: 2.5rem; margin-bottom: 1rem; font-weight: 800; letter-spacing: -1px;">Flexible, Student-Friendly Plans</h2>
-        <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 2.5rem; font-size: 1.1rem;">Get started for free or supercharge your chemistry research for pocket change.</p>
-
-        <!-- Billing Toggle -->
-        <div style="display: inline-flex; align-items: center; gap: 0.8rem; background: rgba(255, 255, 255, 0.05); padding: 0.4rem 1rem; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 3rem;">
-            <span id="label-monthly" style="font-size: 0.95rem; font-weight: 600; color: var(--accent-cyan);">Monthly</span>
-            <label style="position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; margin: 0;">
-                <input type="checkbox" id="pricing-toggle" onchange="togglePricing(this.checked)" style="opacity: 0; width: 0; height: 0;">
-                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2a2a35; transition: .3s; border-radius: 24px;"></span>
-                <span id="toggle-circle" style="position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%;"></span>
-            </label>
-            <span id="label-yearly" style="font-size: 0.95rem; font-weight: 600; color: var(--text-secondary);">Yearly <span style="background: var(--accent-gradient); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; margin-left: 4px;">SAVE UP TO 41%</span></span>
+    <section id="pricing" class="pricing-section" style="padding: 5rem 5%; background-color: var(--bg-secondary); text-align: center;">
+        <div style="display: inline-block; background: rgba(0, 240, 255, 0.12); color: var(--accent-cyan); border: 1px solid rgba(0, 240, 255, 0.35); font-size: 0.85rem; font-weight: 800; padding: 6px 18px; border-radius: 20px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.2rem;">
+            🎉 1-Month Launch Celebration
         </div>
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem; font-weight: 800; letter-spacing: -1px;">100% Free For Everyone</h2>
+        <p style="color: var(--text-secondary); max-width: 650px; margin: 0 auto 2.5rem; font-size: 1.1rem; line-height: 1.6;">
+            To celebrate the official public release of Ultimate Chemistry Simulator, <strong style="color: #fff;">all features, AI reaction prediction, and neural voice models are 100% free for the next month!</strong>
+        </p>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1100px; margin: 0 auto; text-align: left;">
-            <!-- Free Plan -->
-            <div style="background: var(--bg-primary); border-radius: 12px; padding: 2.5rem 2rem; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column;">
-                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Free Starter</h3>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Essential 3D molecular modeling for every student.</p>
-                <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 2rem; color: #fff;">£0 <span style="font-size: 0.9rem; font-weight: 400; color: var(--text-secondary);">/ forever</span></div>
-                <ul style="list-style: none; padding: 0; margin-bottom: 2rem; flex-grow: 1; color: var(--text-secondary); font-size: 0.95rem; line-height: 2;">
-                    <li>✓ 3D Molecular Builder</li>
-                    <li>✓ Real-Time VSEPR Auto-Relaxation</li>
-                    <li>✓ Core Molecule Analyzer & Formula ID</li>
-                    <li>✓ Standard Element Library & 3D Sandbox</li>
-                    <li style="color: rgba(255, 255, 255, 0.25);">✗ AI Reaction Predictor</li>
-                    <li style="color: rgba(255, 255, 255, 0.25);">✗ Research Lab & Chemistry Chat</li>
-                    <li style="color: rgba(255, 255, 255, 0.25);">✗ Piper Neural Voice AI</li>
-                </ul>
-                <a href="#download" class="cta-btn" style="text-align: center; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">Get Started Free</a>
-            </div>
-
-            <!-- Pro Bundle -->
-            <div style="background: var(--bg-primary); border-radius: 12px; padding: 2.5rem 2rem; border: 1px solid var(--accent-cyan); position: relative; display: flex; flex-direction: column; box-shadow: 0 0 25px rgba(0, 240, 255, 0.15);">
-                <div style="position: absolute; top: -12px; right: 20px; background: var(--accent-cyan); color: #000; font-weight: 800; font-size: 0.75rem; padding: 3px 12px; border-radius: 12px; text-transform: uppercase;">Most Popular</div>
-                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--accent-cyan);">Pro Bundle</h3>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Unlock the intelligent AI lab & reaction prediction.</p>
-                <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 2rem; color: #fff;">
-                    <span id="pro-price">£0.25</span> <span id="pro-period" style="font-size: 0.9rem; font-weight: 400; color: var(--text-secondary);">/ month</span>
+        <div style="max-width: 800px; margin: 0 auto; background: var(--bg-primary); border-radius: 16px; padding: 3rem 2.5rem; border: 1px solid var(--accent-cyan); box-shadow: 0 0 35px rgba(0, 240, 255, 0.12); text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 1.5rem;">
+                <div>
+                    <h3 style="font-size: 1.8rem; font-weight: 800; color: #fff; margin: 0 0 0.4rem 0;">Early Adopter Community Edition</h3>
+                    <p style="color: var(--accent-cyan); font-weight: 600; margin: 0; font-size: 0.95rem;">Get it now — Keep lifetime access forever on your device!</p>
                 </div>
-                <ul style="list-style: none; padding: 0; margin-bottom: 2rem; flex-grow: 1; color: var(--text-secondary); font-size: 0.95rem; line-height: 2;">
-                    <li>✓ <strong>Everything in Free Starter</strong></li>
-                    <li>✓ <strong>Predict Reaction AI</strong> (Real-time outcomes)</li>
-                    <li>✓ <strong>Research Chemical Button</strong> (Deep PubChem data)</li>
-                    <li>✓ <strong>AI Chemistry Chat</strong> (Guided tutoring)</li>
-                    <li>✓ Automatic Mechanism Synthesis</li>
-                    <li style="color: rgba(255, 255, 255, 0.25);">✗ Chemistry Minigames</li>
-                    <li style="color: rgba(255, 255, 255, 0.25);">✗ Piper Neural Voice AI Professor</li>
-                </ul>
-                <a href="#download" class="cta-btn" style="text-align: center;">Upgrade to Pro</a>
+                <div style="font-size: 2.8rem; font-weight: 800; color: #00ffaa;">
+                    £0 <span style="font-size: 1rem; font-weight: 400; color: var(--text-secondary);">/ Free Forever</span>
+                </div>
             </div>
 
-            <!-- Expert Bundle -->
-            <div style="background: var(--bg-primary); border-radius: 12px; padding: 2.5rem 2rem; border: 1px solid var(--accent-purple); display: flex; flex-direction: column; box-shadow: 0 0 25px rgba(176, 38, 255, 0.15);">
-                <div style="position: absolute; top: -12px; right: 20px; background: var(--accent-purple); color: #fff; font-weight: 800; font-size: 0.75rem; padding: 3px 12px; border-radius: 12px; text-transform: uppercase;">All-Inclusive</div>
-                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--accent-purple);">Expert Bundle</h3>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Full interactive suite with voice synthesis & games.</p>
-                <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 2rem; color: #fff;">
-                    <span id="expert-price">£0.50</span> <span id="expert-period" style="font-size: 0.9rem; font-weight: 400; color: var(--text-secondary);">/ month</span>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; color: var(--text-secondary); font-size: 0.95rem; line-height: 2;">
+                <div>
+                    <div>✓ <strong>Full 3D Molecular Sandbox & VSEPR</strong></div>
+                    <div>✓ <strong>All 83 Elements in Real-World Forms</strong></div>
+                    <div>✓ <strong>AI Reaction Predictor (Qwen Neural Engine)</strong></div>
+                    <div>✓ <strong>Piper Neural Voice AI Professor</strong></div>
                 </div>
-                <ul style="list-style: none; padding: 0; margin-bottom: 2rem; flex-grow: 1; color: var(--text-secondary); font-size: 0.95rem; line-height: 2;">
-                    <li>✓ <strong>Everything in Pro Bundle</strong></li>
-                    <li>✓ <strong>Piper Neural Voice AI Professor</strong> (Speaks mechanisms & trivia aloud)</li>
-                    <li>✓ <strong>Chemistry Minigames</strong> & Challenges</li>
-                    <li>✓ <strong>Periodic Warfare Arena</strong> (Multiplayer combat & Fog of War)</li>
-                    <li>✓ <strong>100,000+ Compendium & Alloy Forger</strong></li>
-                    <li>✓ <strong>All Future Features & Updates Included</strong></li>
-                </ul>
-                <a href="#download" class="cta-btn" style="text-align: center; background: linear-gradient(135deg, var(--accent-purple), #ff0077);">Upgrade to Expert</a>
+                <div>
+                    <div>✓ <strong>100,000+ Compendium & Alloy Forger</strong></div>
+                    <div>✓ <strong>Real-Time Chemistry Analysis & Chat</strong></div>
+                    <div>✓ <strong>Chemistry Minigames & Periodic Warfare</strong></div>
+                    <div>✓ <strong>Keep It Forever on Your Computer</strong></div>
+                </div>
             </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="#download" class="cta-btn" style="padding: 1rem 3rem; font-size: 1.1rem; text-align: center;">Download Free Now</a>
+            </div>
+            
+            <p style="text-align: center; margin-top: 1.2rem; margin-bottom: 0; font-size: 0.85rem; color: var(--text-secondary);">
+                Love the simulator? Share this download link with your classmates, teachers, and friends!
+            </p>
         </div>
     </section>
-
-    <script>
-        function togglePricing(isYearly) {
-            const proPrice = document.getElementById('pro-price');
-            const proPeriod = document.getElementById('pro-period');
-            const expertPrice = document.getElementById('expert-price');
-            const expertPeriod = document.getElementById('expert-period');
-            const labelMonthly = document.getElementById('label-monthly');
-            const labelYearly = document.getElementById('label-yearly');
-            const toggleCircle = document.getElementById('toggle-circle');
-
-            if (isYearly) {
-                proPrice.textContent = '£2.00';
-                proPeriod.textContent = '/ year';
-                expertPrice.textContent = '£3.50';
-                expertPeriod.textContent = '/ year';
-                labelMonthly.style.color = 'var(--text-secondary)';
-                labelYearly.style.color = 'var(--accent-cyan)';
-                toggleCircle.style.transform = 'translateX(20px)';
-            } else {
-                proPrice.textContent = '£0.25';
-                proPeriod.textContent = '/ month';
-                expertPrice.textContent = '£0.50';
-                expertPeriod.textContent = '/ month';
-                labelMonthly.style.color = 'var(--accent-cyan)';
-                labelYearly.style.color = 'var(--text-secondary)';
-                toggleCircle.style.transform = 'translateX(0px)';
-            }
-        }
-    </script>
 
     <section id="download" class="download-section">
         <h2>Ready to start experimenting?</h2>
