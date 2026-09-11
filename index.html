@@ -171,7 +171,7 @@
                 <div style="background: rgba(255, 255, 255, 0.03); padding: 1.2rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
                     <div style="color: var(--accent-cyan); font-weight: 800; font-size: 1.1rem; margin-bottom: 0.5rem;">Step 2: 1-Click AI Setup</div>
                     <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
-                        Run <strong>Setup_AI_Models.bat</strong> inside the folder. It will configure Ollama and pull the 7B and 14B chemistry reasoning models automatically.
+                        Run <strong>Setup_AI_Models.bat</strong> inside the folder. Choose whether you want the 7B model, the 14B model, or both!
                     </p>
                 </div>
                 <div style="background: rgba(255, 255, 255, 0.03); padding: 1.2rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
@@ -179,6 +179,43 @@
                     <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
                         Launch <strong>UltimateChemistrySim.exe</strong>! All 3D VSEPR mechanics, AI reaction predictions, and neural voice synthesis run 100% locally.
                     </p>
+                </div>
+            </div>
+
+            <!-- Which AI Model Should You Choose? -->
+            <div style="margin-top: 2.5rem; text-align: left;">
+                <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.6rem;">
+                    <span>🧠</span> Which AI Model Should You Choose?
+                </h3>
+                <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;">
+                    The simulator supports modular AI engines so you can match the model to your computer's hardware:
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                    <div style="background: rgba(0, 240, 255, 0.04); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 12px; padding: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+                            <h4 style="color: var(--accent-cyan); font-size: 1.2rem; margin: 0; font-weight: 800;">Qwen 2.5 — 7B Model</h4>
+                            <span style="background: rgba(0, 240, 255, 0.15); color: var(--accent-cyan); font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 8px;">4.7 GB</span>
+                        </div>
+                        <div style="color: #00ffaa; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.8rem;">
+                            Recommended for: 8 GB – 16 GB System RAM
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; margin: 0;">
+                            <strong>Ultra-fast reaction prediction and IUPAC parsing.</strong> Perfect for everyday chemistry classes, balanced stoichiometry, and molecular property lookup with minimal RAM and CPU/GPU usage.
+                        </p>
+                    </div>
+
+                    <div style="background: rgba(255, 215, 0, 0.04); border: 1px solid rgba(255, 215, 0, 0.25); border-radius: 12px; padding: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+                            <h4 style="color: #ffd700; font-size: 1.2rem; margin: 0; font-weight: 800;">Qwen 2.5 — 14B Model</h4>
+                            <span style="background: rgba(255, 215, 0, 0.15); color: #ffd700; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 8px;">9.0 GB</span>
+                        </div>
+                        <div style="color: #ffd700; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.8rem;">
+                            Recommended for: 24+ GB System RAM (or 12GB+ VRAM GPU)
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; margin: 0;">
+                            <strong>Master-tier chemical research and reaction mechanism synthesis.</strong> Provides deeper reasoning for complex multi-step organic reaction pathways, oxidation-reduction energetics, and academic literature analysis.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
