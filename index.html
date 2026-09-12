@@ -287,11 +287,38 @@
     <section id="alkali-minigame" class="alkali-minigame-section">
         <div class="minigame-header">
             <span class="minigame-tag">⚡ Interactive Lab Minigame</span>
-            <h2>Alkali Metals vs Water: Drop & React!</h2>
-            <p>Pick an alkali metal, drop it into the water basin, and trigger real-life violent exothermic chemical reactions!</p>
+            <h2>Alkali Metals vs Acids & Water: Drop & Detonate!</h2>
+            <p>Select your alkali metal and target liquid basin, then drop to trigger real-life violent chemical reactions!</p>
         </div>
 
         <div class="lab-simulation-card">
+            <!-- 1. Liquid Basin Selection -->
+            <div class="picker-label">Select Liquid Basin:</div>
+            <div class="liquid-picker" id="liquid-picker">
+                <button class="liquid-btn active" data-liquid="water" data-name="Water (H2O)">
+                    <span class="liq-icon">💧</span>
+                    <span class="liq-info"><strong>Water</strong><br><small>H<sub>2</sub>O standard</small></span>
+                </button>
+                <button class="liquid-btn" data-liquid="acetic" data-name="Acetic Acid (CH3COOH)">
+                    <span class="liq-icon">🧪</span>
+                    <span class="liq-info"><strong>Acetic Acid</strong><br><small>CH<sub>3</sub>COOH (Stronger shake)</small></span>
+                </button>
+                <button class="liquid-btn" data-liquid="sulfuric" data-name="Sulfuric Acid 98% (H2SO4)">
+                    <span class="liq-icon">⚗️</span>
+                    <span class="liq-info"><strong>Sulfuric Acid 98%</strong><br><small>H<sub>2</sub>SO<sub>4</sub> (Insane shake!)</small></span>
+                </button>
+                <button class="liquid-btn danger-liquid" data-liquid="triflic" data-name="Triflic Acid (CF3SO3H)">
+                    <span class="liq-icon">☣️</span>
+                    <span class="liq-info"><strong>Triflic Acid</strong><br><small>CF<sub>3</sub>SO<sub>3</sub>H (All 6 mushroom clouds!)</small></span>
+                </button>
+                <button class="liquid-btn superacid-liquid" data-liquid="hsbf6" data-name="Fluoroantimonic Acid (HSbF6)">
+                    <span class="liq-icon">☢️</span>
+                    <span class="liq-info"><strong>HSbF<sub>6</sub></strong><br><small>Fluoroantimonic (Universal screen shatter!)</small></span>
+                </button>
+            </div>
+
+            <!-- 2. Alkali Metal Selection -->
+            <div class="picker-label" style="margin-top: 1rem;">Select Alkali Metal:</div>
             <div class="element-picker">
                 <button class="metal-btn active" data-metal="Li" data-level="medium" data-name="Lithium (Li)">
                     <span class="sym">Li</span>
@@ -320,10 +347,10 @@
             </div>
 
             <div class="reaction-arena" id="reaction-arena">
-                <!-- Water Flask Animation Area -->
+                <!-- Liquid Basin Animation Area -->
                 <div class="flask-container">
-                    <div class="water-pool">
-                        <div class="water-surface"></div>
+                    <div class="water-pool" id="liquid-pool">
+                        <div class="water-surface" id="liquid-surface"></div>
                     </div>
                     <div class="metal-drop-piece" id="metal-piece">Li</div>
                 </div>
@@ -339,7 +366,7 @@
                 <div class="reaction-equation" id="reaction-equation">
                     2Li + 2H<sub>2</sub>O &rarr; 2LiOH + H<sub>2</sub>&uarr; + <strong>Heat!</strong>
                 </div>
-                <button id="react-btn" class="cta-btn react-trigger-btn">🔥 React Metal with Water!</button>
+                <button id="react-btn" class="cta-btn react-trigger-btn">🔥 React Metal with Liquid!</button>
             </div>
         </div>
     </section>
@@ -349,7 +376,7 @@
     </footer>
     </div><!-- end .site-wrapper -->
 
-    <!-- Screen cracks overlay (Realistic Spiderweb Glass Fracture at Viewport Root) -->
+    <!-- Screen cracks overlay (Realistic Spiderweb Glass Fracture with 6 Scalable Intensities) -->
     <div class="screen-cracks-overlay" id="screen-cracks">
         <svg class="crack-svg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
             <defs>
@@ -358,49 +385,65 @@
                     <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#00ffff" flood-opacity="0.5"/>
                 </filter>
             </defs>
-            <!-- Center Impact Core (Crushed Glass Center) -->
-            <polygon points="500,490 512,482 525,495 530,510 515,522 498,525 480,515 478,495 490,488" fill="rgba(255,255,255,0.7)" filter="url(#glass-glow)" />
-            <polygon points="495,492 505,488 518,496 512,508 502,514 492,506" fill="rgba(255,255,255,0.9)" />
+            <!-- Tier 1: Center Impact Core (Crushed Glass Center) -->
+            <g class="crack-group crack-tier-1">
+                <polygon points="500,490 512,482 525,495 530,510 515,522 498,525 480,515 478,495 490,488" fill="rgba(255,255,255,0.7)" filter="url(#glass-glow)" />
+                <polygon points="495,492 505,488 518,496 512,508 502,514 492,506" fill="rgba(255,255,255,0.9)" />
+                <polygon points="450,480 480,440 540,430 580,470 590,520 560,570 510,590 460,560 435,510" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" filter="url(#glass-glow)" />
+                <path d="M500,500 L440,390 L380,260" stroke="#fff" stroke-width="3" fill="none" filter="url(#glass-glow)" />
+                <path d="M500,500 L560,370 L640,220" stroke="#fff" stroke-width="3" fill="none" filter="url(#glass-glow)" />
+            </g>
 
-            <!-- Concentric Stress Fracture Rings -->
-            <polygon points="450,480 480,440 540,430 580,470 590,520 560,570 510,590 460,560 435,510" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" filter="url(#glass-glow)" />
-            <polygon points="410,460 450,390 560,370 630,440 660,530 600,620 520,660 430,620 380,530" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.8" filter="url(#glass-glow)" />
-            <polygon points="340,430 420,320 590,290 710,380 740,540 680,690 530,730 380,690 310,540" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" />
+            <!-- Tier 2: Primary Ring & Expanding Radials -->
+            <g class="crack-group crack-tier-2">
+                <polygon points="410,460 450,390 560,370 630,440 660,530 600,620 520,660 430,620 380,530" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.8" filter="url(#glass-glow)" />
+                <path d="M500,500 L660,490 L790,470" stroke="#fff" stroke-width="3" fill="none" filter="url(#glass-glow)" />
+                <path d="M500,500 L410,610 L300,740" stroke="#fff" stroke-width="3" fill="none" filter="url(#glass-glow)" />
+                <line x1="480" y1="460" x2="430" y2="440" stroke="#fff" stroke-width="1.5" />
+                <line x1="530" y1="470" x2="570" y2="430" stroke="#fff" stroke-width="1.5" />
+            </g>
 
-            <!-- Violent Radial Fracture Lines extending to viewport borders -->
-            <path d="M500,500 L440,390 L380,260 L310,120 L240,0" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
-            <path d="M380,260 L450,170 L480,0" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
-            <path d="M500,500 L560,370 L640,220 L720,80 L800,0" stroke="#fff" stroke-width="3" fill="none" filter="url(#glass-glow)" />
-            <path d="M640,220 L580,110 L560,0" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
-            
-            <path d="M500,500 L660,490 L790,470 L890,450 L1000,430" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
-            <path d="M790,470 L870,350 L1000,280" stroke="rgba(255,255,255,0.85)" stroke-width="2.2" fill="none" />
-            <path d="M790,470 L880,560 L1000,610" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+            <!-- Tier 3: Secondary Ring & Sub-branches -->
+            <g class="crack-group crack-tier-3">
+                <polygon points="340,430 420,320 590,290 710,380 740,540 680,690 530,730 380,690 310,540" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" />
+                <path d="M380,260 L450,170 L480,0" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+                <path d="M640,220 L580,110 L560,0" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
+                <path d="M500,500 L600,600 L730,730" stroke="#fff" stroke-width="3.2" fill="none" filter="url(#glass-glow)" />
+                <path d="M500,500 L510,650 L530,790" stroke="#fff" stroke-width="3" fill="none" filter="url(#glass-glow)" />
+            </g>
 
-            <path d="M500,500 L600,600 L730,730 L850,860 L1000,980" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
-            <path d="M730,730 L820,680 L1000,750" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
-            <path d="M730,730 L710,870 L750,1000" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+            <!-- Tier 4: Violent Border Fractures -->
+            <g class="crack-group crack-tier-4">
+                <path d="M380,260 L310,120 L240,0" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+                <path d="M640,220 L720,80 L800,0" stroke="#fff" stroke-width="3" fill="none" filter="url(#glass-glow)" />
+                <path d="M790,470 L890,450 L1000,430" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+                <path d="M790,470 L870,350 L1000,280" stroke="rgba(255,255,255,0.85)" stroke-width="2.2" fill="none" />
+                <path d="M500,500 L380,510 L250,520 L130,510 L0,500" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+            </g>
 
-            <path d="M500,500 L510,650 L530,790 L510,910 L500,1000" stroke="#fff" stroke-width="3" fill="none" filter="url(#glass-glow)" />
-            <path d="M530,790 L440,890 L390,1000" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+            <!-- Tier 5: Heavy Diagonal Wall Fractures -->
+            <g class="crack-group crack-tier-5">
+                <path d="M730,730 L850,860 L1000,980" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+                <path d="M730,730 L820,680 L1000,750" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
+                <path d="M730,730 L710,870 L750,1000" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+                <path d="M530,790 L510,910 L500,1000" stroke="#fff" stroke-width="3" fill="none" filter="url(#glass-glow)" />
+                <path d="M530,790 L440,890 L390,1000" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+                <path d="M300,740 L180,860 L50,1000" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+            </g>
 
-            <path d="M500,500 L410,610 L300,740 L180,860 L50,1000" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
-            <path d="M300,740 L210,720 L0,790" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
-            <path d="M300,740 L340,870 L280,1000" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
-
-            <path d="M500,500 L380,510 L250,520 L130,510 L0,500" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
-            <path d="M250,520 L180,410 L0,380" stroke="rgba(255,255,255,0.8)" stroke-width="2.2" fill="none" />
-            <path d="M250,520 L160,610 L0,640" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
-
-            <path d="M500,500 L390,390 L260,280 L140,170 L0,70" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
-            <path d="M260,280 L180,210 L0,220" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
-            <path d="M260,280 L230,120 L170,0" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
-
-            <!-- Shards / Micro-fractures -->
-            <line x1="480" y1="460" x2="430" y2="440" stroke="#fff" stroke-width="1.5" />
-            <line x1="530" y1="470" x2="570" y2="430" stroke="#fff" stroke-width="1.5" />
-            <line x1="540" y1="530" x2="600" y2="560" stroke="#fff" stroke-width="1.5" />
-            <line x1="470" y1="540" x2="440" y2="580" stroke="#fff" stroke-width="1.5" />
+            <!-- Tier 6: Catastrophic Web Shatter (Full Screen Annihilation) -->
+            <g class="crack-group crack-tier-6">
+                <path d="M790,470 L880,560 L1000,610" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+                <path d="M300,740 L210,720 L0,790" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+                <path d="M300,740 L340,870 L280,1000" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
+                <path d="M250,520 L180,410 L0,380" stroke="rgba(255,255,255,0.8)" stroke-width="2.2" fill="none" />
+                <path d="M250,520 L160,610 L0,640" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+                <path d="M500,500 L390,390 L260,280 L140,170 L0,70" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+                <path d="M260,280 L180,210 L0,220" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
+                <path d="M260,280 L230,120 L170,0" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+                <line x1="540" y1="530" x2="600" y2="560" stroke="#fff" stroke-width="1.5" />
+                <line x1="470" y1="540" x2="440" y2="580" stroke="#fff" stroke-width="1.5" />
+            </g>
         </svg>
     </div>
 
