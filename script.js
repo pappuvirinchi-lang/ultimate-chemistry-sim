@@ -113,12 +113,12 @@ let activeLevel = 'medium';
 let activeLiquid = 'water';
 
 const metalData = {
-    Li: { name: 'Lithium', valency: 1, baseLevel: 1, color: '#ff3366', soundGain: 0.45, boomFreq: 140, particleCount: 60 },
-    Na: { name: 'Sodium', valency: 1, baseLevel: 2, color: '#ffaa00', soundGain: 0.75, boomFreq: 110, particleCount: 110 },
-    K:  { name: 'Potassium', valency: 1, baseLevel: 3, color: '#cc66ff', soundGain: 1.15, boomFreq: 85, particleCount: 180 },
-    Rb: { name: 'Rubidium', valency: 1, baseLevel: 4, color: '#ff2200', soundGain: 1.65, boomFreq: 60, particleCount: 280 },
-    Cs: { name: 'Caesium', valency: 1, baseLevel: 5, color: '#00e5ff', soundGain: 2.35, boomFreq: 45, particleCount: 400 },
-    Fr: { name: 'Francium', valency: 1, baseLevel: 6, color: '#39ff14', soundGain: 3.4, boomFreq: 30, particleCount: 650 }
+    Li: { name: 'Lithium', valency: 1, baseLevel: 1, color: '#ff3366', soundGain: 0.20, boomFreq: 140, particleCount: 60 },
+    Na: { name: 'Sodium', valency: 1, baseLevel: 2, color: '#ffaa00', soundGain: 0.32, boomFreq: 110, particleCount: 110 },
+    K:  { name: 'Potassium', valency: 1, baseLevel: 3, color: '#cc66ff', soundGain: 0.45, boomFreq: 85, particleCount: 180 },
+    Rb: { name: 'Rubidium', valency: 1, baseLevel: 4, color: '#ff2200', soundGain: 0.60, boomFreq: 60, particleCount: 280 },
+    Cs: { name: 'Caesium', valency: 1, baseLevel: 5, color: '#00e5ff', soundGain: 0.78, boomFreq: 45, particleCount: 400 },
+    Fr: { name: 'Francium', valency: 1, baseLevel: 6, color: '#39ff14', soundGain: 0.95, boomFreq: 30, particleCount: 650 }
 };
 
 const liquidData = {
@@ -140,7 +140,7 @@ const liquidData = {
         colorGrad: 'linear-gradient(180deg, rgba(220, 240, 180, 0.7) 0%, rgba(160, 200, 100, 0.9) 100%)',
         borderColor: 'rgba(180, 240, 100, 0.6)',
         glowColor: 'rgba(180, 240, 100, 0.4)',
-        soundMult: 1.45,
+        soundMult: 1.15,
         shakeOffset: 1, // Stronger shake
         allMushroom: false,
         allCracks: false,
@@ -152,7 +152,7 @@ const liquidData = {
         colorGrad: 'linear-gradient(180deg, rgba(255, 170, 0, 0.75) 0%, rgba(200, 70, 0, 0.92) 100%)',
         borderColor: 'rgba(255, 150, 0, 0.8)',
         glowColor: 'rgba(255, 120, 0, 0.55)',
-        soundMult: 2.2,
+        soundMult: 1.35,
         shakeOffset: 2, // Absolutely insane shake!
         allMushroom: false,
         allCracks: false,
@@ -164,7 +164,7 @@ const liquidData = {
         colorGrad: 'linear-gradient(180deg, rgba(200, 0, 255, 0.75) 0%, rgba(100, 0, 220, 0.95) 100%)',
         borderColor: 'rgba(210, 0, 255, 0.85)',
         glowColor: 'rgba(200, 0, 255, 0.6)',
-        soundMult: 3.2,
+        soundMult: 1.55,
         shakeOffset: 3, // Even more insane than H2SO4, ALL 6 metals spawn mushroom clouds!
         allMushroom: true,
         allCracks: false,
@@ -176,7 +176,7 @@ const liquidData = {
         colorGrad: 'linear-gradient(180deg, rgba(255, 0, 85, 0.85) 0%, rgba(60, 0, 30, 0.98) 100%)',
         borderColor: 'rgba(255, 0, 85, 0.95)',
         glowColor: 'rgba(255, 0, 85, 0.75)',
-        soundMult: 4.5, // Insanely loud!
+        soundMult: 1.8, // Heavy cinematic presence without physical clipping
         shakeOffset: 4, // Stronger shake than triflic acid
         allMushroom: true,
         allCracks: true, // ALL metals have screen cracks scaled by size!
@@ -286,14 +286,38 @@ resizeExplosionCanvas();
 
 // Web Audio API procedural sound synthesizer for realistic explosion sounds
 let audioCtx = null;
+let masterCompressor = null;
+let masterSafeGain = null;
+
+function initAudioSystem() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (!masterCompressor) {
+        // Professional brickwall compressor / limiter:
+        // Automatically clamps high-energy dynamic peaks and suppresses clipping
+        masterCompressor = audioCtx.createDynamicsCompressor();
+        masterCompressor.threshold.setValueAtTime(-12, audioCtx.currentTime); // Start gentle compression at -12dB
+        masterCompressor.knee.setValueAtTime(10, audioCtx.currentTime);        // Smooth transition knee
+        masterCompressor.ratio.setValueAtTime(16, audioCtx.currentTime);       // Strong limiting ratio (16:1)
+        masterCompressor.attack.setValueAtTime(0.003, audioCtx.currentTime);   // Ultra-fast 3ms attack to protect against sudden transient spikes
+        masterCompressor.release.setValueAtTime(0.25, audioCtx.currentTime);   // 250ms smooth release
+
+        // Master safe gain output: hard-capped well below 0 dBFS (peak < 0.75) for 100% speaker & ear safety
+        masterSafeGain = audioCtx.createGain();
+        masterSafeGain.gain.setValueAtTime(0.72, audioCtx.currentTime);
+
+        masterCompressor.connect(masterSafeGain);
+        masterSafeGain.connect(audioCtx.destination);
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}
+
 function playExplosionSound(metalKey, liquidKey) {
     try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
+        initAudioSystem();
 
         const details = getReactionDetails(metalKey, liquidKey);
         const data = metalData[metalKey];
@@ -307,15 +331,16 @@ function playExplosionSound(metalKey, liquidKey) {
         const oscGain = audioCtx.createGain();
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(details.boomFreq * 1.5, now);
-        osc.frequency.exponentialRampToValueAtTime(15, now + duration);
+        // Do not drop below 28Hz to avoid violent inaudible DC excursion on physical speaker cones
+        osc.frequency.exponentialRampToValueAtTime(28, now + duration);
 
-        // Clamp soundGain to prevent browser distortion clipping issues while delivering intense impact
-        const clampedOscGain = Math.min(2.5, details.soundGain * 0.85);
-        oscGain.gain.setValueAtTime(clampedOscGain, now);
+        // Safe relative internal gain (normalized between 0.15 and 0.8)
+        const safeOscGain = Math.min(0.8, details.soundGain * 0.65);
+        oscGain.gain.setValueAtTime(safeOscGain, now);
         oscGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
         osc.connect(oscGain);
-        oscGain.connect(audioCtx.destination);
+        oscGain.connect(masterCompressor); // Routed into brickwall safety limiter
         osc.start(now);
         osc.stop(now + duration);
 
@@ -332,37 +357,41 @@ function playExplosionSound(metalKey, liquidKey) {
 
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(800 + tierIndex * 150, now);
-        filter.frequency.linearRampToValueAtTime(50, now + duration);
+        filter.frequency.setValueAtTime(600 + tierIndex * 120, now);
+        filter.frequency.linearRampToValueAtTime(65, now + duration);
 
         const noiseGain = audioCtx.createGain();
-        const clampedNoiseGain = Math.min(3.2, details.soundGain * 1.15);
-        noiseGain.gain.setValueAtTime(clampedNoiseGain, now);
+        const safeNoiseGain = Math.min(0.85, details.soundGain * 0.75);
+        noiseGain.gain.setValueAtTime(safeNoiseGain, now);
         noiseGain.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.9);
 
         whiteNoise.connect(filter);
         filter.connect(noiseGain);
-        noiseGain.connect(audioCtx.destination);
+        noiseGain.connect(masterCompressor); // Routed into brickwall safety limiter
 
         whiteNoise.start(now);
         whiteNoise.stop(now + duration);
 
         // Screen Crack Glass-Shatter Sound Effect (When crackTier > 0)
         if (details.crackTier > 0) {
-            const crackCount = details.crackTier;
-            for (let c = 0; c < Math.min(crackCount, 4); c++) {
+            const crackCount = Math.min(details.crackTier, 4);
+            for (let c = 0; c < crackCount; c++) {
                 const crackOffset = c * 0.04;
                 const crackOsc = audioCtx.createOscillator();
                 const crackGain = audioCtx.createGain();
                 crackOsc.type = 'sawtooth';
-                crackOsc.frequency.setValueAtTime(2200 + Math.random() * 800, now + crackOffset);
-                crackOsc.frequency.exponentialRampToValueAtTime(300, now + crackOffset + 0.25);
-                crackGain.gain.setValueAtTime(Math.min(1.2, 0.4 + details.crackTier * 0.12), now + crackOffset);
-                crackGain.gain.exponentialRampToValueAtTime(0.001, now + crackOffset + 0.25);
+                crackOsc.frequency.setValueAtTime(1800 + Math.random() * 600, now + crackOffset);
+                crackOsc.frequency.exponentialRampToValueAtTime(320, now + crackOffset + 0.22);
+                
+                // Keep crack volume comfortable and non-piercing
+                const safeCrackGain = Math.min(0.35, 0.12 + details.crackTier * 0.035);
+                crackGain.gain.setValueAtTime(safeCrackGain, now + crackOffset);
+                crackGain.gain.exponentialRampToValueAtTime(0.001, now + crackOffset + 0.22);
+                
                 crackOsc.connect(crackGain);
-                crackGain.connect(audioCtx.destination);
+                crackGain.connect(masterCompressor); // Routed into brickwall safety limiter
                 crackOsc.start(now + crackOffset);
-                crackOsc.stop(now + crackOffset + 0.25);
+                crackOsc.stop(now + crackOffset + 0.22);
             }
         }
     } catch (e) {
