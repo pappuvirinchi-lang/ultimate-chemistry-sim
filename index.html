@@ -46,6 +46,7 @@
         <div class="logo">Ultimate Chemistry</div>
         <div class="nav-links">
             <a href="#features">Features</a>
+            <a href="#periodic-table">Periodic Table</a>
             <a href="#pricing">Pricing</a>
             <a href="#download" class="nav-btn">Download</a>
         </div>
@@ -57,14 +58,24 @@
             <p>Experience real-time VSEPR geometry, true physical interactions, and an AI-powered reaction predictor right on your desktop.</p>
             <a href="#download" class="cta-btn">Download for Windows</a>
 
-            <!-- 3D Revolving Showcase Molecule -->
+            <!-- Interactive 3D Molecular Canvas Viewer -->
             <div class="molecule-showcase-container">
-                <div class="molecule-orbit-wrap">
-                    <img src="hsbf6-molecule.png" alt="Example molecule drawing of HSbF6 (fluoroantimonic acid)" class="revolving-molecule-img">
+                <div class="molecule-chips-bar" id="molecule-chips">
+                    <button class="mol-chip active" data-mol="hsbf6">⚡ HSbF₆ Superacid</button>
+                    <button class="mol-chip" data-mol="water">💧 H₂O Water</button>
+                    <button class="mol-chip" data-mol="benzene">⬡ C₆H₆ Benzene</button>
+                    <button class="mol-chip" data-mol="methane">🔥 CH₄ Methane</button>
+                    <button class="mol-chip" data-mol="caffeine">☕ Caffeine</button>
                 </div>
-                <div class="molecule-showcase-caption">
+
+                <div class="molecule-orbit-wrap">
+                    <canvas id="hero-mol-canvas" width="380" height="340"></canvas>
+                    <div class="canvas-drag-hint"><span>🖱️ Drag to rotate in 3D</span></div>
+                </div>
+
+                <div class="molecule-showcase-caption" id="molecule-caption">
                     <span class="pulse-dot"></span>
-                    Example molecule drawing of <strong>HSbF<sub>6</sub></strong> (fluoroantimonic acid)
+                    <span id="mol-caption-text">Example molecule drawing of <strong>HSbF<sub>6</sub></strong> (fluoroantimonic acid) &bull; Octahedral geometry</span>
                 </div>
             </div>
         </div>
@@ -262,6 +273,75 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- Interactive Element Quick-Inspector (Mini Periodic Table Preview) -->
+    <section id="periodic-table" class="periodic-section">
+        <div class="section-header">
+            <span class="badge-tag">🔬 Real-Time Element Inspector</span>
+            <h2>Explore the Periodic Table</h2>
+            <p>Ultimate Chemistry Simulator models real-world physical properties, electronegativity gradients, and electron shells for all 83 sandbox elements. Click any element below to inspect it!</p>
+        </div>
+
+        <div class="periodic-inspector-wrapper">
+            <!-- Left: Interactive Mini Periodic Grid -->
+            <div class="periodic-grid-container">
+                <div class="periodic-legend">
+                    <span class="legend-item alkali"><span class="legend-dot"></span>Alkali Metal</span>
+                    <span class="legend-item alkaline"><span class="legend-dot"></span>Alkaline Earth</span>
+                    <span class="legend-item transition"><span class="legend-dot"></span>Transition Metal</span>
+                    <span class="legend-item nonmetal"><span class="legend-dot"></span>Nonmetal</span>
+                    <span class="legend-item halogen"><span class="legend-dot"></span>Halogen</span>
+                    <span class="legend-item noble"><span class="legend-dot"></span>Noble Gas</span>
+                </div>
+                <div class="ptable-grid" id="ptable-grid">
+                    <!-- Dynamic Element Tiles generated via JS -->
+                </div>
+            </div>
+
+            <!-- Right: Live Detailed Element HUD Card -->
+            <div class="element-hud-card" id="element-hud">
+                <div class="hud-top-bar">
+                    <span class="hud-atomic-num" id="hud-num">1</span>
+                    <span class="hud-category-badge" id="hud-category">Nonmetal</span>
+                </div>
+                <div class="hud-symbol-display">
+                    <div class="hud-big-symbol" id="hud-symbol">H</div>
+                    <div class="hud-element-name" id="hud-name">Hydrogen</div>
+                    <div class="hud-atomic-mass" id="hud-mass">1.008 u</div>
+                </div>
+
+                <div class="hud-stats-grid">
+                    <div class="hud-stat-box">
+                        <span class="hud-stat-label">Phase at 20°C</span>
+                        <span class="hud-stat-val" id="hud-phase">Gas</span>
+                    </div>
+                    <div class="hud-stat-box">
+                        <span class="hud-stat-label">Electronegativity</span>
+                        <span class="hud-stat-val" id="hud-en">2.20</span>
+                    </div>
+                    <div class="hud-stat-box">
+                        <span class="hud-stat-label">Electron Config</span>
+                        <span class="hud-stat-val" id="hud-config">1s¹</span>
+                    </div>
+                    <div class="hud-stat-box">
+                        <span class="hud-stat-label">Flame Color</span>
+                        <span class="hud-stat-val flame-glow" id="hud-flame">Pale Blue</span>
+                    </div>
+                </div>
+
+                <div class="hud-description" id="hud-desc">
+                    Lightest element in the universe. Highly reactive diatomic gas with oxygen, yielding immense exothermic clean energy as pure water vapor.
+                </div>
+
+                <div class="hud-vsepr-tip">
+                    <span>💡 Simulator Sandbox Role:</span>
+                    <strong id="hud-role">Fundamental proton donor & building block of organic chemistry</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="reviews" class="reviews-section">
         <h2>Community Ratings & Reviews</h2>
         <p style="color: var(--text-secondary); max-width: 650px; margin: 0 auto 2.5rem; font-size: 1.05rem;">

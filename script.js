@@ -92,6 +92,377 @@ document.getElementById('submit-review').addEventListener('click', () => {
 
 renderReviews();
 
+// ====================================================
+// 1. Interactive 3D Molecule Canvas Engine (Hero Showcase)
+// ====================================================
+const heroMolCanvas = document.getElementById('hero-mol-canvas');
+const heroCtx = heroMolCanvas ? heroMolCanvas.getContext('2d') : null;
+const molChips = document.querySelectorAll('.mol-chip');
+const molCaptionText = document.getElementById('mol-caption-text');
+
+const moleculeModels = {
+    hsbf6: {
+        caption: 'Example molecule drawing of <strong>HSbF<sub>6</sub></strong> (fluoroantimonic acid) &bull; Octahedral geometry',
+        atoms: [
+            { elem: 'Sb', x: 0, y: 0, z: 0, r: 24, color: '#00e5ff', glow: '#00e5ff' },
+            { elem: 'F', x: 80, y: 0, z: 0, r: 16, color: '#39ff14', glow: '#00ff88' },
+            { elem: 'F', x: -80, y: 0, z: 0, r: 16, color: '#39ff14', glow: '#00ff88' },
+            { elem: 'F', x: 0, y: 80, z: 0, r: 16, color: '#39ff14', glow: '#00ff88' },
+            { elem: 'F', x: 0, y: -80, z: 0, r: 16, color: '#39ff14', glow: '#00ff88' },
+            { elem: 'F', x: 0, y: 0, z: 80, r: 16, color: '#39ff14', glow: '#00ff88' },
+            { elem: 'F', x: 0, y: 0, z: -80, r: 16, color: '#39ff14', glow: '#00ff88' },
+            { elem: 'H', x: 120, y: 35, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' }
+        ],
+        bonds: [
+            [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [1, 7]
+        ]
+    },
+    water: {
+        caption: 'Water <strong>H<sub>2</sub>O</strong> &bull; Bent VSEPR Geometry (104.5° bond angle)',
+        atoms: [
+            { elem: 'O', x: 0, y: -15, z: 0, r: 24, color: '#ff3366', glow: '#ff3366' },
+            { elem: 'H', x: -65, y: 55, z: 0, r: 14, color: '#ffffff', glow: '#ffffff' },
+            { elem: 'H', x: 65, y: 55, z: 0, r: 14, color: '#ffffff', glow: '#ffffff' }
+        ],
+        bonds: [
+            [0, 1], [0, 2]
+        ]
+    },
+    benzene: {
+        caption: 'Benzene <strong>C<sub>6</sub>H<sub>6</sub></strong> &bull; Planar Aromatic Ring with Delocalized Pi-Electrons',
+        atoms: [
+            // Carbon Ring
+            { elem: 'C', x: 0, y: -60, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
+            { elem: 'C', x: 52, y: -30, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
+            { elem: 'C', x: 52, y: 30, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
+            { elem: 'C', x: 0, y: 60, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
+            { elem: 'C', x: -52, y: 30, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
+            { elem: 'C', x: -52, y: -30, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
+            // Hydrogen atoms
+            { elem: 'H', x: 0, y: -105, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' },
+            { elem: 'H', x: 92, y: -52, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' },
+            { elem: 'H', x: 92, y: 52, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' },
+            { elem: 'H', x: 0, y: 105, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' },
+            { elem: 'H', x: -92, y: 52, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' },
+            { elem: 'H', x: -92, y: -52, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' }
+        ],
+        bonds: [
+            [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0],
+            [0, 6], [1, 7], [2, 8], [3, 9], [4, 10], [5, 11]
+        ]
+    },
+    methane: {
+        caption: 'Methane <strong>CH<sub>4</sub></strong> &bull; Perfect Tetrahedral VSEPR Geometry (109.5° bond angles)',
+        atoms: [
+            { elem: 'C', x: 0, y: 0, z: 0, r: 22, color: '#444c56', glow: '#ffaa00' },
+            { elem: 'H', x: 0, y: -80, z: 0, r: 13, color: '#ffffff', glow: '#ffffff' },
+            { elem: 'H', x: 75, y: 35, z: 35, r: 13, color: '#ffffff', glow: '#ffffff' },
+            { elem: 'H', x: -75, y: 35, z: 35, r: 13, color: '#ffffff', glow: '#ffffff' },
+            { elem: 'H', x: 0, y: 35, z: -85, r: 13, color: '#ffffff', glow: '#ffffff' }
+        ],
+        bonds: [
+            [0, 1], [0, 2], [0, 3], [0, 4]
+        ]
+    },
+    caffeine: {
+        caption: 'Caffeine <strong>C<sub>8</sub>H<sub>10</sub>N<sub>4</sub>O<sub>2</sub></strong> &bull; Central Nervous Stimulant Xanthine Core',
+        atoms: [
+            { elem: 'N', x: -35, y: -45, z: 0, r: 16, color: '#2979ff', glow: '#2979ff' },
+            { elem: 'C', x: 15, y: -55, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
+            { elem: 'O', x: 35, y: -95, z: 0, r: 16, color: '#ff3366', glow: '#ff3366' },
+            { elem: 'N', x: 50, y: -20, z: 0, r: 16, color: '#2979ff', glow: '#2979ff' },
+            { elem: 'C', x: 35, y: 25, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
+            { elem: 'C', x: -15, y: 35, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
+            { elem: 'C', x: -50, y: 0, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
+            { elem: 'O', x: -95, y: 10, z: 0, r: 16, color: '#ff3366', glow: '#ff3366' },
+            { elem: 'N', x: -15, y: 75, z: 0, r: 16, color: '#2979ff', glow: '#2979ff' },
+            { elem: 'C', x: 35, y: 85, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
+            { elem: 'N', x: 65, y: 55, z: 0, r: 16, color: '#2979ff', glow: '#2979ff' }
+        ],
+        bonds: [
+            [0, 1], [1, 2], [1, 3], [3, 4], [4, 5], [5, 6], [6, 0], [6, 7],
+            [5, 8], [8, 9], [9, 10], [10, 4]
+        ]
+    }
+};
+
+let currentMolKey = 'hsbf6';
+let rotX = 0.25;
+let rotY = 0;
+let isDragging = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
+let autoSpin = true;
+
+if (heroMolCanvas) {
+    heroMolCanvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        autoSpin = false;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - lastMouseX;
+        const dy = e.clientY - lastMouseY;
+        rotY += dx * 0.012;
+        rotX += dy * 0.012;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        setTimeout(() => { autoSpin = true; }, 2500);
+    });
+
+    // Touch support for mobile devices
+    heroMolCanvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+            isDragging = true;
+            autoSpin = false;
+            lastMouseX = e.touches[0].clientX;
+            lastMouseY = e.touches[0].clientY;
+        }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - lastMouseX;
+        const dy = e.touches[0].clientY - lastMouseY;
+        rotY += dx * 0.012;
+        rotX += dy * 0.012;
+        lastMouseX = e.touches[0].clientX;
+        lastMouseY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+        isDragging = false;
+        setTimeout(() => { autoSpin = true; }, 2500);
+    });
+}
+
+// Molecule Chips selection
+molChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+        molChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentMolKey = chip.getAttribute('data-mol');
+        if (moleculeModels[currentMolKey] && molCaptionText) {
+            molCaptionText.innerHTML = moleculeModels[currentMolKey].caption;
+        }
+    });
+});
+
+function draw3DMolecule() {
+    if (!heroCtx) return;
+    const w = heroMolCanvas.width;
+    const h = heroMolCanvas.height;
+    heroCtx.clearRect(0, 0, w, h);
+
+    if (autoSpin) {
+        rotY += 0.015;
+    }
+
+    const model = moleculeModels[currentMolKey] || moleculeModels.hsbf6;
+    const cx = w / 2;
+    const cy = h / 2;
+    const fov = 320;
+
+    // Transform and project atoms in 3D
+    const projectedAtoms = model.atoms.map((atom, index) => {
+        // Rotate around Y-axis
+        let x1 = atom.x * Math.cos(rotY) + atom.z * Math.sin(rotY);
+        let z1 = -atom.x * Math.sin(rotY) + atom.z * Math.cos(rotY);
+
+        // Rotate around X-axis
+        let y2 = atom.y * Math.cos(rotX) - z1 * Math.sin(rotX);
+        let z2 = atom.y * Math.sin(rotX) + z1 * Math.cos(rotX);
+
+        // Perspective scale
+        const scale = fov / (fov + z2 + 100);
+        const px = cx + x1 * scale;
+        const py = cy + y2 * scale;
+        const pr = Math.max(4, atom.r * scale);
+
+        return {
+            index,
+            elem: atom.elem,
+            color: atom.color,
+            glow: atom.glow,
+            px, py, pr,
+            z: z2,
+            scale
+        };
+    });
+
+    // 1. Draw Bonds in 3D (Cylinder / Lines with depth)
+    for (let bond of model.bonds) {
+        const a1 = projectedAtoms[bond[0]];
+        const a2 = projectedAtoms[bond[1]];
+        if (!a1 || !a2) continue;
+
+        const avgZ = (a1.z + a2.z) / 2;
+        const bondAlpha = Math.max(0.3, Math.min(1, 1 - (avgZ / 250)));
+
+        heroCtx.save();
+        heroCtx.strokeStyle = `rgba(200, 225, 255, ${bondAlpha * 0.75})`;
+        heroCtx.lineWidth = Math.max(2.5, 5 * ((a1.scale + a2.scale) / 2));
+        heroCtx.beginPath();
+        heroCtx.moveTo(a1.px, a1.py);
+        heroCtx.lineTo(a2.px, a2.py);
+        heroCtx.stroke();
+        heroCtx.restore();
+    }
+
+    // 2. Sort atoms from back to front (Painter's Algorithm)
+    projectedAtoms.sort((a, b) => b.z - a.z);
+
+    // 3. Draw Spherical Atoms with Shading & Element Labels
+    for (let atom of projectedAtoms) {
+        heroCtx.save();
+
+        // Atmospheric glowing halo
+        heroCtx.shadowBlur = 18 * atom.scale;
+        heroCtx.shadowColor = atom.glow;
+
+        // 3D Sphere Radial Gradient (Phong highlight)
+        const grad = heroCtx.createRadialGradient(
+            atom.px - atom.pr * 0.35,
+            atom.py - atom.pr * 0.35,
+            atom.pr * 0.1,
+            atom.px,
+            atom.py,
+            atom.pr
+        );
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(0.35, atom.color);
+        grad.addColorStop(1, '#08080c');
+
+        heroCtx.fillStyle = grad;
+        heroCtx.beginPath();
+        heroCtx.arc(atom.px, atom.py, atom.pr, 0, Math.PI * 2);
+        heroCtx.fill();
+
+        // Element Symbol Text
+        heroCtx.shadowBlur = 0;
+        heroCtx.fillStyle = '#ffffff';
+        heroCtx.font = `bold ${Math.max(8, Math.floor(13 * atom.scale))}px Inter, sans-serif`;
+        heroCtx.textAlign = 'center';
+        heroCtx.textBaseline = 'middle';
+        heroCtx.fillText(atom.elem, atom.px, atom.py + 0.5);
+
+        heroCtx.restore();
+    }
+
+    requestAnimationFrame(draw3DMolecule);
+}
+if (heroMolCanvas) {
+    draw3DMolecule();
+}
+
+// ====================================================
+// 2. Interactive Periodic Table Element Quick-Inspector
+// ====================================================
+const ptableData = [
+    { num: 1, sym: 'H', name: 'Hydrogen', mass: '1.008 u', cat: 'nonmetal', phase: 'Gas', en: '2.20', conf: '1s¹', flame: 'Pale Blue', desc: 'Lightest element in the universe. Combines cleanly with oxygen to produce water vapor and energy.', role: 'Universal proton donor & primary building block of organic chemistry' },
+    { num: 2, sym: 'He', name: 'Helium', mass: '4.0026 u', cat: 'noble', phase: 'Gas', en: '—', conf: '1s²', flame: 'Peach / Gold', desc: 'Inert noble gas. Second most abundant element in the cosmos.', role: 'Cryogenic inert gas & unreactive carrier in thermodynamics' },
+    { num: 3, sym: 'Li', name: 'Lithium', mass: '6.94 u', cat: 'alkali', phase: 'Solid', en: '0.98', conf: '[He] 2s¹', flame: 'Crimson Red', desc: 'Lightest metal. Highly reactive with water, producing LiOH and hydrogen.', role: 'High electrochemical potential batteries & organolithium synthesis' },
+    { num: 4, sym: 'Be', name: 'Beryllium', mass: '9.0122 u', cat: 'alkaline', phase: 'Solid', en: '1.57', conf: '[He] 2s²', flame: 'White', desc: 'Steel-gray alkaline earth metal with high thermal conductivity.', role: 'Aerospace structural alloys & specialized X-ray tube windows' },
+    { num: 5, sym: 'B', name: 'Boron', mass: '10.81 u', cat: 'nonmetal', phase: 'Solid', en: '2.04', conf: '[He] 2s² 2p¹', flame: 'Bright Green', desc: 'Semimetal forming unique electron-deficient 3-center 2-electron bonds.', role: 'Borane reduction chemistry & Lewis acid catalysis' },
+    { num: 6, sym: 'C', name: 'Carbon', mass: '12.011 u', cat: 'nonmetal', phase: 'Solid', en: '2.55', conf: '[He] 2s² 2p²', flame: 'Yellow / Orange', desc: 'The backbone of all known biological life. Capable of sp³, sp², and sp hybridization.', role: 'Organic synthesis, catenation, aromatic rings, and graphene structures' },
+    { num: 7, sym: 'N', name: 'Nitrogen', mass: '14.007 u', cat: 'nonmetal', phase: 'Gas', en: '3.04', conf: '[He] 2s² 2p³', flame: 'Blue / Violet', desc: 'Diatomic gas with an exceptionally strong N≡N triple bond (945 kJ/mol).', role: 'Amines, nitrogenous bases, fertilizers, and energetic materials' },
+    { num: 8, sym: 'O', name: 'Oxygen', mass: '15.999 u', cat: 'nonmetal', phase: 'Gas', en: '3.44', conf: '[He] 2s² 2p⁴', flame: 'Pale Blue', desc: 'Highly electronegative oxidizing agent essential for aerobic combustion and respiration.', role: 'Oxidation reactions, hydrogen bonding, and carbonyl chemistry' },
+    { num: 9, sym: 'F', name: 'Fluorine', mass: '18.998 u', cat: 'halogen', phase: 'Gas', en: '3.98', conf: '[He] 2s² 2p⁵', flame: 'Intense White', desc: 'The most electronegative and chemically reactive of all chemical elements.', role: 'Superacids (HSbF₆), Teflon fluoropolymers, and extreme oxidation states' },
+    { num: 10, sym: 'Ne', name: 'Neon', mass: '20.180 u', cat: 'noble', phase: 'Gas', en: '—', conf: '[He] 2s² 2p⁶', flame: 'Red-Orange Glow', desc: 'Colorless, odorless noble gas glowing intense red-orange in electrical discharge.', role: 'High-voltage indicators, cryogenic refrigerants, and lasers' },
+    { num: 11, sym: 'Na', name: 'Sodium', mass: '22.990 u', cat: 'alkali', phase: 'Solid', en: '0.93', conf: '[Ne] 3s¹', flame: 'Intense Yellow', desc: 'Soft alkali metal that reacts vigorously with water with explosive hydrogen ignition.', role: 'Salt electrolytes, organosodium reagents, and flame testing' },
+    { num: 12, sym: 'Mg', name: 'Magnesium', mass: '24.305 u', cat: 'alkaline', phase: 'Solid', en: '1.31', conf: '[Ne] 3s²', flame: 'Brilliant White', desc: 'Combusts with a blinding white light. Key constituent of chlorophyll.', role: 'Grignard reagents (R-Mg-X) for carbon-carbon bond formation' },
+    { num: 13, sym: 'Al', name: 'Aluminium', mass: '26.982 u', cat: 'transition', phase: 'Solid', en: '1.61', conf: '[Ne] 3s² 3p¹', flame: 'Silver White', desc: 'Lightweight, corrosion-resistant metal forming a protective Al₂O₃ passivation layer.', role: 'Alloy forging, Lewis acid catalysts (AlCl₃), and thermite reactions' },
+    { num: 14, sym: 'Si', name: 'Silicon', mass: '28.085 u', cat: 'nonmetal', phase: 'Solid', en: '1.90', conf: '[Ne] 3s² 3p²', flame: 'White', desc: 'Semiconductor forming the basis of modern electronics and silicate geology.', role: 'Silicones, silanes, and semiconductor bandgap modeling' },
+    { num: 15, sym: 'P', name: 'Phosphorus', mass: '30.974 u', cat: 'nonmetal', phase: 'Solid', en: '2.19', conf: '[Ne] 3s² 3p³', flame: 'Pale Green-White', desc: 'Exists as white, red, and black allotropes. Central to cellular ATP energy transfer.', role: 'Phosphate backbones (DNA/RNA) and Wittig reagents' },
+    { num: 16, sym: 'S', name: 'Sulfur', mass: '32.06 u', cat: 'nonmetal', phase: 'Solid', en: '2.58', conf: '[Ne] 3s² 3p⁴', flame: 'Blue', desc: 'Bright yellow nonmetal forming octasulfur (S₈) crown rings.', role: 'Sulfuric acid manufacturing, disulfide bridges, and vulcanization' },
+    { num: 17, sym: 'Cl', name: 'Chlorine', mass: '35.45 u', cat: 'halogen', phase: 'Gas', en: '3.16', conf: '[Ne] 3s² 3p⁵', flame: 'Greenish-Yellow', desc: 'Pungent greenish-yellow halogen gas and powerful bleaching/disinfecting agent.', role: 'Halogenation reactions, chlorination, and hydrochloric acid synthesis' },
+    { num: 18, sym: 'Ar', name: 'Argon', mass: '39.948 u', cat: 'noble', phase: 'Gas', en: '—', conf: '[Ne] 3s² 3p⁶', flame: 'Lilac / Blue-Violet', desc: 'Most abundant noble gas in Earth atmosphere (~0.93%).', role: 'Inert shielding gas for high-temperature metallurgy and synthesis' },
+    { num: 19, sym: 'K', sym2: 'Potassium', name: 'Potassium', mass: '39.098 u', cat: 'alkali', phase: 'Solid', en: '0.82', conf: '[Ar] 4s¹', flame: 'Lilac / Violet', desc: 'Reacts violently with water with a characteristic lilac flame detonation.', role: 'Superoxide formation, biological nerve action potentials, and fertilizers' },
+    { num: 20, sym: 'Ca', name: 'Calcium', mass: '40.078 u', cat: 'alkaline', phase: 'Solid', en: '1.00', conf: '[Ar] 4s²', flame: 'Brick Red', desc: 'Essential structural component of bone minerals (hydroxyapatite) and limestone.', role: 'Desulfurization, biological signaling cascades, and calcium oxide flux' },
+    { num: 26, sym: 'Fe', name: 'Iron', mass: '55.845 u', cat: 'transition', phase: 'Solid', en: '1.83', conf: '[Ar] 3d⁶ 4s²', flame: 'Gold Sparkles', desc: 'Most common element on Earth by mass; center of hemoglobin oxygen transport.', role: 'Haber-Bosch ammonia catalyst, steel alloy forger, and redox chemistry' },
+    { num: 29, sym: 'Cu', name: 'Copper', mass: '63.546 u', cat: 'transition', phase: 'Solid', en: '1.90', conf: '[Ar] 3d¹⁰ 4s¹', flame: 'Emerald Green', desc: 'High electrical conductivity reddish metal forming green patina carbonates.', role: 'Click chemistry (CuAAC), organocuprates, and electrical conductors' },
+    { num: 35, sym: 'Br', name: 'Bromine', mass: '79.904 u', cat: 'halogen', phase: 'Liquid', en: '2.96', conf: '[Ar] 3d¹⁰ 4s² 4p⁵', flame: 'Reddish-Brown', desc: 'The only liquid nonmetallic element at standard temperature and pressure.', role: 'Electrophilic addition to alkenes and radical bromination' },
+    { num: 37, sym: 'Rb', name: 'Rubidium', mass: '85.468 u', cat: 'alkali', phase: 'Solid', en: '0.82', conf: '[Kr] 5s¹', flame: 'Red-Violet', desc: 'Ignites spontaneously in air and detonates violently upon contact with water.', role: 'Atomic clocks, photocells, and vapor cell spectroscopy' },
+    { num: 47, sym: 'Ag', name: 'Silver', mass: '107.87 u', cat: 'transition', phase: 'Solid', en: '1.93', conf: '[Kr] 4d¹⁰ 5s¹', flame: 'Faint Greenish', desc: 'Highest electrical and thermal conductivity of all known metals.', role: 'Tollens reagent test for aldehydes, photography, and antimicrobials' },
+    { num: 51, sym: 'Sb', name: 'Antimony', mass: '121.76 u', cat: 'transition', phase: 'Solid', en: '2.05', conf: '[Kr] 4d¹⁰ 5s² 5p³', flame: 'Pale Green', desc: 'Semimetal whose pentafluoride (SbF₅) is the strongest known Lewis acid.', role: 'Key component in Fluoroantimonic Acid (HSbF₆) superacid synthesis' },
+    { num: 55, sym: 'Cs', name: 'Caesium', mass: '132.91 u', cat: 'alkali', phase: 'Solid (Liquid >28°C)', en: '0.79', conf: '[Xe] 6s¹', flame: 'Sky Blue', desc: 'Most reactive stable metal. Melts just above room temperature (28.5°C).', role: 'SI definition of the second (atomic resonance at 9,192,631,770 Hz)' },
+    { num: 79, sym: 'Au', name: 'Gold', mass: '196.97 u', cat: 'transition', phase: 'Solid', en: '2.54', conf: '[Xe] 4f¹⁴ 5d¹⁰ 6s¹', flame: 'None (Noble)', desc: 'Extremely unreactive noble metal unaffected by air, moisture, or pure single acids.', role: 'Aqua regia dissolution tests and relativistic electron contraction model' },
+    { num: 87, sym: 'Fr', name: 'Francium', mass: '223 u', cat: 'alkali', phase: 'Solid / Molten', en: '0.70', conf: '[Rn] 7s¹', flame: 'Intense Ionizing Green', desc: 'Extremely radioactive and unstable alkali metal with a half-life of 22 minutes.', role: 'Maximum theoretical alkali detonation yield & nuclear ionization effects' }
+];
+
+const ptableGrid = document.getElementById('ptable-grid');
+const hudNum = document.getElementById('hud-num');
+const hudCategory = document.getElementById('hud-category');
+const hudSymbol = document.getElementById('hud-symbol');
+const hudName = document.getElementById('hud-name');
+const hudMass = document.getElementById('hud-mass');
+const hudPhase = document.getElementById('hud-phase');
+const hudEn = document.getElementById('hud-en');
+const hudConfig = document.getElementById('hud-config');
+const hudFlame = document.getElementById('hud-flame');
+const hudDesc = document.getElementById('hud-desc');
+const hudRole = document.getElementById('hud-role');
+
+function renderPeriodicGrid() {
+    if (!ptableGrid) return;
+    ptableGrid.innerHTML = '';
+
+    ptableData.forEach((el, index) => {
+        const tile = document.createElement('div');
+        tile.className = `element-tile ${index === 0 ? 'active' : ''}`;
+        tile.setAttribute('data-cat', el.cat);
+        tile.innerHTML = `
+            <span class="tile-atomic-num">${el.num}</span>
+            <span class="tile-symbol">${el.sym}</span>
+            <span class="tile-name">${el.name}</span>
+        `;
+
+        tile.addEventListener('click', () => {
+            document.querySelectorAll('.element-tile').forEach(t => t.classList.remove('active'));
+            tile.classList.add('active');
+            displayElementHUD(el);
+        });
+
+        ptableGrid.appendChild(tile);
+    });
+}
+
+function displayElementHUD(el) {
+    if (!hudNum) return;
+    hudNum.textContent = `#${el.num}`;
+    hudCategory.textContent = el.cat;
+    hudSymbol.textContent = el.sym;
+    hudName.textContent = el.name;
+    hudMass.textContent = el.mass;
+    hudPhase.textContent = el.phase;
+    hudEn.textContent = el.en;
+    hudConfig.textContent = el.conf;
+    hudFlame.textContent = el.flame;
+    hudDesc.textContent = el.desc;
+    hudRole.textContent = el.role;
+
+    // Glowing tint on big symbol
+    let catColor = '#00e5ff';
+    if (el.cat === 'alkali') catColor = '#ff3366';
+    else if (el.cat === 'alkaline') catColor = '#ffaa00';
+    else if (el.cat === 'halogen') catColor = '#d500f9';
+    else if (el.cat === 'noble') catColor = '#76ff03';
+    else if (el.cat === 'nonmetal') catColor = '#00ffaa';
+
+    hudSymbol.style.textShadow = `0 0 30px ${catColor}`;
+    hudCategory.style.color = catColor;
+    hudCategory.style.borderColor = catColor;
+}
+
+renderPeriodicGrid();
+
 // ----------------------------------------------------
 // Alkali Metal + Water Explosion Minigame Engine
 // ----------------------------------------------------
