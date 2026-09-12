@@ -462,15 +462,15 @@ reactBtn.addEventListener('click', () => {
 
         animateParticles();
 
-        // 7. Reset screen and fade cracks once the violent shaking stops
-        // Francium shake is 3.2s: the screen settles back to normal, then cracks smoothly dissolve
+        // 7. Reset screen and fade cracks once the natural damped oscillation finishes
+        // Francium shake is 3.5s of smooth physical decaying oscillation right into rest (0, 0)
         setTimeout(() => {
-            document.body.className = ''; // Screen returns to steady normal
+            document.body.className = ''; // Screen naturally settled to resting position
             if (activeMetal === 'Fr') {
-                // Dissolve cracks after screen is back to normal
+                // Dissolve cracks only after the screen is completely at rest
                 screenCracks.classList.remove('active');
             }
-        }, 3200);
+        }, 3550);
 
         // 8. Reset metal piece and controls after full event completes
         setTimeout(() => {
