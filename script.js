@@ -93,274 +93,59 @@ document.getElementById('submit-review').addEventListener('click', () => {
 renderReviews();
 
 // ====================================================
-// 1. Interactive 3D Molecule Canvas Engine (Hero Showcase)
+// 1. Authentic In-Simulator 3D Revolving Molecule Showcase
 // ====================================================
-const heroMolCanvas = document.getElementById('hero-mol-canvas');
-const heroCtx = heroMolCanvas ? heroMolCanvas.getContext('2d') : null;
+const revolvingMolImg = document.getElementById('revolving-mol-img');
 const molChips = document.querySelectorAll('.mol-chip');
 const molCaptionText = document.getElementById('mol-caption-text');
 
 const moleculeModels = {
     hsbf6: {
-        caption: 'Example molecule drawing of <strong>HSbF<sub>6</sub></strong> (fluoroantimonic acid) &bull; Octahedral geometry',
-        atoms: [
-            { elem: 'Sb', x: 0, y: 0, z: 0, r: 24, color: '#00e5ff', glow: '#00e5ff' },
-            { elem: 'F', x: 80, y: 0, z: 0, r: 16, color: '#39ff14', glow: '#00ff88' },
-            { elem: 'F', x: -80, y: 0, z: 0, r: 16, color: '#39ff14', glow: '#00ff88' },
-            { elem: 'F', x: 0, y: 80, z: 0, r: 16, color: '#39ff14', glow: '#00ff88' },
-            { elem: 'F', x: 0, y: -80, z: 0, r: 16, color: '#39ff14', glow: '#00ff88' },
-            { elem: 'F', x: 0, y: 0, z: 80, r: 16, color: '#39ff14', glow: '#00ff88' },
-            { elem: 'F', x: 0, y: 0, z: -80, r: 16, color: '#39ff14', glow: '#00ff88' },
-            { elem: 'H', x: 120, y: 35, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' }
-        ],
-        bonds: [
-            [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [1, 7]
-        ]
+        src: 'hsbf6-molecule.png',
+        alt: 'Real in-simulator 3D drawing of Fluoroantimonic Acid HSbF6',
+        caption: 'Example molecule drawing of <strong>HSbF<sub>6</sub></strong> (fluoroantimonic acid) &bull; Octahedral geometry'
     },
     water: {
-        caption: 'Water <strong>H<sub>2</sub>O</strong> &bull; Bent VSEPR Geometry (104.5° bond angle)',
-        atoms: [
-            { elem: 'O', x: 0, y: -15, z: 0, r: 24, color: '#ff3366', glow: '#ff3366' },
-            { elem: 'H', x: -65, y: 55, z: 0, r: 14, color: '#ffffff', glow: '#ffffff' },
-            { elem: 'H', x: 65, y: 55, z: 0, r: 14, color: '#ffffff', glow: '#ffffff' }
-        ],
-        bonds: [
-            [0, 1], [0, 2]
-        ]
+        src: 'water-molecule.png',
+        alt: 'Real in-simulator 3D drawing of Water H2O',
+        caption: 'In-Simulator 3D Drawing of <strong>H<sub>2</sub>O</strong> &bull; Bent VSEPR Geometry (104.5° bond angle)'
+    },
+    cyclopropyne: {
+        src: 'cyclopropyne-molecule.png',
+        alt: 'Real in-simulator 3D drawing of Cyclopropyne C3H2',
+        caption: 'In-Simulator 3D Drawing of <strong>C<sub>3</sub>H<sub>2</sub></strong> (Cyclopropyne) &bull; Extreme ring-strain cyclic alkyne with a C:H ratio of 3:2'
     },
     benzene: {
-        caption: 'Benzene <strong>C<sub>6</sub>H<sub>6</sub></strong> &bull; Planar Aromatic Ring with Delocalized Pi-Electrons',
-        atoms: [
-            // Carbon Ring
-            { elem: 'C', x: 0, y: -60, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
-            { elem: 'C', x: 52, y: -30, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
-            { elem: 'C', x: 52, y: 30, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
-            { elem: 'C', x: 0, y: 60, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
-            { elem: 'C', x: -52, y: 30, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
-            { elem: 'C', x: -52, y: -30, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
-            // Hydrogen atoms
-            { elem: 'H', x: 0, y: -105, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' },
-            { elem: 'H', x: 92, y: -52, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' },
-            { elem: 'H', x: 92, y: 52, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' },
-            { elem: 'H', x: 0, y: 105, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' },
-            { elem: 'H', x: -92, y: 52, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' },
-            { elem: 'H', x: -92, y: -52, z: 0, r: 11, color: '#ffffff', glow: '#ffffff' }
-        ],
-        bonds: [
-            [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0],
-            [0, 6], [1, 7], [2, 8], [3, 9], [4, 10], [5, 11]
-        ]
-    },
-    methane: {
-        caption: 'Methane <strong>CH<sub>4</sub></strong> &bull; Perfect Tetrahedral VSEPR Geometry (109.5° bond angles)',
-        atoms: [
-            { elem: 'C', x: 0, y: 0, z: 0, r: 22, color: '#444c56', glow: '#ffaa00' },
-            { elem: 'H', x: 0, y: -80, z: 0, r: 13, color: '#ffffff', glow: '#ffffff' },
-            { elem: 'H', x: 75, y: 35, z: 35, r: 13, color: '#ffffff', glow: '#ffffff' },
-            { elem: 'H', x: -75, y: 35, z: 35, r: 13, color: '#ffffff', glow: '#ffffff' },
-            { elem: 'H', x: 0, y: 35, z: -85, r: 13, color: '#ffffff', glow: '#ffffff' }
-        ],
-        bonds: [
-            [0, 1], [0, 2], [0, 3], [0, 4]
-        ]
-    },
-    caffeine: {
-        caption: 'Caffeine <strong>C<sub>8</sub>H<sub>10</sub>N<sub>4</sub>O<sub>2</sub></strong> &bull; Central Nervous Stimulant Xanthine Core',
-        atoms: [
-            { elem: 'N', x: -35, y: -45, z: 0, r: 16, color: '#2979ff', glow: '#2979ff' },
-            { elem: 'C', x: 15, y: -55, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
-            { elem: 'O', x: 35, y: -95, z: 0, r: 16, color: '#ff3366', glow: '#ff3366' },
-            { elem: 'N', x: 50, y: -20, z: 0, r: 16, color: '#2979ff', glow: '#2979ff' },
-            { elem: 'C', x: 35, y: 25, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
-            { elem: 'C', x: -15, y: 35, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
-            { elem: 'C', x: -50, y: 0, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
-            { elem: 'O', x: -95, y: 10, z: 0, r: 16, color: '#ff3366', glow: '#ff3366' },
-            { elem: 'N', x: -15, y: 75, z: 0, r: 16, color: '#2979ff', glow: '#2979ff' },
-            { elem: 'C', x: 35, y: 85, z: 0, r: 17, color: '#444c56', glow: '#00f0ff' },
-            { elem: 'N', x: 65, y: 55, z: 0, r: 16, color: '#2979ff', glow: '#2979ff' }
-        ],
-        bonds: [
-            [0, 1], [1, 2], [1, 3], [3, 4], [4, 5], [5, 6], [6, 0], [6, 7],
-            [5, 8], [8, 9], [9, 10], [10, 4]
-        ]
+        src: 'benzene-molecule.png',
+        alt: 'Real in-simulator 3D drawing of Benzene C6H6',
+        caption: 'In-Simulator 3D Drawing of <strong>C<sub>6</sub>H<sub>6</sub></strong> (Benzene) &bull; Planar aromatic resonance ring'
     }
 };
 
-let currentMolKey = 'hsbf6';
-let rotX = 0.25;
-let rotY = 0;
-let isDragging = false;
-let lastMouseX = 0;
-let lastMouseY = 0;
-let autoSpin = true;
-
-if (heroMolCanvas) {
-    heroMolCanvas.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        autoSpin = false;
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
-    });
-
-    window.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        const dx = e.clientX - lastMouseX;
-        const dy = e.clientY - lastMouseY;
-        rotY += dx * 0.012;
-        rotX += dy * 0.012;
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
-    });
-
-    window.addEventListener('mouseup', () => {
-        isDragging = false;
-        setTimeout(() => { autoSpin = true; }, 2500);
-    });
-
-    // Touch support for mobile devices
-    heroMolCanvas.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 1) {
-            isDragging = true;
-            autoSpin = false;
-            lastMouseX = e.touches[0].clientX;
-            lastMouseY = e.touches[0].clientY;
-        }
-    }, { passive: true });
-
-    window.addEventListener('touchmove', (e) => {
-        if (!isDragging || e.touches.length !== 1) return;
-        const dx = e.touches[0].clientX - lastMouseX;
-        const dy = e.touches[0].clientY - lastMouseY;
-        rotY += dx * 0.012;
-        rotX += dy * 0.012;
-        lastMouseX = e.touches[0].clientX;
-        lastMouseY = e.touches[0].clientY;
-    }, { passive: true });
-
-    window.addEventListener('touchend', () => {
-        isDragging = false;
-        setTimeout(() => { autoSpin = true; }, 2500);
-    });
-}
-
-// Molecule Chips selection
 molChips.forEach(chip => {
     chip.addEventListener('click', () => {
         molChips.forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
-        currentMolKey = chip.getAttribute('data-mol');
-        if (moleculeModels[currentMolKey] && molCaptionText) {
-            molCaptionText.innerHTML = moleculeModels[currentMolKey].caption;
+        const key = chip.getAttribute('data-mol');
+        const data = moleculeModels[key];
+
+        if (data && revolvingMolImg) {
+            // Smooth fade transition
+            revolvingMolImg.style.opacity = '0.2';
+            revolvingMolImg.style.transform = 'scale(0.92)';
+
+            setTimeout(() => {
+                revolvingMolImg.src = data.src;
+                revolvingMolImg.alt = data.alt;
+                if (molCaptionText) {
+                    molCaptionText.innerHTML = data.caption;
+                }
+                revolvingMolImg.style.opacity = '1';
+                revolvingMolImg.style.transform = 'scale(1)';
+            }, 180);
         }
     });
 });
-
-function draw3DMolecule() {
-    if (!heroCtx) return;
-    const w = heroMolCanvas.width;
-    const h = heroMolCanvas.height;
-    heroCtx.clearRect(0, 0, w, h);
-
-    if (autoSpin) {
-        rotY += 0.015;
-    }
-
-    const model = moleculeModels[currentMolKey] || moleculeModels.hsbf6;
-    const cx = w / 2;
-    const cy = h / 2;
-    const fov = 320;
-
-    // Transform and project atoms in 3D
-    const projectedAtoms = model.atoms.map((atom, index) => {
-        // Rotate around Y-axis
-        let x1 = atom.x * Math.cos(rotY) + atom.z * Math.sin(rotY);
-        let z1 = -atom.x * Math.sin(rotY) + atom.z * Math.cos(rotY);
-
-        // Rotate around X-axis
-        let y2 = atom.y * Math.cos(rotX) - z1 * Math.sin(rotX);
-        let z2 = atom.y * Math.sin(rotX) + z1 * Math.cos(rotX);
-
-        // Perspective scale
-        const scale = fov / (fov + z2 + 100);
-        const px = cx + x1 * scale;
-        const py = cy + y2 * scale;
-        const pr = Math.max(4, atom.r * scale);
-
-        return {
-            index,
-            elem: atom.elem,
-            color: atom.color,
-            glow: atom.glow,
-            px, py, pr,
-            z: z2,
-            scale
-        };
-    });
-
-    // 1. Draw Bonds in 3D (Cylinder / Lines with depth)
-    for (let bond of model.bonds) {
-        const a1 = projectedAtoms[bond[0]];
-        const a2 = projectedAtoms[bond[1]];
-        if (!a1 || !a2) continue;
-
-        const avgZ = (a1.z + a2.z) / 2;
-        const bondAlpha = Math.max(0.3, Math.min(1, 1 - (avgZ / 250)));
-
-        heroCtx.save();
-        heroCtx.strokeStyle = `rgba(200, 225, 255, ${bondAlpha * 0.75})`;
-        heroCtx.lineWidth = Math.max(2.5, 5 * ((a1.scale + a2.scale) / 2));
-        heroCtx.beginPath();
-        heroCtx.moveTo(a1.px, a1.py);
-        heroCtx.lineTo(a2.px, a2.py);
-        heroCtx.stroke();
-        heroCtx.restore();
-    }
-
-    // 2. Sort atoms from back to front (Painter's Algorithm)
-    projectedAtoms.sort((a, b) => b.z - a.z);
-
-    // 3. Draw Spherical Atoms with Shading & Element Labels
-    for (let atom of projectedAtoms) {
-        heroCtx.save();
-
-        // Atmospheric glowing halo
-        heroCtx.shadowBlur = 18 * atom.scale;
-        heroCtx.shadowColor = atom.glow;
-
-        // 3D Sphere Radial Gradient (Phong highlight)
-        const grad = heroCtx.createRadialGradient(
-            atom.px - atom.pr * 0.35,
-            atom.py - atom.pr * 0.35,
-            atom.pr * 0.1,
-            atom.px,
-            atom.py,
-            atom.pr
-        );
-        grad.addColorStop(0, '#ffffff');
-        grad.addColorStop(0.35, atom.color);
-        grad.addColorStop(1, '#08080c');
-
-        heroCtx.fillStyle = grad;
-        heroCtx.beginPath();
-        heroCtx.arc(atom.px, atom.py, atom.pr, 0, Math.PI * 2);
-        heroCtx.fill();
-
-        // Element Symbol Text
-        heroCtx.shadowBlur = 0;
-        heroCtx.fillStyle = '#ffffff';
-        heroCtx.font = `bold ${Math.max(8, Math.floor(13 * atom.scale))}px Inter, sans-serif`;
-        heroCtx.textAlign = 'center';
-        heroCtx.textBaseline = 'middle';
-        heroCtx.fillText(atom.elem, atom.px, atom.py + 0.5);
-
-        heroCtx.restore();
-    }
-
-    requestAnimationFrame(draw3DMolecule);
-}
-if (heroMolCanvas) {
-    draw3DMolecule();
-}
 
 // ====================================================
 // 2. Interactive Periodic Table Element Quick-Inspector (All 83 Sandbox Elements + Fr)
