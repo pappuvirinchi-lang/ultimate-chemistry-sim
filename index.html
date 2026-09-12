@@ -330,8 +330,60 @@
                 <!-- Canvas for dynamic particle explosions -->
                 <canvas id="explosion-canvas"></canvas>
 
-                <!-- Screen cracks overlay -->
-                <div class="screen-cracks-overlay" id="screen-cracks"></div>
+                <!-- Screen cracks overlay (Realistic Spiderweb Glass Fracture) -->
+                <div class="screen-cracks-overlay" id="screen-cracks">
+                    <svg class="crack-svg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+                        <defs>
+                            <filter id="glass-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#ffffff" flood-opacity="0.9"/>
+                                <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#00ffff" flood-opacity="0.5"/>
+                            </filter>
+                        </defs>
+                        <!-- Center Impact Core (Crushed Glass Center) -->
+                        <polygon points="500,490 512,482 525,495 530,510 515,522 498,525 480,515 478,495 490,488" fill="rgba(255,255,255,0.7)" filter="url(#glass-glow)" />
+                        <polygon points="495,492 505,488 518,496 512,508 502,514 492,506" fill="rgba(255,255,255,0.9)" />
+
+                        <!-- Concentric Stress Fracture Rings -->
+                        <polygon points="450,480 480,440 540,430 580,470 590,520 560,570 510,590 460,560 435,510" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" filter="url(#glass-glow)" />
+                        <polygon points="410,460 450,390 560,370 630,440 660,530 600,620 520,660 430,620 380,530" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.8" filter="url(#glass-glow)" />
+                        <polygon points="340,430 420,320 590,290 710,380 740,540 680,690 530,730 380,690 310,540" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" />
+
+                        <!-- Violent Radial Fracture Lines extending to viewport borders -->
+                        <path d="M500,500 L440,390 L380,260 L310,120 L240,0" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+                        <path d="M380,260 L450,170 L480,0" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+                        <path d="M500,500 L560,370 L640,220 L720,80 L800,0" stroke="#fff" stroke-width="3" fill="none" filter="url(#glass-glow)" />
+                        <path d="M640,220 L580,110 L560,0" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
+                        
+                        <path d="M500,500 L660,490 L790,470 L890,450 L1000,430" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+                        <path d="M790,470 L870,350 L1000,280" stroke="rgba(255,255,255,0.85)" stroke-width="2.2" fill="none" />
+                        <path d="M790,470 L880,560 L1000,610" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+
+                        <path d="M500,500 L600,600 L730,730 L850,860 L1000,980" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+                        <path d="M730,730 L820,680 L1000,750" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
+                        <path d="M730,730 L710,870 L750,1000" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+
+                        <path d="M500,500 L510,650 L530,790 L510,910 L500,1000" stroke="#fff" stroke-width="3" fill="none" filter="url(#glass-glow)" />
+                        <path d="M530,790 L440,890 L390,1000" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+
+                        <path d="M500,500 L410,610 L300,740 L180,860 L50,1000" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+                        <path d="M300,740 L210,720 L0,790" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+                        <path d="M300,740 L340,870 L280,1000" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
+
+                        <path d="M500,500 L380,510 L250,520 L130,510 L0,500" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+                        <path d="M250,520 L180,410 L0,380" stroke="rgba(255,255,255,0.8)" stroke-width="2.2" fill="none" />
+                        <path d="M250,520 L160,610 L0,640" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+
+                        <path d="M500,500 L390,390 L260,280 L140,170 L0,70" stroke="#fff" stroke-width="3.5" fill="none" filter="url(#glass-glow)" />
+                        <path d="M260,280 L180,210 L0,220" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" fill="none" />
+                        <path d="M260,280 L230,120 L170,0" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="none" />
+
+                        <!-- Shards / Micro-fractures -->
+                        <line x1="480" y1="460" x2="430" y2="440" stroke="#fff" stroke-width="1.5" />
+                        <line x1="530" y1="470" x2="570" y2="430" stroke="#fff" stroke-width="1.5" />
+                        <line x1="540" y1="530" x2="600" y2="560" stroke="#fff" stroke-width="1.5" />
+                        <line x1="470" y1="540" x2="440" y2="580" stroke="#fff" stroke-width="1.5" />
+                    </svg>
+                </div>
 
                 <!-- Flash Overlay -->
                 <div class="blast-flash" id="blast-flash"></div>
