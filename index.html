@@ -282,6 +282,70 @@
         </div>
     </section>
 
+    <!-- Alkali Metal + Water Explosion Minigame Section -->
+    <section id="alkali-minigame" class="alkali-minigame-section">
+        <div class="minigame-header">
+            <span class="minigame-tag">⚡ Interactive Lab Minigame</span>
+            <h2>Alkali Metals vs Water: Drop & React!</h2>
+            <p>Pick an alkali metal, drop it into the water basin, and trigger real-life violent exothermic chemical reactions!</p>
+        </div>
+
+        <div class="lab-simulation-card">
+            <div class="element-picker">
+                <button class="metal-btn active" data-metal="Li" data-level="medium" data-name="Lithium (Li)">
+                    <span class="sym">Li</span>
+                    <span class="info">Lithium<br><small>Medium Fizzes & Pops</small></span>
+                </button>
+                <button class="metal-btn" data-metal="Na" data-level="large" data-name="Sodium (Na)">
+                    <span class="sym">Na</span>
+                    <span class="info">Sodium<br><small>Large Orange Fireball</small></span>
+                </button>
+                <button class="metal-btn" data-metal="K" data-level="giant" data-name="Potassium (K)">
+                    <span class="sym">K</span>
+                    <span class="info">Potassium<br><small>Giant Lilac Detonation</small></span>
+                </button>
+                <button class="metal-btn" data-metal="Rb" data-level="insane" data-name="Rubidium (Rb)">
+                    <span class="sym">Rb</span>
+                    <span class="info">Rubidium<br><small>Insane Shockwave</small></span>
+                </button>
+                <button class="metal-btn" data-metal="Cs" data-level="almost-nuclear" data-name="Caesium (Cs)">
+                    <span class="sym">Cs</span>
+                    <span class="info">Caesium<br><small>Almost Nuclear Blast</small></span>
+                </button>
+                <button class="metal-btn danger-btn" data-metal="Fr" data-level="nuclear" data-name="Francium (Fr)">
+                    <span class="sym">Fr</span>
+                    <span class="info">Francium ☢️<br><small>Nuclear Screen-Cracker</small></span>
+                </button>
+            </div>
+
+            <div class="reaction-arena" id="reaction-arena">
+                <!-- Water Flask Animation Area -->
+                <div class="flask-container">
+                    <div class="water-pool">
+                        <div class="water-surface"></div>
+                    </div>
+                    <div class="metal-drop-piece" id="metal-piece">Li</div>
+                </div>
+
+                <!-- Canvas for dynamic particle explosions -->
+                <canvas id="explosion-canvas"></canvas>
+
+                <!-- Screen cracks overlay -->
+                <div class="screen-cracks-overlay" id="screen-cracks"></div>
+
+                <!-- Flash Overlay -->
+                <div class="blast-flash" id="blast-flash"></div>
+            </div>
+
+            <div class="reaction-controls">
+                <div class="reaction-equation" id="reaction-equation">
+                    2Li + 2H<sub>2</sub>O &rarr; 2LiOH + H<sub>2</sub>&uarr; + <strong>Heat!</strong>
+                </div>
+                <button id="react-btn" class="cta-btn react-trigger-btn">🔥 React Metal with Water!</button>
+            </div>
+        </div>
+    </section>
+
     <footer>
         <p>&copy; 2026 Ultimate Chemistry Simulator. All rights reserved. | <a href="terms.html" style="color: var(--accent-cyan); text-decoration: none;">Terms and Conditions</a></p>
     </footer>
