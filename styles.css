@@ -355,21 +355,36 @@ body {
 .legend-item.alkali .legend-dot { background: #ff3366; }
 .legend-item.alkaline .legend-dot { background: #ffaa00; }
 .legend-item.transition .legend-dot { background: #00d2ff; }
+.legend-item.post-transition .legend-dot { background: #4fc3f7; }
+.legend-item.metalloid .legend-dot { background: #ffd54f; }
 .legend-item.nonmetal .legend-dot { background: #00ffaa; }
 .legend-item.halogen .legend-dot { background: #d500f9; }
 .legend-item.noble .legend-dot { background: #76ff03; }
+.legend-item.lanthanide .legend-dot { background: #ff80ab; }
 
 .ptable-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(62px, 1fr));
-    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    gap: 0.45rem;
+    max-height: 540px;
+    overflow-y: auto;
+    padding-right: 0.4rem;
+}
+
+.ptable-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ptable-grid::-webkit-scrollbar-thumb {
+    background: rgba(0, 240, 255, 0.3);
+    border-radius: 4px;
 }
 
 .element-tile {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
-    padding: 0.45rem 0.3rem;
+    padding: 0.45rem 0.2rem;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -392,21 +407,21 @@ body {
 }
 
 .tile-atomic-num {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     color: rgba(255, 255, 255, 0.5);
     display: block;
     line-height: 1;
 }
 
 .tile-symbol {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 800;
     margin: 2px 0;
     display: block;
 }
 
 .tile-name {
-    font-size: 0.62rem;
+    font-size: 0.58rem;
     color: var(--text-secondary);
     white-space: nowrap;
     overflow: hidden;
@@ -424,10 +439,23 @@ body {
 .element-tile[data-cat="transition"] { border-top: 3px solid #00d2ff; }
 .element-tile[data-cat="transition"] .tile-symbol { color: #00d2ff; }
 
+.element-tile[data-cat="post-transition"] { border-top: 3px solid #4fc3f7; }
+.element-tile[data-cat="post-transition"] .tile-symbol { color: #4fc3f7; }
+
+.element-tile[data-cat="metalloid"] { border-top: 3px solid #ffd54f; }
+.element-tile[data-cat="metalloid"] .tile-symbol { color: #ffd54f; }
+
 .element-tile[data-cat="nonmetal"] { border-top: 3px solid #00ffaa; }
 .element-tile[data-cat="nonmetal"] .tile-symbol { color: #00ffaa; }
 
 .element-tile[data-cat="halogen"] { border-top: 3px solid #d500f9; }
+.element-tile[data-cat="halogen"] .tile-symbol { color: #d500f9; }
+
+.element-tile[data-cat="noble"] { border-top: 3px solid #76ff03; }
+.element-tile[data-cat="noble"] .tile-symbol { color: #76ff03; }
+
+.element-tile[data-cat="lanthanide"] { border-top: 3px solid #ff80ab; }
+.element-tile[data-cat="lanthanide"] .tile-symbol { color: #ff80ab; }
 .element-tile[data-cat="halogen"] .tile-symbol { color: #d500f9; }
 
 .element-tile[data-cat="noble"] { border-top: 3px solid #76ff03; }
