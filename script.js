@@ -256,69 +256,87 @@ class BlastParticle {
 
 // Specialized High-Yield Mushroom Cloud Simulation
 class MushroomCloud {
-    constructor(originX, originY, color, isNuclear) {
+    constructor(originX, originY, color, metalKey) {
         this.originX = originX;
         this.originY = originY;
+        this.metalKey = metalKey;
         this.color = color;
-        this.isNuclear = isNuclear;
+        this.isNuclear = metalKey === 'Fr';
         this.cloudParticles = [];
         this.torusRadius = 0;
-        this.maxTorusRadius = isNuclear ? 220 : 160;
+        // Significantly increased scale for all three metals
+        this.maxTorusRadius = metalKey === 'Fr' ? 380 : (metalKey === 'Cs' ? 300 : 250);
         this.stemHeight = 0;
-        this.targetStemHeight = isNuclear ? 260 : 190;
+        this.targetStemHeight = metalKey === 'Fr' ? 370 : (metalKey === 'Cs' ? 330 : 290);
         this.alpha = 1.0;
         this.stemPuffs = [];
         this.capPuffs = [];
 
         // Pre-seed cap puffs that expand into the characteristic curling mushroom head
-        const capPuffCount = isNuclear ? 90 : 60;
+        const capPuffCount = metalKey === 'Fr' ? 140 : (metalKey === 'Cs' ? 100 : 85);
         for (let i = 0; i < capPuffCount; i++) {
-            const angle = (Math.PI * 2 / capPuffCount) * i + (Math.random() - 0.5) * 0.3;
+            const angle = (Math.PI * 2 / capPuffCount) * i + (Math.random() - 0.5) * 0.35;
+            let puffColor;
+            if (metalKey === 'Fr') {
+                // Intense radioactive green tints for Francium
+                const greenPalette = ['#39ff14', '#00ff66', '#76ff03', '#b2ff59', '#10e050', '#ffffff', '#004d1a'];
+                puffColor = greenPalette[Math.floor(Math.random() * greenPalette.length)];
+            } else {
+                puffColor = Math.random() > 0.35 ? color : (Math.random() > 0.5 ? '#ffeedd' : '#ff5500');
+            }
+
             this.capPuffs.push({
                 angle: angle,
-                dist: Math.random() * 15,
-                targetDist: (Math.random() * 0.7 + 0.5) * this.maxTorusRadius,
-                yOffset: (Math.random() - 0.5) * 20,
-                radius: Math.random() * 25 + 18,
-                growth: Math.random() * 0.4 + 0.3,
-                color: Math.random() > 0.4 ? color : (Math.random() > 0.5 ? '#ffeedd' : '#ff4400'),
+                dist: Math.random() * 20,
+                targetDist: (Math.random() * 0.75 + 0.45) * this.maxTorusRadius,
+                yOffset: (Math.random() - 0.5) * 35,
+                radius: (Math.random() * 32 + 25) * (metalKey === 'Fr' ? 1.35 : 1.15),
+                color: puffColor,
                 rotSpeed: (Math.random() - 0.5) * 0.02
             });
         }
     }
 
     update() {
-        // Rise stem upward
+        // Rise stem upward with powerful convective surge
         if (this.stemHeight < this.targetStemHeight) {
-            this.stemHeight += (this.targetStemHeight - this.stemHeight) * 0.07;
+            this.stemHeight += (this.targetStemHeight - this.stemHeight) * 0.08;
             
             // Add billowing stem puffs while rising
-            if (Math.random() < 0.8) {
+            if (Math.random() < 0.9) {
+                let stemColor;
+                if (this.isNuclear) {
+                    const greenStem = ['#39ff14', '#00ff88', '#2e7d32', '#76ff03', '#ffffff'];
+                    stemColor = greenStem[Math.floor(Math.random() * greenStem.length)];
+                } else {
+                    stemColor = Math.random() > 0.3 ? this.color : '#ffaa33';
+                }
+
                 this.stemPuffs.push({
-                    x: this.originX + (Math.random() - 0.5) * 35,
-                    y: this.originY - this.stemHeight + (Math.random() - 0.5) * 15,
-                    radius: Math.random() * 18 + 12,
-                    maxRadius: Math.random() * 32 + 20,
-                    alpha: 0.9,
-                    color: Math.random() > 0.3 ? this.color : '#ffaa33'
+                    x: this.originX + (Math.random() - 0.5) * (this.isNuclear ? 65 : 45),
+                    y: this.originY - this.stemHeight + (Math.random() - 0.5) * 20,
+                    radius: Math.random() * 24 + 16,
+                    maxRadius: Math.random() * 45 + 30,
+                    alpha: 0.95,
+                    color: stemColor
                 });
             }
         }
 
         // Expand torus mushroom cap sideways and roll vortex edges downward
         if (this.torusRadius < this.maxTorusRadius) {
-            this.torusRadius += (this.maxTorusRadius - this.torusRadius) * 0.05;
+            this.torusRadius += (this.maxTorusRadius - this.torusRadius) * 0.06;
         }
 
         // Update stem puffs
         for (let puff of this.stemPuffs) {
-            if (puff.radius < puff.maxRadius) puff.radius += 0.3;
-            puff.y -= 0.4; // gentle thermal convection
+            if (puff.radius < puff.maxRadius) puff.radius += 0.4;
+            puff.y -= 0.5; // thermal convective rise
         }
 
-        // Dissipation
+        // Dissipation timing
         if (this.stemHeight >= this.targetStemHeight * 0.85) {
-            this.alpha -= 0.008;
+            this.alpha -= (this.isNuclear ? 0.005 : 0.007);
         }
     }
 
@@ -330,17 +348,25 @@ class MushroomCloud {
         const capY = this.originY - this.stemHeight;
 
         // 1. Draw Rising Central Stem / Column
-        const stemGrad = ctx.createLinearGradient(this.originX - 25, this.originY, this.originX + 25, capY);
-        stemGrad.addColorStop(0, 'rgba(255, 120, 0, 0.85)');
-        stemGrad.addColorStop(0.5, this.color);
-        stemGrad.addColorStop(1, '#ffffff');
+        const stemWidth = this.isNuclear ? 55 : 40;
+        const stemGrad = ctx.createLinearGradient(this.originX - stemWidth, this.originY, this.originX + stemWidth, capY);
+        if (this.isNuclear) {
+            stemGrad.addColorStop(0, 'rgba(0, 255, 100, 0.9)');
+            stemGrad.addColorStop(0.4, '#39ff14');
+            stemGrad.addColorStop(0.8, '#a7ffeb');
+            stemGrad.addColorStop(1, '#ffffff');
+        } else {
+            stemGrad.addColorStop(0, 'rgba(255, 120, 0, 0.85)');
+            stemGrad.addColorStop(0.5, this.color);
+            stemGrad.addColorStop(1, '#ffffff');
+        }
 
         // Draw stem puffs
         for (let p of this.stemPuffs) {
             ctx.beginPath();
             ctx.fillStyle = p.color;
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = p.color;
+            ctx.shadowBlur = this.isNuclear ? 30 : 20;
+            ctx.shadowColor = this.isNuclear ? '#00ff66' : p.color;
             ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
             ctx.fill();
         }
@@ -349,34 +375,54 @@ class MushroomCloud {
         for (let cp of this.capPuffs) {
             const curDist = (this.torusRadius / this.maxTorusRadius) * cp.targetDist;
             const px = this.originX + Math.cos(cp.angle) * curDist;
-            // Curling downward at the rim (vortex effect)
-            const py = capY + cp.yOffset + Math.sin(curDist * 0.05) * 18;
+            // Curling downward at the rim (vortex torus effect)
+            const py = capY + cp.yOffset + Math.sin(curDist * 0.04) * 25;
 
             ctx.beginPath();
             ctx.fillStyle = cp.color;
-            ctx.shadowBlur = 25;
-            ctx.shadowColor = cp.color;
+            ctx.shadowBlur = this.isNuclear ? 35 : 25;
+            ctx.shadowColor = this.isNuclear ? '#39ff14' : cp.color;
             ctx.arc(px, py, cp.radius, 0, Math.PI * 2);
             ctx.fill();
         }
 
         // 3. Central Cap Fireball Core (Intense nuclear luminescence)
-        const coreGrad = ctx.createRadialGradient(this.originX, capY, 10, this.originX, capY, this.torusRadius * 0.6);
-        coreGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-        coreGrad.addColorStop(0.3, this.color);
-        coreGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        const coreRadius = this.torusRadius * 0.65;
+        const coreGrad = ctx.createRadialGradient(this.originX, capY, 15, this.originX, capY, coreRadius);
+        if (this.isNuclear) {
+            coreGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            coreGrad.addColorStop(0.25, '#76ff03');
+            coreGrad.addColorStop(0.55, '#00e676');
+            coreGrad.addColorStop(0.85, 'rgba(0, 100, 30, 0.7)');
+            coreGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        } else {
+            coreGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+            coreGrad.addColorStop(0.3, this.color);
+            coreGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        }
 
         ctx.fillStyle = coreGrad;
         ctx.beginPath();
-        ctx.ellipse(this.originX, capY, this.torusRadius * 0.8, this.torusRadius * 0.45, 0, 0, Math.PI * 2);
+        ctx.ellipse(this.originX, capY, this.torusRadius * 0.85, this.torusRadius * 0.48, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // 4. Wilson Shockwave Condensation Rings (Nuclear Rb/Cs/Fr feature)
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.lineWidth = 3;
+        // 4. Wilson Shockwave Condensation Rings (Atmospheric ionization blast rings)
+        ctx.strokeStyle = this.isNuclear ? 'rgba(57, 255, 20, 0.85)' : 'rgba(255, 255, 255, 0.75)';
+        ctx.lineWidth = this.isNuclear ? 4.5 : 3;
+        ctx.shadowBlur = this.isNuclear ? 25 : 15;
+        ctx.shadowColor = this.isNuclear ? '#00ff66' : '#ffffff';
         ctx.beginPath();
-        ctx.ellipse(this.originX, capY + 15, this.torusRadius * 1.25, 22, 0, 0, Math.PI * 2);
+        ctx.ellipse(this.originX, capY + 20, this.torusRadius * 1.3, 30, 0, 0, Math.PI * 2);
         ctx.stroke();
+
+        if (this.isNuclear) {
+            // Secondary ionization shock ring for Francium
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.ellipse(this.originX, capY + 45, this.torusRadius * 1.5, 38, 0, 0, Math.PI * 2);
+            ctx.stroke();
+        }
 
         ctx.restore();
     }
@@ -427,7 +473,13 @@ reactBtn.addEventListener('click', () => {
         playExplosionSound(activeMetal);
 
         // 3. Flash effect
-        blastFlash.style.opacity = activeMetal === 'Fr' ? '1' : (activeMetal === 'Cs' ? '0.85' : '0.6');
+        if (activeMetal === 'Fr') {
+            blastFlash.style.background = 'radial-gradient(circle at 50% 50%, #ffffff 0%, #39ff14 70%, #00e676 100%)';
+            blastFlash.style.opacity = '1';
+        } else {
+            blastFlash.style.background = '#ffffff';
+            blastFlash.style.opacity = activeMetal === 'Cs' ? '0.85' : '0.6';
+        }
         setTimeout(() => {
             blastFlash.style.opacity = '0';
         }, 120);
@@ -453,14 +505,14 @@ reactBtn.addEventListener('click', () => {
         for (let i = 0; i < data.particleCount; i++) {
             particles.push(new BlastParticle(originX, originY, data.color, speedMult));
             if (i % 2 === 0) {
-                particles.push(new BlastParticle(originX, originY, '#ffffff', speedMult * 0.9));
+                const particleTint = activeMetal === 'Fr' ? '#76ff03' : '#ffffff';
+                particles.push(new BlastParticle(originX, originY, particleTint, speedMult * 0.9));
             }
         }
 
         // 6. Authentic Mushroom Cloud for the last three alkali metals (Rb, Cs, Fr)
         if (activeMetal === 'Rb' || activeMetal === 'Cs' || activeMetal === 'Fr') {
-            const isNuclear = activeMetal === 'Fr';
-            mushroomClouds.push(new MushroomCloud(originX, originY, data.color, isNuclear));
+            mushroomClouds.push(new MushroomCloud(originX, originY, data.color, activeMetal));
         }
 
         animateParticles();
