@@ -559,7 +559,7 @@ footer {
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     margin-bottom: 2rem;
-    overflow: hidden;
+    overflow: visible; /* Allow towering mushroom clouds and shockwaves to erupt out of the box! */
     display: flex;
     justify-content: center;
     align-items: flex-end;
@@ -621,12 +621,12 @@ footer {
 
 #explosion-canvas {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: -300px;
+    left: -250px;
+    width: calc(100% + 500px);
+    height: calc(100% + 350px);
     pointer-events: none;
-    z-index: 5;
+    z-index: 50;
 }
 
 /* Flash overlay */
@@ -636,6 +636,7 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
+    border-radius: 16px;
     background: #fff;
     opacity: 0;
     pointer-events: none;

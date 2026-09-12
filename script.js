@@ -100,6 +100,7 @@ const reactBtn = document.getElementById('react-btn');
 const metalPiece = document.getElementById('metal-piece');
 const reactionEquation = document.getElementById('reaction-equation');
 const blastFlash = document.getElementById('blast-flash');
+const reactionArena = document.getElementById('reaction-arena');
 const screenCracks = document.getElementById('screen-cracks');
 const siteWrapper = document.getElementById('site-wrapper');
 const explosionCanvas = document.getElementById('explosion-canvas');
@@ -133,8 +134,8 @@ metalButtons.forEach(btn => {
 // Resize Canvas
 function resizeExplosionCanvas() {
     if (explosionCanvas) {
-        explosionCanvas.width = explosionCanvas.parentElement.clientWidth;
-        explosionCanvas.height = explosionCanvas.parentElement.clientHeight;
+        explosionCanvas.width = explosionCanvas.offsetWidth;
+        explosionCanvas.height = explosionCanvas.offsetHeight;
     }
 }
 window.addEventListener('resize', resizeExplosionCanvas);
@@ -498,9 +499,12 @@ reactBtn.addEventListener('click', () => {
 
         // 5. Spawn burst particles
         resizeExplosionCanvas();
-        const originX = explosionCanvas.width / 2;
-        const originY = explosionCanvas.height - 70;
-        const speedMult = activeMetal === 'Fr' ? 2.5 : (activeMetal === 'Cs' ? 2.0 : 1.3);
+        const arenaRect = reactionArena ? reactionArena.getBoundingClientRect() : { width: 900, height: 420 };
+        const canvasRect = explosionCanvas.getBoundingClientRect();
+        // Exact flask center inside canvas coordinate system
+        const originX = (arenaRect.left + arenaRect.width / 2) - canvasRect.left;
+        const originY = (arenaRect.bottom - 75) - canvasRect.top;
+        const speedMult = activeMetal === 'Fr' ? 2.8 : (activeMetal === 'Cs' ? 2.2 : 1.4);
 
         for (let i = 0; i < data.particleCount; i++) {
             particles.push(new BlastParticle(originX, originY, data.color, speedMult));
