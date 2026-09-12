@@ -653,19 +653,20 @@ footer {
     pointer-events: none;
     z-index: 99999;
     opacity: 0;
-    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
-    backdrop-filter: blur(1.5px);
-    transition: opacity 0.3s ease-out;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.45) 100%);
+    backdrop-filter: blur(2px);
+    transition: opacity 0.8s ease-out; /* Smooth cinematic fade out when removed */
+}
+
+.screen-cracks-overlay.active {
+    opacity: 1;
+    transition: none; /* Instant violent shatter the moment the screen shakes! */
 }
 
 .crack-svg {
     width: 100%;
     height: 100%;
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 20px rgba(0, 240, 255, 0.6));
-}
-
-.screen-cracks-overlay.active {
-    opacity: 1;
 }
 
 /* Screen Shakes */

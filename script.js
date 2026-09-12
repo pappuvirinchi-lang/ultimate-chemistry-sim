@@ -431,10 +431,15 @@ reactBtn.addEventListener('click', () => {
             blastFlash.style.opacity = '0';
         }, 120);
 
-        // 4. Violent screen shake
+        // 4. Violent screen shake & Instant Screen Shatter
         document.body.className = ''; // Reset any previous shake
         void document.body.offsetWidth; // Force reflow
         document.body.classList.add(`shake-${data.level}`);
+
+        // Francium Screen Cracks: Shatter violently the exact millisecond screen begins shaking!
+        if (activeMetal === 'Fr') {
+            screenCracks.classList.add('active');
+        }
 
         // 5. Spawn burst particles
         resizeExplosionCanvas();
@@ -457,23 +462,24 @@ reactBtn.addEventListener('click', () => {
 
         animateParticles();
 
-        // 7. Francium Screen Cracks: disappear after 3 seconds!
-        if (activeMetal === 'Fr') {
-            screenCracks.classList.add('active');
-            setTimeout(() => {
+        // 7. Reset screen and fade cracks once the violent shaking stops
+        // Francium shake is 3.2s: the screen settles back to normal, then cracks smoothly dissolve
+        setTimeout(() => {
+            document.body.className = ''; // Screen returns to steady normal
+            if (activeMetal === 'Fr') {
+                // Dissolve cracks after screen is back to normal
                 screenCracks.classList.remove('active');
-            }, 3000);
-        }
+            }
+        }, 3200);
 
-        // 8. Reset metal piece after blast
+        // 8. Reset metal piece and controls after full event completes
         setTimeout(() => {
             metalPiece.style.transition = 'none';
             metalPiece.style.transform = 'translateY(0) rotate(0deg)';
-            document.body.className = '';
             isReacting = false;
             reactBtn.disabled = false;
             reactBtn.style.opacity = '1';
-        }, 3200);
+        }, 3600);
 
     }, 450);
 });
