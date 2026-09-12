@@ -651,16 +651,20 @@ footer {
     width: 100vw;
     height: 100vh;
     pointer-events: none;
-    z-index: 99999;
+    z-index: 999999;
     opacity: 0;
+    visibility: hidden;
     background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.45) 100%);
     backdrop-filter: blur(2px);
-    transition: opacity 0.8s ease-out; /* Smooth cinematic fade out when removed */
+    transition: opacity 0.8s ease-out, visibility 0.8s; /* Smooth cinematic fade out when removed */
+    will-change: opacity, transform;
 }
 
 .screen-cracks-overlay.active {
-    opacity: 1;
-    transition: none; /* Instant violent shatter the moment the screen shakes! */
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    transition: none !important; /* Instant violent shatter the moment the screen shakes! */
 }
 
 .crack-svg {
@@ -669,28 +673,35 @@ footer {
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 20px rgba(0, 240, 255, 0.6));
 }
 
-/* Screen Shakes (Physics-based Damped Oscillations settling naturally to rest) */
-body.shake-medium {
+/* Site Wrapper & Screen Shakes (Physics-based Damped Oscillations settling naturally to rest) */
+.site-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+    will-change: transform;
+}
+
+.site-wrapper.shake-medium, body.shake-medium {
     animation: shakeMedium 0.7s cubic-bezier(.25, 1, .5, 1) both;
 }
 
-body.shake-large {
+.site-wrapper.shake-large, body.shake-large {
     animation: shakeLarge 1.1s cubic-bezier(.25, 1, .5, 1) both;
 }
 
-body.shake-giant {
+.site-wrapper.shake-giant, body.shake-giant {
     animation: shakeGiant 1.6s cubic-bezier(.25, 1, .5, 1) both;
 }
 
-body.shake-insane {
+.site-wrapper.shake-insane, body.shake-insane {
     animation: shakeInsane 2.2s cubic-bezier(.25, 1, .5, 1) both;
 }
 
-body.shake-almost-nuclear {
+.site-wrapper.shake-almost-nuclear, body.shake-almost-nuclear {
     animation: shakeAlmostNuclear 2.8s cubic-bezier(.25, 1, .5, 1) both;
 }
 
-body.shake-nuclear {
+.site-wrapper.shake-nuclear, body.shake-nuclear {
     animation: shakeNuclear 3.5s cubic-bezier(.25, 1, .5, 1) both;
 }
 

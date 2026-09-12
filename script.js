@@ -101,6 +101,7 @@ const metalPiece = document.getElementById('metal-piece');
 const reactionEquation = document.getElementById('reaction-equation');
 const blastFlash = document.getElementById('blast-flash');
 const screenCracks = document.getElementById('screen-cracks');
+const siteWrapper = document.getElementById('site-wrapper');
 const explosionCanvas = document.getElementById('explosion-canvas');
 const ctx = explosionCanvas.getContext('2d');
 
@@ -432,9 +433,11 @@ reactBtn.addEventListener('click', () => {
         }, 120);
 
         // 4. Violent screen shake & Instant Screen Shatter
-        document.body.className = ''; // Reset any previous shake
-        void document.body.offsetWidth; // Force reflow
-        document.body.classList.add(`shake-${data.level}`);
+        const shakeTarget = siteWrapper || document.body;
+        shakeTarget.className = siteWrapper ? 'site-wrapper' : '';
+        document.body.className = '';
+        void shakeTarget.offsetWidth; // Force reflow
+        shakeTarget.classList.add(`shake-${data.level}`);
 
         // Francium Screen Cracks: Shatter violently the exact millisecond screen begins shaking!
         if (activeMetal === 'Fr') {
@@ -465,7 +468,8 @@ reactBtn.addEventListener('click', () => {
         // 7. Reset screen and fade cracks once the natural damped oscillation finishes
         // Francium shake is 3.5s of smooth physical decaying oscillation right into rest (0, 0)
         setTimeout(() => {
-            document.body.className = ''; // Screen naturally settled to resting position
+            shakeTarget.className = siteWrapper ? 'site-wrapper' : '';
+            document.body.className = '';
             if (activeMetal === 'Fr') {
                 // Dissolve cracks only after the screen is completely at rest
                 screenCracks.classList.remove('active');
