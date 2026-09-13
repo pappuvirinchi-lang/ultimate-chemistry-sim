@@ -327,6 +327,8 @@ const reactionEquation = document.getElementById('reaction-equation');
 const blastFlash = document.getElementById('blast-flash');
 const reactionArena = document.getElementById('reaction-arena');
 const screenCracks = document.getElementById('screen-cracks');
+const screenShatterContainer = document.getElementById('screen-shatter-container');
+const cataclysmBlackout = document.getElementById('cataclysm-blackout');
 const siteWrapper = document.getElementById('site-wrapper');
 const liquidPool = document.getElementById('liquid-pool');
 const explosionCanvas = document.getElementById('explosion-canvas');
@@ -461,7 +463,11 @@ function updateReactionEquation() {
     } else if (activeLiquid === 'triflic') {
         eq = `2${activeMetal} + 2CF<sub>3</sub>SO<sub>3</sub>H &rarr; 2${activeMetal}CF<sub>3</sub>SO<sub>3</sub> + H<sub>2</sub>&uarr; + <strong>☢️ Superacid Mushroom Cloud!</strong>`;
     } else if (activeLiquid === 'hsbf6') {
-        eq = `2${activeMetal} + 2HSbF<sub>6</sub> &rarr; 2${activeMetal}SbF<sub>6</sub> + H<sub>2</sub>&uarr; + <strong>⚡ CATACLYSMIC SCREEN-SHATTERING SUPERDETONATION!</strong>`;
+        if (activeMetal === 'Fr') {
+            eq = `2Fr + 2HSbF<sub>6</sub> &rarr; 2FrSbF<sub>6</sub> + H<sub>2</sub>&uarr; + <strong style="color:#00ffff; text-shadow:0 0 10px #00ffff;">⚡ APOCALYPTIC REALITY-SHATTERING VOID DETONATION! 💥</strong>`;
+        } else {
+            eq = `2${activeMetal} + 2HSbF<sub>6</sub> &rarr; 2${activeMetal}SbF<sub>6</sub> + H<sub>2</sub>&uarr; + <strong>⚡ CATACLYSMIC SUPERACID BLAST!</strong>`;
+        }
     }
 
     reactionEquation.innerHTML = eq;
@@ -618,9 +624,118 @@ function playExplosionSound(metalKey, liquidKey) {
                 crackOsc.stop(now + crackOffset + 0.22);
             }
         }
+
+        // Cataclysmic Glass Shatter Burst Sound (Francium + HSbF6)
+        if (metalKey === 'Fr' && liquidKey === 'hsbf6') {
+            for (let s = 0; s < 12; s++) {
+                const sOffset = 0.05 + s * 0.025;
+                const sOsc = audioCtx.createOscillator();
+                const sGain = audioCtx.createGain();
+                sOsc.type = s % 2 === 0 ? 'sawtooth' : 'square';
+                sOsc.frequency.setValueAtTime(2400 + Math.random() * 1800, now + sOffset);
+                sOsc.frequency.exponentialRampToValueAtTime(180, now + sOffset + 0.35);
+                
+                sGain.gain.setValueAtTime(0.28, now + sOffset);
+                sGain.gain.exponentialRampToValueAtTime(0.001, now + sOffset + 0.35);
+                
+                sOsc.connect(sGain);
+                sGain.connect(masterCompressor);
+                sOsc.start(now + sOffset);
+                sOsc.stop(now + sOffset + 0.35);
+            }
+        }
     } catch (e) {
         console.warn('Audio context error:', e);
     }
+}
+
+// -------------------------------------------------------------------------
+// Cataclysmic Glass Shatter & Blackout Void Recovery Engine (Fr + HSbF6)
+// -------------------------------------------------------------------------
+function triggerCataclysmShatterEffect() {
+    if (!screenShatterContainer || !cataclysmBlackout) return;
+
+    // 1. Clear any prior shards
+    screenShatterContainer.innerHTML = '';
+    screenShatterContainer.classList.add('active');
+
+    // 2. Generate full-screen Voronoi-like polygonal glass shards
+    // Using a 5x4 grid with randomized irregular vertices to form jagged shards covering 100vw x 100vh
+    const cols = 5;
+    const rows = 4;
+    const widthPct = 100 / cols;
+    const heightPct = 100 / rows;
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            const x1 = c * widthPct;
+            const y1 = r * heightPct;
+            const x2 = (c + 1) * widthPct;
+            const y2 = (r + 1) * heightPct;
+
+            // Generate two triangular shards per grid cell with jittered inner points
+            const jitterX = (Math.random() - 0.5) * (widthPct * 0.4);
+            const jitterY = (Math.random() - 0.5) * (heightPct * 0.4);
+            const midX = Math.max(0, Math.min(100, (x1 + x2) / 2 + jitterX));
+            const midY = Math.max(0, Math.min(100, (y1 + y2) / 2 + jitterY));
+
+            const triangles = [
+                `polygon(${x1}% ${y1}%, ${x2}% ${y1}%, ${midX}% ${midY}%)`,
+                `polygon(${x2}% ${y1}%, ${x2}% ${y2}%, ${midX}% ${midY}%)`,
+                `polygon(${x2}% ${y2}%, ${x1}% ${y2}%, ${midX}% ${midY}%)`,
+                `polygon(${x1}% ${y2}%, ${x1}% ${y1}%, ${midX}% ${midY}%)`
+            ];
+
+            triangles.forEach((clipPath) => {
+                const shard = document.createElement('div');
+                shard.className = 'glass-shard';
+                shard.style.clipPath = clipPath;
+
+                // Center displacement vector
+                const centerX = 50;
+                const centerY = 50;
+                const dx = (midX - centerX);
+                const dy = (midY - centerY);
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                const force = 350 + Math.random() * 450;
+
+                const tx = (dx / dist) * force + (Math.random() - 0.5) * 120;
+                const ty = (dy / dist) * force + (Math.random() - 0.5) * 120;
+                const rx = (Math.random() - 0.5) * 480;
+                const ry = (Math.random() - 0.5) * 480;
+                const rz = (Math.random() - 0.5) * 360;
+
+                shard.style.setProperty('--tx', `${tx}px`);
+                shard.style.setProperty('--ty', `${ty}px`);
+                shard.style.setProperty('--rx', `${rx}deg`);
+                shard.style.setProperty('--ry', `${ry}deg`);
+                shard.style.setProperty('--rz', `${rz}deg`);
+
+                screenShatterContainer.appendChild(shard);
+            });
+        }
+    }
+
+    // 3. Blackout sequence:
+    // When shards fly apart (at ~350ms), the screen is engulfed in pure blackness
+    setTimeout(() => {
+        cataclysmBlackout.className = 'cataclysm-blackout flash-instant';
+
+        // Clean up shards while screen is completely black
+        setTimeout(() => {
+            screenShatterContainer.classList.remove('active');
+            screenShatterContainer.innerHTML = '';
+        }, 1200);
+
+        // 4. Hold in pitch blackness briefly, then slowly fade back in smoothly
+        setTimeout(() => {
+            cataclysmBlackout.className = 'cataclysm-blackout recovering';
+            setTimeout(() => {
+                cataclysmBlackout.className = 'cataclysm-blackout';
+            }, 3300);
+        }, 1100);
+
+    }, 380);
 }
 
 // Particle System
@@ -928,6 +1043,11 @@ reactBtn.addEventListener('click', () => {
             screenCracks.classList.add('active');
         }
 
+        // Special Screen Shatter & Blackout Sequence for Francium + HSbF6
+        if (activeMetal === 'Fr' && activeLiquid === 'hsbf6') {
+            triggerCataclysmShatterEffect();
+        }
+
         // 5. Spawn burst particles
         resizeExplosionCanvas();
         const arenaRect = reactionArena ? reactionArena.getBoundingClientRect() : { width: 900, height: 420 };
@@ -960,8 +1080,9 @@ reactBtn.addEventListener('click', () => {
         animateParticles();
 
         // 7. Reset screen and fade cracks once the damped shake oscillation completes smoothly
-        // Higher tiers have longer natural decay oscillations (3.5s to 4.2s)
-        const settleTime = details.shakeLevel === 'apocalyptic' || details.shakeLevel === 'cataclysmic' ? 4200 : (activeMetal === 'Fr' ? 3550 : 2500);
+        // Higher tiers have longer natural decay oscillations (3.5s to 4.8s)
+        const isCataclysmPair = activeMetal === 'Fr' && activeLiquid === 'hsbf6';
+        const settleTime = isCataclysmPair ? 4800 : (details.shakeLevel === 'apocalyptic' || details.shakeLevel === 'cataclysmic' ? 4200 : (activeMetal === 'Fr' ? 3550 : 2500));
 
         setTimeout(() => {
             shakeTarget.className = siteWrapper ? 'site-wrapper' : '';

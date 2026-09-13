@@ -1148,6 +1148,90 @@ footer {
 .screen-cracks-overlay[data-crack-tier="6"] .crack-group,
 .screen-cracks-overlay:not([data-crack-tier]) .crack-group { display: inline; }
 
+/* =========================================================================
+   CATACLYSMIC SCREEN SHATTER & BLACKOUT RECOVERY (FRANCIUM + HSbF6 SPECIAL)
+   ========================================================================= */
+.screen-shatter-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1000000;
+    overflow: hidden;
+    perspective: 1200px;
+    display: none;
+}
+
+.screen-shatter-container.active {
+    display: block;
+}
+
+.glass-shard {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.45) 0%, rgba(200, 255, 255, 0.15) 60%, rgba(0, 255, 180, 0.25) 100%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(20, 255, 120, 0.1) 100%);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.9), inset 0 0 15px rgba(0, 255, 240, 0.8);
+    backdrop-filter: blur(12px) brightness(1.6) contrast(1.4);
+    -webkit-backdrop-filter: blur(12px) brightness(1.6) contrast(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    transform-origin: center center;
+    will-change: transform, opacity;
+    animation: shardExplode 1.8s cubic-bezier(0.12, 0.8, 0.32, 1) forwards;
+}
+
+@keyframes shardExplode {
+    0% {
+        transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1);
+        opacity: 1;
+    }
+    15% {
+        transform: translate3d(calc(var(--tx) * 0.15), calc(var(--ty) * 0.15), 80px) rotateX(calc(var(--rx) * 0.2)) rotateY(calc(var(--ry) * 0.2)) rotateZ(calc(var(--rz) * 0.2)) scale(1.05);
+        opacity: 1;
+    }
+    55% {
+        transform: translate3d(calc(var(--tx) * 0.7), calc(var(--ty) * 0.7 + 120px), 250px) rotateX(calc(var(--rx) * 0.75)) rotateY(calc(var(--ry) * 0.75)) rotateZ(calc(var(--rz) * 0.75)) scale(1.15);
+        opacity: 0.95;
+    }
+    100% {
+        transform: translate3d(var(--tx), calc(var(--ty) + 700px), 600px) rotateX(var(--rx)) rotateY(var(--ry)) rotateZ(var(--rz)) scale(0.65);
+        opacity: 0;
+    }
+}
+
+/* Blackout Overlay that blankets the viewport and slowly fades back in */
+.cataclysm-blackout {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000000;
+    pointer-events: none;
+    z-index: 9999999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 2.8s cubic-bezier(0.2, 0.8, 0.25, 1), visibility 2.8s;
+}
+
+.cataclysm-blackout.flash-instant {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: opacity 0.35s ease-in, visibility 0.35s !important;
+}
+
+.cataclysm-blackout.recovering {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 3.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 3.2s !important;
+}
+
 /* Site Wrapper & Screen Shakes (Physics-based Damped Oscillations settling naturally to rest) */
 .site-wrapper {
     width: 100%;
