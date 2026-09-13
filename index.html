@@ -504,16 +504,16 @@
         <div class="minigame-header">
             <span class="minigame-tag" style="background: rgba(255, 102, 0, 0.15); color: #ff7700; border-color: rgba(255, 102, 0, 0.4);">🔥 Thermal Pyrotechnics Sandbox</span>
             <h2>Thermal Ignition Chamber: Elemental Metal Combustion in Air</h2>
-            <p>Select any of the 59 nuclearly stable metals, adjust the air & blowtorch temperature, and observe exact real-life ignition thresholds, authentic flame emission colors, and reaction thermodynamics!</p>
+            <p>Select any of the 59 nuclearly stable metals, dial up the blowtorch temperature, and discover for yourself at which exact temperature each metal ignites into flames!</p>
         </div>
 
         <div class="combustion-workbench">
             <!-- Filter & Category Bar -->
             <div class="combustion-category-tabs" id="combustion-category-tabs">
                 <button class="comb-tab active" data-cat="all">All Metals (59)</button>
-                <button class="comb-tab" data-cat="combustible">Combustible Only (49)</button>
-                <button class="comb-tab" data-cat="pyrophoric">Spontaneous / Pyrophoric (≤100°C)</button>
-                <button class="comb-tab" data-cat="noble">Noble / Non-Burning (10)</button>
+                <button class="comb-tab" data-cat="combustible">Combustible Only</button>
+                <button class="comb-tab" data-cat="pyrophoric">Spontaneous / Pyrophoric</button>
+                <button class="comb-tab" data-cat="noble">Noble Metals</button>
             </div>
 
             <!-- Metal Grid Carousel Picker -->
@@ -565,7 +565,7 @@
                                 <span class="temp-f" id="temp-f-display">(68 °F)</span>
                             </div>
                             <div class="temp-target-badge" id="temp-threshold-badge">
-                                Ignition Point: <strong>473 °C</strong>
+                                Ignition Status: <strong>Unignited</strong>
                             </div>
                         </div>
 
@@ -608,8 +608,8 @@
 
                     <div class="pyro-spec-grid">
                         <div class="pyro-stat">
-                            <span class="lbl">Auto-Ignition Temp:</span>
-                            <span class="val" id="pyro-ign-temp" style="color: #ffaa00;">473 °C</span>
+                            <span class="lbl">Combustion Status:</span>
+                            <span class="val" id="pyro-ign-temp" style="color: #ffaa00;">Unignited</span>
                         </div>
                         <div class="pyro-stat">
                             <span class="lbl">Combustion Flame Color:</span>

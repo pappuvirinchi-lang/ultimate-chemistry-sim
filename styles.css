@@ -1524,11 +1524,11 @@ footer {
 }
 
 .metal-card-item {
-    flex: 0 0 105px;
+    flex: 0 0 100px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
-    padding: 1.6rem 0.4rem 0.65rem;
+    padding: 0.9rem 0.4rem 0.65rem;
     display: flex;
     flex-direction: column;
     align-items: center;
