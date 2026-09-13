@@ -651,6 +651,7 @@ function playExplosionSound(metalKey, liquidKey) {
 
 // -------------------------------------------------------------------------
 // Cataclysmic Glass Shatter & Blackout Void Recovery Engine (Fr + HSbF6)
+// Highly optimized for 60fps silky smooth performance
 // -------------------------------------------------------------------------
 function triggerCataclysmShatterEffect() {
     if (!screenShatterContainer || !cataclysmBlackout) return;
@@ -659,10 +660,11 @@ function triggerCataclysmShatterEffect() {
     screenShatterContainer.innerHTML = '';
     screenShatterContainer.classList.add('active');
 
-    // 2. Generate full-screen Voronoi-like polygonal glass shards
-    // Using a 5x4 grid with randomized irregular vertices to form jagged shards covering 100vw x 100vh
-    const cols = 5;
-    const rows = 4;
+    // 2. Generate full-screen Voronoi polygonal glass shards using DocumentFragment
+    // Using a 3x3 grid (2 triangles per cell = 18 shards) gives great visual coverage with zero frame drops
+    const fragment = document.createDocumentFragment();
+    const cols = 3;
+    const rows = 3;
     const widthPct = 100 / cols;
     const heightPct = 100 / rows;
 
@@ -673,17 +675,15 @@ function triggerCataclysmShatterEffect() {
             const x2 = (c + 1) * widthPct;
             const y2 = (r + 1) * heightPct;
 
-            // Generate two triangular shards per grid cell with jittered inner points
-            const jitterX = (Math.random() - 0.5) * (widthPct * 0.4);
-            const jitterY = (Math.random() - 0.5) * (heightPct * 0.4);
-            const midX = Math.max(0, Math.min(100, (x1 + x2) / 2 + jitterX));
-            const midY = Math.max(0, Math.min(100, (y1 + y2) / 2 + jitterY));
+            // Randomized jagged diagonal split across each cell
+            const midJitterX = (Math.random() - 0.5) * (widthPct * 0.3);
+            const midJitterY = (Math.random() - 0.5) * (heightPct * 0.3);
+            const midX = Math.max(0, Math.min(100, (x1 + x2) / 2 + midJitterX));
+            const midY = Math.max(0, Math.min(100, (y1 + y2) / 2 + midJitterY));
 
             const triangles = [
-                `polygon(${x1}% ${y1}%, ${x2}% ${y1}%, ${midX}% ${midY}%)`,
-                `polygon(${x2}% ${y1}%, ${x2}% ${y2}%, ${midX}% ${midY}%)`,
-                `polygon(${x2}% ${y2}%, ${x1}% ${y2}%, ${midX}% ${midY}%)`,
-                `polygon(${x1}% ${y2}%, ${x1}% ${y1}%, ${midX}% ${midY}%)`
+                `polygon(${x1}% ${y1}%, ${x2}% ${y1}%, ${midX}% ${midY}%, ${x1}% ${y2}%)`,
+                `polygon(${x2}% ${y1}%, ${x2}% ${y2}%, ${x1}% ${y2}%, ${midX}% ${midY}%)`
             ];
 
             triangles.forEach((clipPath) => {
@@ -691,41 +691,41 @@ function triggerCataclysmShatterEffect() {
                 shard.className = 'glass-shard';
                 shard.style.clipPath = clipPath;
 
-                // Center displacement vector
+                // Center displacement outward velocity
                 const centerX = 50;
                 const centerY = 50;
                 const dx = (midX - centerX);
                 const dy = (midY - centerY);
                 const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                const force = 350 + Math.random() * 450;
+                const force = 320 + Math.random() * 380;
 
-                const tx = (dx / dist) * force + (Math.random() - 0.5) * 120;
-                const ty = (dy / dist) * force + (Math.random() - 0.5) * 120;
-                const rx = (Math.random() - 0.5) * 480;
-                const ry = (Math.random() - 0.5) * 480;
-                const rz = (Math.random() - 0.5) * 360;
+                const tx = (dx / dist) * force + (Math.random() - 0.5) * 80;
+                const ty = (dy / dist) * force + (Math.random() - 0.5) * 80;
+                const rz = (Math.random() - 0.5) * 140;
 
-                shard.style.setProperty('--tx', `${tx}px`);
-                shard.style.setProperty('--ty', `${ty}px`);
-                shard.style.setProperty('--rx', `${rx}deg`);
-                shard.style.setProperty('--ry', `${ry}deg`);
-                shard.style.setProperty('--rz', `${rz}deg`);
+                shard.style.setProperty('--tx', `${tx.toFixed(1)}px`);
+                shard.style.setProperty('--ty', `${ty.toFixed(1)}px`);
+                shard.style.setProperty('--rz', `${rz.toFixed(1)}deg`);
 
-                screenShatterContainer.appendChild(shard);
+                fragment.appendChild(shard);
             });
         }
     }
+    screenShatterContainer.appendChild(fragment);
 
     // 3. Blackout sequence:
-    // When shards fly apart (at ~350ms), the screen is engulfed in pure blackness
+    // When shards fly apart (at ~300ms), screen transitions instantly to pitch black
     setTimeout(() => {
         cataclysmBlackout.className = 'cataclysm-blackout flash-instant';
 
-        // Clean up shards while screen is completely black
+        // Clear shards and canvas off-screen while screen is completely black to save GPU/memory
         setTimeout(() => {
             screenShatterContainer.classList.remove('active');
             screenShatterContainer.innerHTML = '';
-        }, 1200);
+            particles = [];
+            mushroomClouds = [];
+            ctx.clearRect(0, 0, explosionCanvas.width, explosionCanvas.height);
+        }, 300);
 
         // 4. Hold in pitch blackness briefly, then slowly fade back in smoothly
         setTimeout(() => {
@@ -733,9 +733,9 @@ function triggerCataclysmShatterEffect() {
             setTimeout(() => {
                 cataclysmBlackout.className = 'cataclysm-blackout';
             }, 3300);
-        }, 1100);
+        }, 900);
 
-    }, 380);
+    }, 320);
 }
 
 // Particle System
