@@ -545,6 +545,19 @@ function initAudioSystem() {
     }
 }
 
+let sharedNoiseBuffer = null;
+function getSharedNoiseBuffer(ctx, duration) {
+    if (!sharedNoiseBuffer || sharedNoiseBuffer.duration < duration) {
+        const bufferSize = Math.floor(ctx.sampleRate * Math.max(duration, 3.5));
+        sharedNoiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = sharedNoiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            output[i] = Math.random() * 2 - 1;
+        }
+    }
+    return sharedNoiseBuffer;
+}
+
 function playExplosionSound(metalKey, liquidKey) {
     try {
         initAudioSystem();
@@ -574,14 +587,8 @@ function playExplosionSound(metalKey, liquidKey) {
         osc.start(now);
         osc.stop(now + duration);
 
-        // 2. Synthesize bursting noise shockwave buffer
-        const bufferSize = Math.floor(audioCtx.sampleRate * duration);
-        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            output[i] = Math.random() * 2 - 1;
-        }
-
+        // 2. Play bursting noise shockwave from cached buffer
+        const noiseBuffer = getSharedNoiseBuffer(audioCtx, duration);
         const whiteNoise = audioCtx.createBufferSource();
         whiteNoise.buffer = noiseBuffer;
 
@@ -604,44 +611,43 @@ function playExplosionSound(metalKey, liquidKey) {
 
         // Screen Crack Glass-Shatter Sound Effect (When crackTier > 0)
         if (details.crackTier > 0) {
-            const crackCount = Math.min(details.crackTier, 4);
+            const crackCount = Math.min(details.crackTier, 3);
             for (let c = 0; c < crackCount; c++) {
-                const crackOffset = c * 0.04;
+                const crackOffset = c * 0.05;
                 const crackOsc = audioCtx.createOscillator();
                 const crackGain = audioCtx.createGain();
                 crackOsc.type = 'sawtooth';
                 crackOsc.frequency.setValueAtTime(1800 + Math.random() * 600, now + crackOffset);
-                crackOsc.frequency.exponentialRampToValueAtTime(320, now + crackOffset + 0.22);
+                crackOsc.frequency.exponentialRampToValueAtTime(320, now + crackOffset + 0.2);
                 
-                // Keep crack volume comfortable and non-piercing
                 const safeCrackGain = Math.min(0.35, 0.12 + details.crackTier * 0.035);
                 crackGain.gain.setValueAtTime(safeCrackGain, now + crackOffset);
-                crackGain.gain.exponentialRampToValueAtTime(0.001, now + crackOffset + 0.22);
+                crackGain.gain.exponentialRampToValueAtTime(0.001, now + crackOffset + 0.2);
                 
                 crackOsc.connect(crackGain);
-                crackGain.connect(masterCompressor); // Routed into brickwall safety limiter
+                crackGain.connect(masterCompressor);
                 crackOsc.start(now + crackOffset);
-                crackOsc.stop(now + crackOffset + 0.22);
+                crackOsc.stop(now + crackOffset + 0.2);
             }
         }
 
         // Cataclysmic Glass Shatter Burst Sound (Francium + HSbF6)
         if (metalKey === 'Fr' && liquidKey === 'hsbf6') {
-            for (let s = 0; s < 12; s++) {
-                const sOffset = 0.05 + s * 0.025;
+            for (let s = 0; s < 4; s++) {
+                const sOffset = 0.04 + s * 0.04;
                 const sOsc = audioCtx.createOscillator();
                 const sGain = audioCtx.createGain();
-                sOsc.type = s % 2 === 0 ? 'sawtooth' : 'square';
-                sOsc.frequency.setValueAtTime(2400 + Math.random() * 1800, now + sOffset);
-                sOsc.frequency.exponentialRampToValueAtTime(180, now + sOffset + 0.35);
+                sOsc.type = 'sawtooth';
+                sOsc.frequency.setValueAtTime(2400 + Math.random() * 1200, now + sOffset);
+                sOsc.frequency.exponentialRampToValueAtTime(180, now + sOffset + 0.25);
                 
-                sGain.gain.setValueAtTime(0.28, now + sOffset);
-                sGain.gain.exponentialRampToValueAtTime(0.001, now + sOffset + 0.35);
+                sGain.gain.setValueAtTime(0.25, now + sOffset);
+                sGain.gain.exponentialRampToValueAtTime(0.001, now + sOffset + 0.25);
                 
                 sOsc.connect(sGain);
                 sGain.connect(masterCompressor);
                 sOsc.start(now + sOffset);
-                sOsc.stop(now + sOffset + 0.35);
+                sOsc.stop(now + sOffset + 0.25);
             }
         }
     } catch (e) {
@@ -1036,7 +1042,6 @@ reactBtn.addEventListener('click', () => {
         const shakeTarget = siteWrapper || document.body;
         shakeTarget.className = siteWrapper ? 'site-wrapper' : '';
         document.body.className = '';
-        void shakeTarget.offsetWidth; // Force reflow
         shakeTarget.classList.add(`shake-${details.shakeLevel}`);
 
         // Screen Cracks: Trigger instantaneously at exact onset of shaking if crackTier > 0!
@@ -1051,7 +1056,9 @@ reactBtn.addEventListener('click', () => {
         }
 
         // 5. Spawn burst particles
-        resizeExplosionCanvas();
+        if (explosionCanvas.width !== explosionCanvas.offsetWidth || explosionCanvas.height !== explosionCanvas.offsetHeight) {
+            resizeExplosionCanvas();
+        }
         const arenaRect = reactionArena ? reactionArena.getBoundingClientRect() : { width: 900, height: 420 };
         const canvasRect = explosionCanvas.getBoundingClientRect();
         // Exact flask center inside canvas coordinate system
