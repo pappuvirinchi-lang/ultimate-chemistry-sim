@@ -651,7 +651,7 @@ function playExplosionSound(metalKey, liquidKey) {
 
 // -------------------------------------------------------------------------
 // Cataclysmic Reality Shatter & Void Collapse Engine (Fr + HSbF6)
-// Physically breaks the actual screen apart into falling tectonic plates
+// Ultra-fast zero-lag execution: Pure CSS tectonic fractures
 // -------------------------------------------------------------------------
 function triggerCataclysmShatterEffect() {
     if (!screenShatterContainer || !cataclysmBlackout || !siteWrapper) return;
@@ -660,45 +660,10 @@ function triggerCataclysmShatterEffect() {
     screenShatterContainer.innerHTML = '';
     screenShatterContainer.classList.add('active');
 
-    // 2. Render a 1-to-1 visual snapshot representation of the screen onto a background canvas
-    const snapCanvas = document.createElement('canvas');
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    snapCanvas.width = vw;
-    snapCanvas.height = vh;
-    const sCtx = snapCanvas.getContext('2d');
-
-    // Draw dark atmospheric baseline matching page background
-    sCtx.fillStyle = '#0a0a0c';
-    sCtx.fillRect(0, 0, vw, vh);
-
-    // Draw existing explosion canvas and particle shockwave into snapshot
-    if (explosionCanvas && explosionCanvas.width > 0) {
-        try {
-            sCtx.drawImage(explosionCanvas, 0, 0, vw, vh);
-        } catch (e) {}
-    }
-
-    // Draw stylized representation of page elements into snapshot
-    sCtx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
-    sCtx.lineWidth = 2;
-    sCtx.strokeRect(30, 40, vw - 60, vh - 80);
-
-    // Glowing impact core at center
-    const grad = sCtx.createRadialGradient(vw / 2, vh / 2, 10, vw / 2, vh / 2, vw * 0.6);
-    grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-    grad.addColorStop(0.2, 'rgba(0, 255, 200, 0.6)');
-    grad.addColorStop(0.5, 'rgba(180, 0, 255, 0.3)');
-    grad.addColorStop(1, 'rgba(10, 10, 12, 0.95)');
-    sCtx.fillStyle = grad;
-    sCtx.fillRect(0, 0, vw, vh);
-
-    const snapshotDataUrl = snapCanvas.toDataURL();
-
-    // 3. Generate 12 large jagged interlocking polygonal screen shards (tectonic plates)
+    // 2. Generate 8 clean jagged tectonic plates without canvas encoding overhead
     const fragment = document.createDocumentFragment();
     const cols = 4;
-    const rows = 3;
+    const rows = 2;
     const widthPct = 100 / cols;
     const heightPct = 100 / rows;
 
@@ -709,56 +674,46 @@ function triggerCataclysmShatterEffect() {
             const x2 = (c + 1) * widthPct;
             const y2 = (r + 1) * heightPct;
 
-            const jitterX = (Math.random() - 0.5) * (widthPct * 0.4);
-            const jitterY = (Math.random() - 0.5) * (heightPct * 0.4);
+            const jitterX = (Math.random() - 0.5) * (widthPct * 0.35);
+            const jitterY = (Math.random() - 0.5) * (heightPct * 0.35);
             const midX = Math.max(2, Math.min(98, (x1 + x2) / 2 + jitterX));
             const midY = Math.max(2, Math.min(98, (y1 + y2) / 2 + jitterY));
 
-            const plates = [
-                `polygon(${x1}% ${y1}%, ${x2}% ${y1}%, ${midX}% ${midY}%, ${x1}% ${y2}%)`,
-                `polygon(${x2}% ${y1}%, ${x2}% ${y2}%, ${x1}% ${y2}%, ${midX}% ${midY}%)`
-            ];
+            const clipPath = `polygon(${x1}% ${y1}%, ${x2}% ${y1}%, ${midX}% ${midY}%, ${x1}% ${y2}%)`;
 
-            plates.forEach((clipPath) => {
-                const plate = document.createElement('div');
-                plate.className = 'reality-shard';
-                plate.style.clipPath = clipPath;
-                plate.style.background = `url("${snapshotDataUrl}") center / cover no-repeat, radial-gradient(circle, rgba(0,255,255,0.4) 0%, rgba(10,10,12,0.95) 100%)`;
+            const plate = document.createElement('div');
+            plate.className = 'reality-shard';
+            plate.style.clipPath = clipPath;
 
-                const centerX = 50;
-                const centerY = 50;
-                const dx = midX - centerX;
-                const dy = midY - centerY;
-                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                const force = 380 + Math.random() * 450;
+            const centerX = 50;
+            const centerY = 50;
+            const dx = midX - centerX;
+            const dy = midY - centerY;
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            const force = 300 + Math.random() * 300;
 
-                const tx = (dx / dist) * force + (Math.random() - 0.5) * 120;
-                const ty = (dy / dist) * force + (Math.random() - 0.5) * 120;
-                const rx = (Math.random() - 0.5) * 320;
-                const ry = (Math.random() - 0.5) * 320;
-                const rz = (Math.random() - 0.5) * 160;
+            const tx = (dx / dist) * force;
+            const ty = (dy / dist) * force;
+            const rz = (Math.random() - 0.5) * 80;
 
-                plate.style.setProperty('--tx', `${tx.toFixed(1)}px`);
-                plate.style.setProperty('--ty', `${ty.toFixed(1)}px`);
-                plate.style.setProperty('--rx', `${rx.toFixed(1)}deg`);
-                plate.style.setProperty('--ry', `${ry.toFixed(1)}deg`);
-                plate.style.setProperty('--rz', `${rz.toFixed(1)}deg`);
+            plate.style.setProperty('--tx', `${tx.toFixed(0)}px`);
+            plate.style.setProperty('--ty', `${ty.toFixed(0)}px`);
+            plate.style.setProperty('--rz', `${rz.toFixed(0)}deg`);
 
-                fragment.appendChild(plate);
-            });
+            fragment.appendChild(plate);
         }
     }
     screenShatterContainer.appendChild(fragment);
 
-    // 4. Hide the real website behind the shattered plates so the screen physically breaks open into the void!
-    siteWrapper.style.transition = 'opacity 0.15s ease-out';
+    // 3. Immediately disappear the actual website so it looks like it was smashed to pieces into the void!
+    siteWrapper.style.transition = 'opacity 0.08s ease-out';
     siteWrapper.style.opacity = '0';
 
-    // 5. As the plates break apart and fall into the abyss, trigger the pitch-black void overlay
+    // 4. Trigger pitch-black void overlay cleanly
     setTimeout(() => {
         cataclysmBlackout.className = 'cataclysm-blackout flash-instant';
 
-        // Clear all shatter pieces, cracks overlay, and particle trails during total blackness
+        // Clear all shatter pieces and active canvas animations while hidden in blackness
         setTimeout(() => {
             screenShatterContainer.classList.remove('active');
             screenShatterContainer.innerHTML = '';
@@ -769,20 +724,20 @@ function triggerCataclysmShatterEffect() {
             particles = [];
             mushroomClouds = [];
             ctx.clearRect(0, 0, explosionCanvas.width, explosionCanvas.height);
-        }, 300);
+        }, 150);
 
-        // 6. Hold in the empty void briefly, then fade the website and blackout smoothly back to reality
+        // 5. Rest in the void, then smoothly fade back into reality
         setTimeout(() => {
-            siteWrapper.style.transition = 'opacity 3.2s cubic-bezier(0.16, 1, 0.3, 1)';
+            siteWrapper.style.transition = 'opacity 2.5s cubic-bezier(0.16, 1, 0.3, 1)';
             siteWrapper.style.opacity = '1';
             cataclysmBlackout.className = 'cataclysm-blackout recovering';
 
             setTimeout(() => {
                 cataclysmBlackout.className = 'cataclysm-blackout';
-            }, 3800);
-        }, 1200);
+            }, 2800);
+        }, 850);
 
-    }, 420);
+    }, 280);
 }
 
 // Particle System
@@ -1110,7 +1065,8 @@ reactBtn.addEventListener('click', () => {
         else if (activeMetal === 'Fr') speedMult = 2.8;
         else if (activeMetal === 'Cs') speedMult = 2.2;
 
-        const totalParticles = Math.floor(data.particleCount * (1 + (shakeTiers.indexOf(details.shakeLevel) * 0.18)));
+        const isCataclysm = activeMetal === 'Fr' && activeLiquid === 'hsbf6';
+        const totalParticles = isCataclysm ? 120 : Math.floor(data.particleCount * (1 + (shakeTiers.indexOf(details.shakeLevel) * 0.18)));
         for (let i = 0; i < totalParticles; i++) {
             particles.push(new BlastParticle(originX, originY, data.color, speedMult));
             if (i % 2 === 0) {
