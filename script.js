@@ -758,14 +758,18 @@ function triggerCataclysmShatterEffect() {
     setTimeout(() => {
         cataclysmBlackout.className = 'cataclysm-blackout flash-instant';
 
-        // Clear all shatter pieces and particle trails during total blackness
+        // Clear all shatter pieces, cracks overlay, and particle trails during total blackness
         setTimeout(() => {
             screenShatterContainer.classList.remove('active');
             screenShatterContainer.innerHTML = '';
+            if (screenCracks) {
+                screenCracks.classList.remove('active');
+                screenCracks.removeAttribute('data-crack-tier');
+            }
             particles = [];
             mushroomClouds = [];
             ctx.clearRect(0, 0, explosionCanvas.width, explosionCanvas.height);
-        }, 400);
+        }, 300);
 
         // 6. Hold in the empty void briefly, then fade the website and blackout smoothly back to reality
         setTimeout(() => {
