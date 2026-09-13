@@ -2467,3 +2467,41 @@ const metalOxygenIgnitionData = {
     selectMetal('Mg');
     renderFlameLoop();
 })();
+
+// Minigames Hub Navigation Pills Interactive Switcher
+(function initMinigamesHubNav() {
+    const pills = document.querySelectorAll('.minigame-pill');
+    if (!pills.length) return;
+
+    pills.forEach(pill => {
+        pill.addEventListener('click', (e) => {
+            const targetId = pill.getAttribute('data-target');
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                pills.forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+            }
+        });
+    });
+
+    // Update active pill on scroll
+    const sections = ['alkali-minigame', 'combustion-lab'].map(id => document.getElementById(id)).filter(Boolean);
+    if ('IntersectionObserver' in window && sections.length) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    pills.forEach(p => {
+                        if (p.getAttribute('data-target') === id) {
+                            p.classList.add('active');
+                        } else {
+                            p.classList.remove('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.35 });
+
+        sections.forEach(s => observer.observe(s));
+    }
+})();

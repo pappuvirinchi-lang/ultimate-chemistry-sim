@@ -816,14 +816,134 @@ footer {
     }
 }
 
+/* =========================================================================
+   Interactive Chemistry Minigames Hub
+   ========================================================================= */
+.minigames-hub-section {
+    padding: 6rem 5% 5rem;
+    background: radial-gradient(circle at 50% 10%, #161524 0%, #0a0a0f 60%, #06070a 100%);
+    border-top: 2px solid rgba(0, 240, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.minigames-hub-intro {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto 3.5rem;
+}
+
+.hub-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(255, 102, 0, 0.15) 100%);
+    color: #fff;
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    font-size: 0.88rem;
+    font-weight: 800;
+    padding: 7px 18px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+}
+
+.hub-title {
+    font-size: 3.2rem;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 0.9rem;
+    background: linear-gradient(135deg, #ffffff 30%, #00f0ff 70%, #ff8833 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hub-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin-bottom: 2.2rem;
+}
+
+/* Minigames Switcher Pill Navigation */
+.minigame-nav-pills {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.minigame-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 0.85rem 1.4rem;
+    text-decoration: none;
+    color: #fff;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.4, 1);
+    text-align: left;
+    backdrop-filter: blur(10px);
+}
+
+.minigame-pill .pill-icon {
+    font-size: 1.6rem;
+}
+
+.minigame-pill .pill-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.minigame-pill .pill-text strong {
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+.minigame-pill .pill-text small {
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.minigame-pill:hover {
+    background: rgba(0, 240, 255, 0.1);
+    border-color: rgba(0, 240, 255, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 240, 255, 0.25);
+}
+
+.minigame-pill.active {
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(255, 102, 0, 0.2) 100%);
+    border-color: #00f0ff;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.35);
+}
+
+.minigames-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4.5rem;
+}
+
+.minigame-subcard {
+    position: relative;
+    border-radius: 24px;
+    scroll-margin-top: 80px;
+}
+
 /* Alkali Metals Explosion Minigame */
 .alkali-minigame-section {
-    padding: 6rem 5% 7rem;
-    background: radial-gradient(circle at center, #15151e 0%, #0a0a0c 100%);
+    padding: 3rem 2rem 4rem;
+    background: radial-gradient(circle at center, rgba(21, 21, 30, 0.85) 0%, rgba(10, 10, 12, 0.95) 100%);
     text-align: center;
     position: relative;
     overflow: hidden;
-    border-top: 1px solid rgba(0, 240, 255, 0.15);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
 .minigame-header h2 {
@@ -1445,11 +1565,13 @@ footer {
    Thermal Metal Combustion & Ignition Chamber Minigame
    ========================================================================= */
 .combustion-lab-section {
-    padding: 5rem 5%;
-    background: radial-gradient(circle at 50% 20%, #15131b 0%, #0c0d12 100%);
-    border-top: 1px solid rgba(255, 102, 0, 0.2);
+    padding: 3rem 2rem 4rem;
+    background: radial-gradient(circle at 50% 20%, rgba(21, 19, 27, 0.85) 0%, rgba(12, 13, 18, 0.95) 100%);
+    border: 1px solid rgba(255, 102, 0, 0.25);
+    border-radius: 24px;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
 .combustion-workbench {

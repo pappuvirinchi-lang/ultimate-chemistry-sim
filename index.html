@@ -47,8 +47,7 @@
         <div class="nav-links">
             <a href="#features">Features</a>
             <a href="#periodic-table">Periodic Table</a>
-            <a href="#alkali-minigame">Detonation Lab</a>
-            <a href="#combustion-lab">Combustion Lab</a>
+            <a href="#minigames-hub">Minigames</a>
             <a href="#pricing">Pricing</a>
             <a href="#download" class="nav-btn">Download</a>
         </div>
@@ -411,17 +410,40 @@
         </div>
     </section>
 
-    <!-- Alkali Metal + Water Explosion Minigame Section -->
-    <section id="alkali-minigame" class="alkali-minigame-section">
-        <div class="minigame-header">
-            <span class="minigame-tag">⚡ Interactive Lab Minigame</span>
-            <h2>Alkali Metals vs Acids & Water: Drop & Detonate!</h2>
-            <p>Select your alkali metal and target liquid basin, then drop to trigger real-life violent chemical reactions!</p>
+    <!-- =========================================================================
+         Interactive Chemistry Minigames Hub
+         ========================================================================= -->
+    <section id="minigames-hub" class="minigames-hub-section">
+        <div class="minigames-hub-intro">
+            <span class="hub-tag">🎮 Interactive Lab Minigames</span>
+            <h2 class="hub-title">Experimental Sandbox & Minigames</h2>
+            <p class="hub-subtitle">Jump directly into hands-on chemical detonations, thermal ignitions, and discover real-world elemental physics right in your browser!</p>
+
+            <!-- Interactive Minigame Switcher Tabs -->
+            <div class="minigame-nav-pills" id="minigame-nav-pills">
+                <a href="#alkali-minigame" class="minigame-pill active" data-target="alkali-minigame">
+                    <span class="pill-icon">💧💥</span>
+                    <span class="pill-text"><strong>Metal + Liquid Detonation Lab</strong><small>Alkali metals vs water & superacids</small></span>
+                </a>
+                <a href="#combustion-lab" class="minigame-pill" data-target="combustion-lab">
+                    <span class="pill-icon">🔥⚡</span>
+                    <span class="pill-text"><strong>Thermal Combustion Chamber</strong><small>59 metals & oxygen blowtorch ignition</small></span>
+                </a>
+            </div>
         </div>
 
-        <div class="lab-simulation-card">
-            <!-- 1. Liquid Basin Selection -->
-            <div class="picker-label">Select Liquid Basin:</div>
+        <div class="minigames-container">
+            <!-- Alkali Metal + Water Explosion Minigame Section -->
+            <div id="alkali-minigame" class="minigame-subcard alkali-minigame-section">
+                <div class="minigame-header">
+                    <span class="minigame-tag">⚡ Minigame 1: Detonation Lab</span>
+                    <h2>Alkali Metals vs Acids & Water: Drop & Detonate!</h2>
+                    <p>Select your alkali metal and target liquid basin, then drop to trigger real-life violent chemical reactions!</p>
+                </div>
+
+                <div class="lab-simulation-card">
+                    <!-- 1. Liquid Basin Selection -->
+                    <div class="picker-label">Select Liquid Basin:</div>
             <div class="liquid-picker" id="liquid-picker">
                 <button class="liquid-btn active" data-liquid="water" data-name="Water (H2O)">
                     <span class="liq-icon">💧</span>
@@ -497,12 +519,12 @@
                 <button id="react-btn" class="cta-btn react-trigger-btn">🔥 React Metal with Liquid!</button>
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- Metal Thermal Ignition & Combustion Chamber Minigame -->
-    <section id="combustion-lab" class="combustion-lab-section">
+    <div id="combustion-lab" class="minigame-subcard combustion-lab-section">
         <div class="minigame-header">
-            <span class="minigame-tag" style="background: rgba(255, 102, 0, 0.15); color: #ff7700; border-color: rgba(255, 102, 0, 0.4);">🔥 Thermal Pyrotechnics Sandbox</span>
+            <span class="minigame-tag" style="background: rgba(255, 102, 0, 0.15); color: #ff7700; border-color: rgba(255, 102, 0, 0.4);">🔥 Minigame 2: Combustion Chamber</span>
             <h2>Thermal Ignition Chamber: Elemental Metal Combustion Simulator</h2>
             <p>Select any of the 59 nuclearly stable metals, toggle between <strong>Standard Air (21% O₂)</strong> and <strong>Pure Oxygen (100% O₂)</strong> atmospheres, and discover for yourself at which temperature each metal ignites into flames!</p>
         </div>
@@ -662,7 +684,9 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div><!-- end #combustion-lab -->
+    </div><!-- end .minigames-container -->
+    </section><!-- end #minigames-hub -->
 
     <footer>
         <p>&copy; 2026 Ultimate Chemistry Simulator. All rights reserved. | <a href="terms.html" style="color: var(--accent-cyan); text-decoration: none;">Terms and Conditions</a></p>
