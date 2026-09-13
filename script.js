@@ -650,20 +650,54 @@ function playExplosionSound(metalKey, liquidKey) {
 }
 
 // -------------------------------------------------------------------------
-// Cataclysmic Glass Shatter & Blackout Void Recovery Engine (Fr + HSbF6)
-// Highly optimized for 60fps silky smooth performance
+// Cataclysmic Reality Shatter & Void Collapse Engine (Fr + HSbF6)
+// Physically breaks the actual screen apart into falling tectonic plates
 // -------------------------------------------------------------------------
 function triggerCataclysmShatterEffect() {
-    if (!screenShatterContainer || !cataclysmBlackout) return;
+    if (!screenShatterContainer || !cataclysmBlackout || !siteWrapper) return;
 
-    // 1. Clear any prior shards
+    // 1. Prepare shatter container
     screenShatterContainer.innerHTML = '';
     screenShatterContainer.classList.add('active');
 
-    // 2. Generate full-screen Voronoi polygonal glass shards using DocumentFragment
-    // Using a 3x3 grid (2 triangles per cell = 18 shards) gives great visual coverage with zero frame drops
+    // 2. Render a 1-to-1 visual snapshot representation of the screen onto a background canvas
+    const snapCanvas = document.createElement('canvas');
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    snapCanvas.width = vw;
+    snapCanvas.height = vh;
+    const sCtx = snapCanvas.getContext('2d');
+
+    // Draw dark atmospheric baseline matching page background
+    sCtx.fillStyle = '#0a0a0c';
+    sCtx.fillRect(0, 0, vw, vh);
+
+    // Draw existing explosion canvas and particle shockwave into snapshot
+    if (explosionCanvas && explosionCanvas.width > 0) {
+        try {
+            sCtx.drawImage(explosionCanvas, 0, 0, vw, vh);
+        } catch (e) {}
+    }
+
+    // Draw stylized representation of page elements into snapshot
+    sCtx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+    sCtx.lineWidth = 2;
+    sCtx.strokeRect(30, 40, vw - 60, vh - 80);
+
+    // Glowing impact core at center
+    const grad = sCtx.createRadialGradient(vw / 2, vh / 2, 10, vw / 2, vh / 2, vw * 0.6);
+    grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+    grad.addColorStop(0.2, 'rgba(0, 255, 200, 0.6)');
+    grad.addColorStop(0.5, 'rgba(180, 0, 255, 0.3)');
+    grad.addColorStop(1, 'rgba(10, 10, 12, 0.95)');
+    sCtx.fillStyle = grad;
+    sCtx.fillRect(0, 0, vw, vh);
+
+    const snapshotDataUrl = snapCanvas.toDataURL();
+
+    // 3. Generate 12 large jagged interlocking polygonal screen shards (tectonic plates)
     const fragment = document.createDocumentFragment();
-    const cols = 3;
+    const cols = 4;
     const rows = 3;
     const widthPct = 100 / cols;
     const heightPct = 100 / rows;
@@ -675,67 +709,76 @@ function triggerCataclysmShatterEffect() {
             const x2 = (c + 1) * widthPct;
             const y2 = (r + 1) * heightPct;
 
-            // Randomized jagged diagonal split across each cell
-            const midJitterX = (Math.random() - 0.5) * (widthPct * 0.3);
-            const midJitterY = (Math.random() - 0.5) * (heightPct * 0.3);
-            const midX = Math.max(0, Math.min(100, (x1 + x2) / 2 + midJitterX));
-            const midY = Math.max(0, Math.min(100, (y1 + y2) / 2 + midJitterY));
+            const jitterX = (Math.random() - 0.5) * (widthPct * 0.4);
+            const jitterY = (Math.random() - 0.5) * (heightPct * 0.4);
+            const midX = Math.max(2, Math.min(98, (x1 + x2) / 2 + jitterX));
+            const midY = Math.max(2, Math.min(98, (y1 + y2) / 2 + jitterY));
 
-            const triangles = [
+            const plates = [
                 `polygon(${x1}% ${y1}%, ${x2}% ${y1}%, ${midX}% ${midY}%, ${x1}% ${y2}%)`,
                 `polygon(${x2}% ${y1}%, ${x2}% ${y2}%, ${x1}% ${y2}%, ${midX}% ${midY}%)`
             ];
 
-            triangles.forEach((clipPath) => {
-                const shard = document.createElement('div');
-                shard.className = 'glass-shard';
-                shard.style.clipPath = clipPath;
+            plates.forEach((clipPath) => {
+                const plate = document.createElement('div');
+                plate.className = 'reality-shard';
+                plate.style.clipPath = clipPath;
+                plate.style.background = `url("${snapshotDataUrl}") center / cover no-repeat, radial-gradient(circle, rgba(0,255,255,0.4) 0%, rgba(10,10,12,0.95) 100%)`;
 
-                // Center displacement outward velocity
                 const centerX = 50;
                 const centerY = 50;
-                const dx = (midX - centerX);
-                const dy = (midY - centerY);
+                const dx = midX - centerX;
+                const dy = midY - centerY;
                 const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                const force = 320 + Math.random() * 380;
+                const force = 380 + Math.random() * 450;
 
-                const tx = (dx / dist) * force + (Math.random() - 0.5) * 80;
-                const ty = (dy / dist) * force + (Math.random() - 0.5) * 80;
-                const rz = (Math.random() - 0.5) * 140;
+                const tx = (dx / dist) * force + (Math.random() - 0.5) * 120;
+                const ty = (dy / dist) * force + (Math.random() - 0.5) * 120;
+                const rx = (Math.random() - 0.5) * 320;
+                const ry = (Math.random() - 0.5) * 320;
+                const rz = (Math.random() - 0.5) * 160;
 
-                shard.style.setProperty('--tx', `${tx.toFixed(1)}px`);
-                shard.style.setProperty('--ty', `${ty.toFixed(1)}px`);
-                shard.style.setProperty('--rz', `${rz.toFixed(1)}deg`);
+                plate.style.setProperty('--tx', `${tx.toFixed(1)}px`);
+                plate.style.setProperty('--ty', `${ty.toFixed(1)}px`);
+                plate.style.setProperty('--rx', `${rx.toFixed(1)}deg`);
+                plate.style.setProperty('--ry', `${ry.toFixed(1)}deg`);
+                plate.style.setProperty('--rz', `${rz.toFixed(1)}deg`);
 
-                fragment.appendChild(shard);
+                fragment.appendChild(plate);
             });
         }
     }
     screenShatterContainer.appendChild(fragment);
 
-    // 3. Blackout sequence:
-    // When shards fly apart (at ~300ms), screen transitions instantly to pitch black
+    // 4. Hide the real website behind the shattered plates so the screen physically breaks open into the void!
+    siteWrapper.style.transition = 'opacity 0.15s ease-out';
+    siteWrapper.style.opacity = '0';
+
+    // 5. As the plates break apart and fall into the abyss, trigger the pitch-black void overlay
     setTimeout(() => {
         cataclysmBlackout.className = 'cataclysm-blackout flash-instant';
 
-        // Clear shards and canvas off-screen while screen is completely black to save GPU/memory
+        // Clear all shatter pieces and particle trails during total blackness
         setTimeout(() => {
             screenShatterContainer.classList.remove('active');
             screenShatterContainer.innerHTML = '';
             particles = [];
             mushroomClouds = [];
             ctx.clearRect(0, 0, explosionCanvas.width, explosionCanvas.height);
-        }, 300);
+        }, 400);
 
-        // 4. Hold in pitch blackness briefly, then slowly fade back in smoothly
+        // 6. Hold in the empty void briefly, then fade the website and blackout smoothly back to reality
         setTimeout(() => {
+            siteWrapper.style.transition = 'opacity 3.2s cubic-bezier(0.16, 1, 0.3, 1)';
+            siteWrapper.style.opacity = '1';
             cataclysmBlackout.className = 'cataclysm-blackout recovering';
+
             setTimeout(() => {
                 cataclysmBlackout.className = 'cataclysm-blackout';
-            }, 3300);
-        }, 900);
+            }, 3800);
+        }, 1200);
 
-    }, 320);
+    }, 420);
 }
 
 // Particle System
