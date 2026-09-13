@@ -329,6 +329,8 @@ const reactionArena = document.getElementById('reaction-arena');
 const screenCracks = document.getElementById('screen-cracks');
 const screenShatterContainer = document.getElementById('screen-shatter-container');
 const cataclysmBlackout = document.getElementById('cataclysm-blackout');
+const cataclysmCanvas = document.getElementById('cataclysm-canvas');
+const cataclysmCtx = cataclysmCanvas ? cataclysmCanvas.getContext('2d') : null;
 const siteWrapper = document.getElementById('site-wrapper');
 const liquidPool = document.getElementById('liquid-pool');
 const explosionCanvas = document.getElementById('explosion-canvas');
@@ -711,11 +713,11 @@ function triggerCataclysmShatterEffect() {
     }
     screenShatterContainer.appendChild(fragment);
 
-    // 3. Promote explosion canvas above the blackout void overlay so the mushroom cloud remains majestically visible!
-    if (explosionCanvas) {
-        explosionCanvas.classList.add('cataclysm-void-canvas');
-        explosionCanvas.width = window.innerWidth;
-        explosionCanvas.height = window.innerHeight;
+    // 3. Prepare dedicated Cataclysm Canvas (placed outside site-wrapper, above the blackout void!)
+    if (cataclysmCanvas) {
+        cataclysmCanvas.width = window.innerWidth;
+        cataclysmCanvas.height = window.innerHeight;
+        cataclysmCanvas.classList.add('active');
     }
 
     // Immediately disappear the actual website so it looks like it was smashed to pieces into the void!
@@ -744,10 +746,12 @@ function triggerCataclysmShatterEffect() {
 
             setTimeout(() => {
                 cataclysmBlackout.className = 'cataclysm-blackout';
-                // Restore standard canvas positioning once site is fully faded back in
-                if (explosionCanvas) {
-                    explosionCanvas.classList.remove('cataclysm-void-canvas');
-                    resizeExplosionCanvas();
+                // Reset and hide cataclysm canvas once reality has settled back
+                if (cataclysmCanvas) {
+                    cataclysmCanvas.classList.remove('active');
+                    if (cataclysmCtx) {
+                        cataclysmCtx.clearRect(0, 0, cataclysmCanvas.width, cataclysmCanvas.height);
+                    }
                 }
             }, 2800);
         }, 1200);
@@ -760,7 +764,7 @@ let particles = [];
 let mushroomClouds = [];
 
 class BlastParticle {
-    constructor(x, y, color, speedMultiplier) {
+    constructor(x, y, color, speedMultiplier, isCataclysm = false) {
         this.x = x;
         this.y = y;
         const angle = Math.random() * Math.PI * 2;
@@ -771,6 +775,7 @@ class BlastParticle {
         this.radius = Math.random() * 6 + 3;
         this.alpha = 1;
         this.decay = Math.random() * 0.02 + 0.012;
+        this.isCataclysm = isCataclysm;
     }
 
     update() {
@@ -802,6 +807,7 @@ class MushroomCloud {
         this.liquidKey = liquidKey;
         this.color = color;
         this.isNuclear = metalKey === 'Fr' || liquidKey === 'hsbf6';
+        this.isCataclysm = metalKey === 'Fr' && liquidKey === 'hsbf6';
         this.cloudParticles = [];
         this.torusRadius = 0;
         
@@ -987,21 +993,29 @@ class MushroomCloud {
 
 function animateParticles() {
     ctx.clearRect(0, 0, explosionCanvas.width, explosionCanvas.height);
+    if (cataclysmCtx && cataclysmCanvas) {
+        cataclysmCtx.clearRect(0, 0, cataclysmCanvas.width, cataclysmCanvas.height);
+    }
 
     // Update & draw mushroom clouds
     for (let m = mushroomClouds.length - 1; m >= 0; m--) {
-        mushroomClouds[m].update();
-        mushroomClouds[m].draw(ctx);
-        if (mushroomClouds[m].alpha <= 0) {
+        const cloud = mushroomClouds[m];
+        cloud.update();
+        // Route to dedicated Cataclysm Canvas if in cataclysm mode, otherwise standard arena canvas
+        const targetCtx = (cloud.isCataclysm && cataclysmCtx) ? cataclysmCtx : ctx;
+        cloud.draw(targetCtx);
+        if (cloud.alpha <= 0) {
             mushroomClouds.splice(m, 1);
         }
     }
 
     // Update & draw debris particles
     for (let i = particles.length - 1; i >= 0; i--) {
-        particles[i].update();
-        particles[i].draw(ctx);
-        if (particles[i].alpha <= 0) {
+        const p = particles[i];
+        p.update();
+        const targetCtx = (p.isCataclysm && cataclysmCtx) ? cataclysmCtx : ctx;
+        p.draw(targetCtx);
+        if (p.alpha <= 0) {
             particles.splice(i, 1);
         }
     }
@@ -1091,10 +1105,10 @@ reactBtn.addEventListener('click', () => {
 
         const totalParticles = isCataclysm ? 120 : Math.floor(data.particleCount * (1 + (shakeTiers.indexOf(details.shakeLevel) * 0.18)));
         for (let i = 0; i < totalParticles; i++) {
-            particles.push(new BlastParticle(originX, originY, data.color, speedMult));
+            particles.push(new BlastParticle(originX, originY, data.color, speedMult, isCataclysm));
             if (i % 2 === 0) {
                 const particleTint = details.isNuclearTint ? '#76ff03' : (activeLiquid === 'triflic' ? '#e040fb' : '#ffffff');
-                particles.push(new BlastParticle(originX, originY, particleTint, speedMult * 0.9));
+                particles.push(new BlastParticle(originX, originY, particleTint, speedMult * 0.9, isCataclysm));
             }
         }
 
