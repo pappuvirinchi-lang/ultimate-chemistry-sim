@@ -1767,6 +1767,7 @@ const metalOxygenIgnitionData = {
     let selectedMetalKey = 'Mg';
     let currentFilter = 'all';
     let currentAtmosphere = 'air'; // 'air' or 'oxygen'
+    let isHeating = false; // Heating default is OFF
     let isIgnited = false;
     let animFrameId = null;
 
@@ -1789,6 +1790,9 @@ const metalOxygenIgnitionData = {
     const tempF = document.getElementById('temp-f-display');
     const targetBadge = document.getElementById('temp-threshold-badge');
     const presetBtns = document.querySelectorAll('.preset-btn');
+    const presetsWrap = document.querySelector('.temp-quick-presets');
+    const sliderWrap = document.querySelector('.temp-slider-wrap');
+    const heatingPowerBtn = document.getElementById('heating-power-btn');
 
     const specimenImg = document.getElementById('combustion-specimen-img');
     const specimenGlow = document.getElementById('specimen-glow-overlay');
@@ -1886,25 +1890,25 @@ const metalOxygenIgnitionData = {
     function updateAudio(temp, burning) {
         if (!audioCtx) return;
         try {
-            if (audioCtx.state === 'suspended') {
+            if (audioCtx.state === 'suspended' && isHeating) {
                 audioCtx.resume();
             }
 
-            // Torch volume scales with temperature (0 at 20°C, max ~0.25 at 3500°C)
+            // Torch volume scales with temperature (strictly 0 when heating is OFF)
             if (torchGain) {
-                const targetTorchVol = temp > 50 ? Math.min(0.22, 0.03 + (temp / 3500) * 0.19) : 0;
-                torchGain.gain.setTargetAtTime(targetTorchVol, audioCtx.currentTime, 0.1);
+                const targetTorchVol = (isHeating && temp > 50) ? Math.min(0.22, 0.03 + (temp / 3500) * 0.19) : 0;
+                torchGain.gain.setTargetAtTime(targetTorchVol, audioCtx.currentTime, 0.08);
             }
 
-            // Fire roar/crackle volume when ignited (boosted in pure oxygen & scales with temperature!)
+            // Fire roar/crackle volume when ignited (strictly 0 when heating is OFF)
             if (fireGain) {
                 let targetFireVol = 0;
-                if (burning) {
+                if (isHeating && burning) {
                     const baseVol = currentAtmosphere === 'oxygen' ? 0.35 : 0.24;
                     const tempOver = Math.min(1, Math.max(0, (temp - 300) / 3200));
                     targetFireVol = Math.min(0.55, baseVol + tempOver * 0.22);
                 }
-                fireGain.gain.setTargetAtTime(targetFireVol, audioCtx.currentTime, 0.15);
+                fireGain.gain.setTargetAtTime(targetFireVol, audioCtx.currentTime, 0.12);
             }
         } catch (e) {}
     }
@@ -2171,7 +2175,7 @@ const metalOxygenIgnitionData = {
 
         const m = metalCombustionData[selectedMetalKey];
         const activeThreshold = getActiveIgnitionThreshold(selectedMetalKey);
-        const isBurning = m && m.isCombustible && currentTemp >= activeThreshold;
+        const isBurning = isHeating && m && m.isCombustible && currentTemp >= activeThreshold;
 
         // Origin of combustion: ceramic crucible center
         const originX = canvas.width / 2;
@@ -2233,34 +2237,40 @@ const metalOxygenIgnitionData = {
         animFrameId = requestAnimationFrame(renderFlameLoop);
     }
 
-    // Update Combustion Status & Visuals based on Temperature
+    // Update Combustion Status & Visuals based on Temperature & Heating state
     function updateCombustionState() {
         const m = metalCombustionData[selectedMetalKey];
         if (!m) return;
 
         const activeThreshold = getActiveIgnitionThreshold(selectedMetalKey);
-        const isBurning = m.isCombustible && currentTemp >= activeThreshold;
-        const tempRatio = (currentTemp - 20) / (3500 - 20);
+        const isBurning = isHeating && m.isCombustible && currentTemp >= activeThreshold;
+        const effectiveTemp = isHeating ? currentTemp : 20;
+        const tempRatio = (effectiveTemp - 20) / (3500 - 20);
 
-        // Blowtorch Flame Jet dynamic length and intensity
+        // Blowtorch Flame Jet dynamic length and intensity (hidden/extinguished when heating is OFF)
         if (torchFlameJet) {
-            const jetLength = Math.max(8, tempRatio * (currentAtmosphere === 'oxygen' ? 175 : 155));
-            const jetWidth = Math.max(5, (currentAtmosphere === 'oxygen' ? 8 : 7) + tempRatio * 16);
-            torchFlameJet.style.width = `${jetLength}px`;
-            torchFlameJet.style.height = `${jetWidth}px`;
-            
-            if (currentAtmosphere === 'oxygen') {
-                torchFlameJet.style.opacity = '1';
-                torchFlameJet.style.background = 'linear-gradient(90deg, #ffffff, #00f0ff 40%, #7928ca 80%, transparent)';
-            } else if (currentTemp <= 100) {
-                torchFlameJet.style.opacity = '0.2';
-                torchFlameJet.style.background = 'linear-gradient(90deg, #60a5fa, transparent)';
-            } else if (currentTemp <= 1200) {
-                torchFlameJet.style.opacity = '0.75';
-                torchFlameJet.style.background = 'linear-gradient(90deg, #38bdf8, #0284c7 60%, transparent)';
+            if (!isHeating) {
+                torchFlameJet.style.opacity = '0';
+                torchFlameJet.style.width = '0px';
             } else {
-                torchFlameJet.style.opacity = '1';
-                torchFlameJet.style.background = 'linear-gradient(90deg, #ffffff, #67e8f9 35%, #0284c7 75%, transparent)';
+                const jetLength = Math.max(8, tempRatio * (currentAtmosphere === 'oxygen' ? 175 : 155));
+                const jetWidth = Math.max(5, (currentAtmosphere === 'oxygen' ? 8 : 7) + tempRatio * 16);
+                torchFlameJet.style.width = `${jetLength}px`;
+                torchFlameJet.style.height = `${jetWidth}px`;
+                
+                if (currentAtmosphere === 'oxygen') {
+                    torchFlameJet.style.opacity = '1';
+                    torchFlameJet.style.background = 'linear-gradient(90deg, #ffffff, #00f0ff 40%, #7928ca 80%, transparent)';
+                } else if (currentTemp <= 100) {
+                    torchFlameJet.style.opacity = '0.2';
+                    torchFlameJet.style.background = 'linear-gradient(90deg, #60a5fa, transparent)';
+                } else if (currentTemp <= 1200) {
+                    torchFlameJet.style.opacity = '0.75';
+                    torchFlameJet.style.background = 'linear-gradient(90deg, #38bdf8, #0284c7 60%, transparent)';
+                } else {
+                    torchFlameJet.style.opacity = '1';
+                    torchFlameJet.style.background = 'linear-gradient(90deg, #ffffff, #67e8f9 35%, #0284c7 75%, transparent)';
+                }
             }
         }
 
@@ -2324,7 +2334,15 @@ const metalOxygenIgnitionData = {
         // Status Badge & HUD
         const atmosName = currentAtmosphere === 'oxygen' ? 'PURE OXYGEN' : 'AIR';
         if (statusBadge && statusText) {
-            if (!m.isCombustible) {
+            if (!isHeating) {
+                statusBadge.className = 'chamber-status-badge';
+                statusText.textContent = `HEATING OFF (${atmosName}) - TURN HEATING ON TO OPERATE BLOWTORCH`;
+                if (targetBadge) targetBadge.innerHTML = 'Status: <strong style="color:#64748b;">HEATING OFF</strong>';
+                if (pyroIgnTemp) {
+                    pyroIgnTemp.textContent = 'Heating Off';
+                    pyroIgnTemp.style.color = '#64748b';
+                }
+            } else if (!m.isCombustible) {
                 statusBadge.className = 'chamber-status-badge noble';
                 statusText.textContent = `NOBLE METAL: IMMUNE TO IGNITION IN ${atmosName} (TESTED AT ${currentTemp}°C)`;
                 if (targetBadge) targetBadge.innerHTML = 'Status: <strong style="color:#c084fc;">NOBLE (IMMUNE)</strong>';
@@ -2355,9 +2373,52 @@ const metalOxygenIgnitionData = {
         updateAudio(currentTemp, isBurning);
     }
 
-    // Slider Event
+    // Toggle Heating On / Off
+    function setHeating(enable) {
+        isHeating = enable;
+        if (isHeating) {
+            initAudio();
+        }
+
+        if (heatingPowerBtn) {
+            if (isHeating) {
+                heatingPowerBtn.classList.add('active');
+                heatingPowerBtn.innerHTML = '<span class="power-icon">🔥</span><span class="power-label">Heating: <strong>ON</strong></span>';
+            } else {
+                heatingPowerBtn.classList.remove('active');
+                heatingPowerBtn.innerHTML = '<span class="power-icon">⭕</span><span class="power-label">Heating: <strong>OFF</strong></span>';
+            }
+        }
+
+        // Disable slider & presets when heating is OFF
+        if (slider) {
+            slider.disabled = !isHeating;
+        }
+        if (sliderWrap) {
+            sliderWrap.classList.toggle('disabled', !isHeating);
+        }
+        if (presetsWrap) {
+            presetsWrap.classList.toggle('disabled', !isHeating);
+        }
+
+        if (!isHeating) {
+            particles = [];
+            sparks = [];
+        }
+
+        updateCombustionState();
+    }
+
+    if (heatingPowerBtn) {
+        heatingPowerBtn.addEventListener('click', () => {
+            setHeating(!isHeating);
+        });
+    }
+
+    // Slider Event (only interactive when heating is ON)
     if (slider) {
         slider.addEventListener('input', (e) => {
+            if (!isHeating) return;
             initAudio();
             currentTemp = parseInt(e.target.value, 10);
             if (tempNum) tempNum.textContent = currentTemp;
@@ -2366,9 +2427,10 @@ const metalOxygenIgnitionData = {
         });
     }
 
-    // Preset Buttons
+    // Preset Buttons (only responsive when heating is ON)
     presetBtns.forEach(btn => {
         btn.addEventListener('click', () => {
+            if (!isHeating) return;
             initAudio();
             const targetT = parseInt(btn.dataset.temp, 10);
             animateSliderTo(targetT);
@@ -2399,7 +2461,8 @@ const metalOxygenIgnitionData = {
         requestAnimationFrame(step);
     }
 
-    // Initial boot
+    // Initial boot (heating default is OFF)
+    setHeating(false);
     renderInventory();
     selectMetal('Mg');
     renderFlameLoop();
