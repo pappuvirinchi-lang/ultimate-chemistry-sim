@@ -711,7 +711,14 @@ function triggerCataclysmShatterEffect() {
     }
     screenShatterContainer.appendChild(fragment);
 
-    // 3. Immediately disappear the actual website so it looks like it was smashed to pieces into the void!
+    // 3. Promote explosion canvas above the blackout void overlay so the mushroom cloud remains majestically visible!
+    if (explosionCanvas) {
+        explosionCanvas.classList.add('cataclysm-void-canvas');
+        explosionCanvas.width = window.innerWidth;
+        explosionCanvas.height = window.innerHeight;
+    }
+
+    // Immediately disappear the actual website so it looks like it was smashed to pieces into the void!
     siteWrapper.style.transition = 'opacity 0.08s ease-out';
     siteWrapper.style.opacity = '0';
 
@@ -719,7 +726,7 @@ function triggerCataclysmShatterEffect() {
     setTimeout(() => {
         cataclysmBlackout.className = 'cataclysm-blackout flash-instant';
 
-        // Clear all shatter pieces and active canvas animations while hidden in blackness
+        // Clear shatter plates and screen cracks while hidden in blackness (keeping the mushroom cloud alive!)
         setTimeout(() => {
             screenShatterContainer.classList.remove('active');
             screenShatterContainer.innerHTML = '';
@@ -727,12 +734,9 @@ function triggerCataclysmShatterEffect() {
                 screenCracks.classList.remove('active');
                 screenCracks.removeAttribute('data-crack-tier');
             }
-            particles = [];
-            mushroomClouds = [];
-            ctx.clearRect(0, 0, explosionCanvas.width, explosionCanvas.height);
         }, 150);
 
-        // 5. Rest in the void, then smoothly fade back into reality
+        // 5. Rest in the void (with mushroom cloud towering), then smoothly fade back into reality
         setTimeout(() => {
             siteWrapper.style.transition = 'opacity 2.5s cubic-bezier(0.16, 1, 0.3, 1)';
             siteWrapper.style.opacity = '1';
@@ -740,8 +744,13 @@ function triggerCataclysmShatterEffect() {
 
             setTimeout(() => {
                 cataclysmBlackout.className = 'cataclysm-blackout';
+                // Restore standard canvas positioning once site is fully faded back in
+                if (explosionCanvas) {
+                    explosionCanvas.classList.remove('cataclysm-void-canvas');
+                    resizeExplosionCanvas();
+                }
             }, 2800);
-        }, 850);
+        }, 1200);
 
     }, 280);
 }
@@ -890,9 +899,10 @@ class MushroomCloud {
             cap.angle += cap.rotSpeed;
         }
 
-        // Slow cinematic smoke dispersal
+        // Slow cinematic smoke dispersal (slower for Fr + HSbF6 so it billows and remains clearly visible in the void)
         if (this.torusRadius > this.maxTorusRadius * 0.85) {
-            this.alpha -= 0.007;
+            const decayRate = (this.metalKey === 'Fr' && this.liquidKey === 'hsbf6') ? 0.0035 : 0.007;
+            this.alpha -= decayRate;
         }
     }
 
@@ -1055,15 +1065,22 @@ reactBtn.addEventListener('click', () => {
             triggerCataclysmShatterEffect();
         }
 
-        // 5. Spawn burst particles
-        if (explosionCanvas.width !== explosionCanvas.offsetWidth || explosionCanvas.height !== explosionCanvas.offsetHeight) {
+        // 5. Spawn burst particles & mushroom cloud
+        const isCataclysm = activeMetal === 'Fr' && activeLiquid === 'hsbf6';
+        if (!isCataclysm && (explosionCanvas.width !== explosionCanvas.offsetWidth || explosionCanvas.height !== explosionCanvas.offsetHeight)) {
             resizeExplosionCanvas();
         }
-        const arenaRect = reactionArena ? reactionArena.getBoundingClientRect() : { width: 900, height: 420 };
-        const canvasRect = explosionCanvas.getBoundingClientRect();
-        // Exact flask center inside canvas coordinate system
-        const originX = (arenaRect.left + arenaRect.width / 2) - canvasRect.left;
-        const originY = (arenaRect.bottom - 75) - canvasRect.top;
+        
+        let originX, originY;
+        if (isCataclysm) {
+            originX = window.innerWidth / 2;
+            originY = window.innerHeight * 0.78;
+        } else {
+            const arenaRect = reactionArena ? reactionArena.getBoundingClientRect() : { width: 900, height: 420 };
+            const canvasRect = explosionCanvas.getBoundingClientRect();
+            originX = (arenaRect.left + arenaRect.width / 2) - canvasRect.left;
+            originY = (arenaRect.bottom - 75) - canvasRect.top;
+        }
         
         let speedMult = 1.4;
         if (details.shakeLevel === 'apocalyptic') speedMult = 3.8;
