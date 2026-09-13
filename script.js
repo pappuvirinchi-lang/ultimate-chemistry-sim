@@ -1896,9 +1896,14 @@ const metalOxygenIgnitionData = {
                 torchGain.gain.setTargetAtTime(targetTorchVol, audioCtx.currentTime, 0.1);
             }
 
-            // Fire roar/crackle volume when ignited (boosted in pure oxygen!)
+            // Fire roar/crackle volume when ignited (boosted in pure oxygen & scales with temperature!)
             if (fireGain) {
-                const targetFireVol = burning ? (currentAtmosphere === 'oxygen' ? 0.38 : 0.28) : 0;
+                let targetFireVol = 0;
+                if (burning) {
+                    const baseVol = currentAtmosphere === 'oxygen' ? 0.35 : 0.24;
+                    const tempOver = Math.min(1, Math.max(0, (temp - 300) / 3200));
+                    targetFireVol = Math.min(0.55, baseVol + tempOver * 0.22);
+                }
                 fireGain.gain.setTargetAtTime(targetFireVol, audioCtx.currentTime, 0.15);
             }
         } catch (e) {}
@@ -2065,17 +2070,17 @@ const metalOxygenIgnitionData = {
     let sparks = [];
 
     class FlameParticle {
-        constructor(x, y, palette, scale) {
-            this.x = x + (Math.random() - 0.5) * 36;
-            this.y = y + (Math.random() - 0.5) * 12;
+        constructor(x, y, palette, scale, speedMultiplier = 1.0, spread = 36) {
+            this.x = x + (Math.random() - 0.5) * spread;
+            this.y = y + (Math.random() - 0.5) * 14;
             this.palette = palette || ['#ffffff', '#ff9800', '#f44336'];
-            this.vx = (Math.random() - 0.5) * 1.8;
-            this.vy = -(Math.random() * 3.5 + 2.5) * (scale || 1);
+            this.vx = (Math.random() - 0.5) * 2.2 * Math.sqrt(speedMultiplier);
+            this.vy = -(Math.random() * 3.8 + 2.6) * (scale || 1) * speedMultiplier;
             this.size = (Math.random() * 22 + 14) * (scale || 1);
-            this.maxLife = Math.random() * 32 + 25;
+            this.maxLife = (Math.random() * 30 + 22) * Math.min(1.4, 0.8 + 0.3 * speedMultiplier);
             this.life = this.maxLife;
-            this.growth = (Math.random() * 0.4 + 0.2);
-            this.turbulence = Math.random() * 0.12 + 0.05;
+            this.growth = (Math.random() * 0.45 + 0.22) * Math.min(1.3, speedMultiplier);
+            this.turbulence = (Math.random() * 0.15 + 0.06) * Math.min(1.5, speedMultiplier);
             this.turbPhase = Math.random() * Math.PI * 2;
         }
 
@@ -2113,17 +2118,17 @@ const metalOxygenIgnitionData = {
     }
 
     class SparkParticle {
-        constructor(x, y, color) {
-            this.x = x + (Math.random() - 0.5) * 20;
-            this.y = y + (Math.random() - 0.5) * 10;
+        constructor(x, y, color, speedMultiplier = 1.0) {
+            this.x = x + (Math.random() - 0.5) * (20 * Math.min(1.8, speedMultiplier));
+            this.y = y + (Math.random() - 0.5) * 12;
             this.color = color || '#ffeb3b';
-            const angle = -Math.PI / 2 + (Math.random() - 0.5) * (currentAtmosphere === 'oxygen' ? 1.8 : 1.4);
-            const speed = (Math.random() * 7 + 4) * (currentAtmosphere === 'oxygen' ? 1.35 : 1.0);
+            const angle = -Math.PI / 2 + (Math.random() - 0.5) * (currentAtmosphere === 'oxygen' ? 2.0 : 1.5);
+            const speed = (Math.random() * 7 + 4) * (currentAtmosphere === 'oxygen' ? 1.4 : 1.0) * speedMultiplier;
             this.vx = Math.cos(angle) * speed;
             this.vy = Math.sin(angle) * speed;
             this.gravity = 0.18;
-            this.size = (Math.random() * 2.5 + 1.2) * (currentAtmosphere === 'oxygen' ? 1.25 : 1.0);
-            this.life = Math.random() * 35 + 20;
+            this.size = (Math.random() * 2.6 + 1.3) * (currentAtmosphere === 'oxygen' ? 1.3 : 1.0) * Math.min(1.5, Math.sqrt(speedMultiplier));
+            this.life = (Math.random() * 35 + 20) * Math.min(1.4, speedMultiplier);
             this.maxLife = this.life;
         }
 
@@ -2173,25 +2178,37 @@ const metalOxygenIgnitionData = {
         const originY = canvas.height * 0.72;
 
         if (isBurning) {
-            // Spawn flame particles (more voluminous & intense in pure O2)
-            const scaleMultiplier = currentAtmosphere === 'oxygen' ? 1.35 : 1.0;
-            const count = Math.min(12, Math.max(3, Math.floor(m.flameScale * (currentAtmosphere === 'oxygen' ? 7 : 5))));
+            // Thermal overdrive ratio: how much hotter than ignition threshold (1.0 at threshold up to 2.3 at 3500°C)
+            const tempSurplus = Math.max(0, currentTemp - activeThreshold);
+            const tempBoostFactor = Math.min(1.35, (tempSurplus / (3500 - activeThreshold || 1)) * 1.35);
+            const intensityMult = 1.0 + tempBoostFactor; // ranges from 1.0 to ~2.35
+            
+            // Atmosphere boost (pure oxygen further enhances turbulence and energy)
+            const atmosMult = currentAtmosphere === 'oxygen' ? 1.35 : 1.0;
+            const totalScale = m.flameScale * atmosMult * (0.85 + 0.45 * intensityMult);
+            const speedMultiplier = 0.9 + 0.55 * intensityMult;
+
+            // Spawn count scales dynamically with temperature
+            const baseCount = Math.floor(m.flameScale * (currentAtmosphere === 'oxygen' ? 6 : 4.5));
+            const count = Math.min(24, Math.max(3, Math.floor(baseCount * intensityMult)));
+            
+            const spreadWidth = 32 + tempBoostFactor * 30; // wider flame base as heat surges
             for (let i = 0; i < count; i++) {
-                particles.push(new FlameParticle(originX, originY, m.flamePalette, m.flameScale * scaleMultiplier));
+                particles.push(new FlameParticle(originX, originY, m.flamePalette, totalScale, speedMultiplier, spreadWidth));
             }
 
-            // Spawn sparks if applicable (amplified in pure oxygen!)
-            const sparkChance = currentAtmosphere === 'oxygen' ? 0.85 : 0.65;
+            // Spawn sparks if applicable (accelerates in frequency, count, and velocity at higher temperatures)
+            const sparkChance = Math.min(0.98, (currentAtmosphere === 'oxygen' ? 0.75 : 0.55) + tempBoostFactor * 0.3);
             if (m.hasSparks && Math.random() < sparkChance) {
-                const sparkCount = Math.floor(Math.random() * (currentAtmosphere === 'oxygen' ? 6 : 4)) + 1;
+                const sparkCount = Math.floor(Math.random() * (currentAtmosphere === 'oxygen' ? 5 : 3) * intensityMult) + 1;
                 for (let s = 0; s < sparkCount; s++) {
-                    sparks.push(new SparkParticle(originX, originY, m.sparkColor));
+                    sparks.push(new SparkParticle(originX, originY, m.sparkColor, speedMultiplier));
                 }
             }
         } else if (currentTemp >= (currentAtmosphere === 'oxygen' ? 450 : 600)) {
             // Hot incandescence heat shimmer
             if (Math.random() < 0.25) {
-                particles.push(new FlameParticle(originX, originY, ['#ff3d00', '#ff1744', '#212121'], 0.45));
+                particles.push(new FlameParticle(originX, originY, ['#ff3d00', '#ff1744', '#212121'], 0.45, 0.8, 24));
             }
         }
 
@@ -2247,13 +2264,16 @@ const metalOxygenIgnitionData = {
             }
         }
 
-        // Specimen incandescence glow
+        // Specimen incandescence glow (scales dynamically with temperature surplus)
         if (specimenGlow) {
             if (isBurning) {
                 const primaryColor = m.flamePalette && m.flamePalette.length > 1 ? m.flamePalette[1] : '#ff9800';
                 specimenGlow.style.opacity = '1';
-                const spread = currentAtmosphere === 'oxygen' ? 45 : 35;
-                specimenGlow.style.boxShadow = `inset 0 0 25px ${primaryColor}, 0 0 ${spread}px ${primaryColor}`;
+                const tempSurplus = Math.max(0, currentTemp - activeThreshold);
+                const surplusRatio = Math.min(1, tempSurplus / Math.max(1, 3500 - activeThreshold));
+                const spread = Math.round((currentAtmosphere === 'oxygen' ? 45 : 35) + surplusRatio * 40);
+                const insetSpread = Math.round(25 + surplusRatio * 20);
+                specimenGlow.style.boxShadow = `inset 0 0 ${insetSpread}px ${primaryColor}, 0 0 ${spread}px ${primaryColor}`;
             } else if (currentTemp >= 500) {
                 // Thermal incandescence (blackbody radiation)
                 const incRatio = Math.min(1, (currentTemp - 500) / 1500);
@@ -2265,12 +2285,15 @@ const metalOxygenIgnitionData = {
             }
         }
 
-        // Specimen image filter (heat glow / burn discoloration)
+        // Specimen image filter (intensifies radiance as temperature ascends)
         if (specimenImg) {
             if (isBurning) {
-                specimenImg.style.filter = currentAtmosphere === 'oxygen' 
-                    ? 'brightness(1.75) contrast(1.35) drop-shadow(0 0 22px rgba(255,255,255,0.9))'
-                    : 'brightness(1.5) contrast(1.2) drop-shadow(0 0 15px rgba(255,255,255,0.7))';
+                const tempSurplus = Math.max(0, currentTemp - activeThreshold);
+                const surplusRatio = Math.min(1, tempSurplus / Math.max(1, 3500 - activeThreshold));
+                const brightness = (currentAtmosphere === 'oxygen' ? 1.75 : 1.45) + surplusRatio * 0.8;
+                const contrast = (currentAtmosphere === 'oxygen' ? 1.35 : 1.2) + surplusRatio * 0.35;
+                const shadowRadius = Math.round((currentAtmosphere === 'oxygen' ? 22 : 16) + surplusRatio * 22);
+                specimenImg.style.filter = `brightness(${brightness.toFixed(2)}) contrast(${contrast.toFixed(2)}) drop-shadow(0 0 ${shadowRadius}px rgba(255,255,255,0.9))`;
             } else if (currentTemp >= 500) {
                 const b = 1 + (currentTemp - 500) / 3000;
                 const sep = Math.min(0.6, (currentTemp - 500) / 2000);
@@ -2280,12 +2303,17 @@ const metalOxygenIgnitionData = {
             }
         }
 
-        // Furnace chamber ambient glow
+        // Furnace chamber ambient glow (scales with flame intensity)
         if (furnaceGlow) {
             if (isBurning) {
                 const primaryColor = m.flamePalette && m.flamePalette.length > 1 ? m.flamePalette[1] : '#ffaa00';
-                furnaceGlow.style.opacity = currentAtmosphere === 'oxygen' ? '0.95' : '0.85';
-                furnaceGlow.style.background = `radial-gradient(circle at 50% 65%, ${hexToRgba(primaryColor, currentAtmosphere === 'oxygen' ? 0.6 : 0.45)} 0%, ${hexToRgba(primaryColor, 0.18)} 55%, transparent 80%)`;
+                const tempSurplus = Math.max(0, currentTemp - activeThreshold);
+                const surplusRatio = Math.min(1, tempSurplus / Math.max(1, 3500 - activeThreshold));
+                furnaceGlow.style.opacity = Math.min(1.0, (currentAtmosphere === 'oxygen' ? 0.95 : 0.85) + surplusRatio * 0.15).toString();
+                const centerAlpha = (currentAtmosphere === 'oxygen' ? 0.6 : 0.45) + surplusRatio * 0.3;
+                const midAlpha = 0.18 + surplusRatio * 0.18;
+                const radSpread = Math.round(55 + surplusRatio * 20);
+                furnaceGlow.style.background = `radial-gradient(circle at 50% 65%, ${hexToRgba(primaryColor, centerAlpha)} 0%, ${hexToRgba(primaryColor, midAlpha)} ${radSpread}%, transparent 85%)`;
             } else {
                 const heatAlpha = Math.min(0.6, tempRatio * 0.6);
                 furnaceGlow.style.opacity = heatAlpha.toString();
