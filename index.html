@@ -503,17 +503,31 @@
     <section id="combustion-lab" class="combustion-lab-section">
         <div class="minigame-header">
             <span class="minigame-tag" style="background: rgba(255, 102, 0, 0.15); color: #ff7700; border-color: rgba(255, 102, 0, 0.4);">🔥 Thermal Pyrotechnics Sandbox</span>
-            <h2>Thermal Ignition Chamber: Elemental Metal Combustion in Air</h2>
-            <p>Select any of the 59 nuclearly stable metals, dial up the blowtorch temperature, and discover for yourself at which exact temperature each metal ignites into flames!</p>
+            <h2>Thermal Ignition Chamber: Elemental Metal Combustion Simulator</h2>
+            <p>Select any of the 59 nuclearly stable metals, toggle between <strong>Standard Air (21% O₂)</strong> and <strong>Pure Oxygen (100% O₂)</strong> atmospheres, and discover for yourself at which temperature each metal ignites into flames!</p>
         </div>
 
         <div class="combustion-workbench">
-            <!-- Filter & Category Bar -->
-            <div class="combustion-category-tabs" id="combustion-category-tabs">
-                <button class="comb-tab active" data-cat="all">All Metals (59)</button>
-                <button class="comb-tab" data-cat="combustible">Combustible Only</button>
-                <button class="comb-tab" data-cat="pyrophoric">Spontaneous / Pyrophoric</button>
-                <button class="comb-tab" data-cat="noble">Noble Metals</button>
+            <!-- Atmosphere & Category Bar -->
+            <div class="combustion-control-bar">
+                <div class="atmosphere-switch-wrap">
+                    <span class="ctrl-label">Chamber Atmosphere:</span>
+                    <div class="atmosphere-btn-group" id="atmosphere-btn-group">
+                        <button class="atmos-btn active" data-atmos="air">
+                            <span class="atmos-icon">💨</span> Standard Air <span class="atmos-sub">(21% O₂)</span>
+                        </button>
+                        <button class="atmos-btn" data-atmos="oxygen">
+                            <span class="atmos-icon">⚡</span> Pure Oxygen <span class="atmos-sub">(100% O₂)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="combustion-category-tabs" id="combustion-category-tabs">
+                    <button class="comb-tab active" data-cat="all">All Metals (59)</button>
+                    <button class="comb-tab" data-cat="combustible">Combustible Only</button>
+                    <button class="comb-tab" data-cat="pyrophoric">Spontaneous / Pyrophoric</button>
+                    <button class="comb-tab" data-cat="noble">Noble Metals</button>
+                </div>
             </div>
 
             <!-- Metal Grid Carousel Picker -->
@@ -626,7 +640,7 @@
                     </div>
 
                     <div class="pyro-equation-box">
-                        <span class="lbl">Balanced Oxidation Reaction in Air:</span>
+                        <span class="lbl" id="pyro-equation-label">Balanced Oxidation Reaction in Air:</span>
                         <div class="equation-text" id="pyro-equation">2Mg + O<sub>2</sub> &rarr; 2MgO + <strong>Blinding Light & Heat!</strong></div>
                     </div>
 

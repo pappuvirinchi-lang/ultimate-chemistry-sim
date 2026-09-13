@@ -1750,16 +1750,40 @@ const metalCombustionData = {
 
 
 
+// Pure Oxygen (100% O2) Thermal Auto-Ignition Temperatures (°C)
+// Elevated O2 partial pressure accelerates chemical oxidation kinetics,
+// lowering ignition thresholds dramatically while causing far more incandescent, violent deflagration.
+const metalOxygenIgnitionData = {
+    Li: 100, Be: 950, Na: 70, Mg: 380, Al: 550, K: 20, Ca: 420, Sc: 650, Ti: 450, V: 500,
+    Cr: 1250, Mn: 550, Fe: 550, Co: 700, Ni: 750, Cu: 800, Zn: 380, Ga: 750, Rb: 20, Sr: 380,
+    Y: 520, Zr: 350, Nb: 620, Mo: 450, Ru: 600, Rh: 9999, Pd: 9999, Ag: 9999, Cd: 260, In: 580,
+    Sn: 600, Cs: 20, Ba: 240, La: 280, Ce: 160, Pr: 230, Nd: 210, Sm: 180, Eu: 120, Gd: 220,
+    Tb: 200, Dy: 210, Ho: 210, Er: 220, Tm: 220, Yb: 280, Lu: 240, Hf: 450, Ta: 9999, W: 650,
+    Re: 750, Os: 9999, Ir: 9999, Pt: 9999, Au: 9999, Hg: 280, Tl: 220, Pb: 450, Bi: 380
+};
+
 (function initCombustionLab() {
     let currentTemp = 20;
     let selectedMetalKey = 'Mg';
     let currentFilter = 'all';
+    let currentAtmosphere = 'air'; // 'air' or 'oxygen'
     let isIgnited = false;
     let animFrameId = null;
+
+    // Helper to get active ignition threshold based on atmosphere
+    function getActiveIgnitionThreshold(metalKey) {
+        const m = metalCombustionData[metalKey];
+        if (!m || !m.isCombustible) return 9999;
+        if (currentAtmosphere === 'oxygen') {
+            return metalOxygenIgnitionData[metalKey] !== undefined ? metalOxygenIgnitionData[metalKey] : m.ignTemp;
+        }
+        return m.ignTemp;
+    }
 
     // DOM Elements
     const tray = document.getElementById('metal-inventory-tray');
     const filterTabs = document.querySelectorAll('.comb-tab');
+    const atmosBtns = document.querySelectorAll('.atmos-btn');
     const slider = document.getElementById('blowtorch-temp-slider');
     const tempNum = document.getElementById('temp-val-display');
     const tempF = document.getElementById('temp-f-display');
@@ -1783,6 +1807,7 @@ const metalCombustionData = {
     const pyroFlameColor = document.getElementById('pyro-flame-color');
     const pyroOxide = document.getElementById('pyro-oxide');
     const pyroHeat = document.getElementById('pyro-heat');
+    const pyroEquationLabel = document.getElementById('pyro-equation-label');
     const pyroEquation = document.getElementById('pyro-equation');
     const pyroNotes = document.getElementById('pyro-notes');
     const pyroUse = document.getElementById('pyro-use');
@@ -1871,9 +1896,9 @@ const metalCombustionData = {
                 torchGain.gain.setTargetAtTime(targetTorchVol, audioCtx.currentTime, 0.1);
             }
 
-            // Fire roar/crackle volume when ignited
+            // Fire roar/crackle volume when ignited (boosted in pure oxygen!)
             if (fireGain) {
-                const targetFireVol = burning ? 0.28 : 0;
+                const targetFireVol = burning ? (currentAtmosphere === 'oxygen' ? 0.38 : 0.28) : 0;
                 fireGain.gain.setTargetAtTime(targetFireVol, audioCtx.currentTime, 0.15);
             }
         } catch (e) {}
@@ -1887,7 +1912,8 @@ const metalCombustionData = {
 
         keys.forEach(key => {
             const m = metalCombustionData[key];
-            const isPyrophoric = m.isCombustible && m.ignTemp <= 100;
+            const activeThreshold = getActiveIgnitionThreshold(key);
+            const isPyrophoric = m.isCombustible && activeThreshold <= 100;
             const isNoble = !m.isCombustible;
 
             let show = false;
@@ -1923,6 +1949,28 @@ const metalCombustionData = {
             filterTabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             currentFilter = tab.dataset.cat;
+            renderInventory();
+        });
+    });
+
+    // Atmosphere Toggle Buttons (Standard Air vs Pure Oxygen)
+    atmosBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            initAudio();
+            atmosBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentAtmosphere = btn.dataset.atmos;
+
+            // Update dynamic labels
+            if (pyroEquationLabel) {
+                pyroEquationLabel.textContent = currentAtmosphere === 'oxygen' 
+                    ? 'Balanced Oxidation Reaction in Pure Oxygen (100% O₂):' 
+                    : 'Balanced Oxidation Reaction in Air (21% O₂):';
+            }
+
+            particles = [];
+            sparks = [];
+            updateCombustionState();
             renderInventory();
         });
     });
@@ -1971,7 +2019,7 @@ const metalCombustionData = {
 
         if (pyroIgnTemp) {
             if (!m.isCombustible) {
-                pyroIgnTemp.textContent = 'Immune (Does Not Burn in Air)';
+                pyroIgnTemp.textContent = 'Immune (Does Not Burn)';
                 pyroIgnTemp.style.color = '#a78bfa';
             } else {
                 pyroIgnTemp.textContent = 'Unignited (Dial heat to test)';
@@ -1991,6 +2039,12 @@ const metalCombustionData = {
         if (pyroEquation) pyroEquation.textContent = m.equation;
         if (pyroNotes) pyroNotes.textContent = m.notes;
         if (pyroUse) pyroUse.textContent = m.use;
+
+        if (pyroEquationLabel) {
+            pyroEquationLabel.textContent = currentAtmosphere === 'oxygen' 
+                ? 'Balanced Oxidation Reaction in Pure Oxygen (100% O₂):' 
+                : 'Balanced Oxidation Reaction in Air (21% O₂):';
+        }
 
         // Target badge (discovery mode - never reveal exact threshold)
         if (targetBadge) {
@@ -2036,18 +2090,18 @@ const metalCombustionData = {
 
         draw(ctx) {
             if (this.life <= 0) return;
-            const progress = 1 - (this.life / this.maxLife); // 0 (start) to 1 (death)
+            const progress = 1 - (this.life / this.maxLife);
             const colorIdx = Math.min(this.palette.length - 1, Math.floor(progress * this.palette.length));
             const baseColor = this.palette[colorIdx];
 
-            const alpha = Math.max(0, (1 - progress) * 0.75);
+            const alpha = Math.max(0, (1 - progress) * (currentAtmosphere === 'oxygen' ? 0.9 : 0.75));
 
             ctx.save();
             ctx.globalCompositeOperation = 'lighter';
             const rad = Math.max(1, this.size);
             const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, rad);
             grad.addColorStop(0, hexToRgba(this.palette[0], alpha));
-            grad.addColorStop(0.4, hexToRgba(baseColor, alpha * 0.8));
+            grad.addColorStop(0.4, hexToRgba(baseColor, alpha * 0.85));
             grad.addColorStop(1, hexToRgba(baseColor, 0));
 
             ctx.fillStyle = grad;
@@ -2063,12 +2117,12 @@ const metalCombustionData = {
             this.x = x + (Math.random() - 0.5) * 20;
             this.y = y + (Math.random() - 0.5) * 10;
             this.color = color || '#ffeb3b';
-            const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.4;
-            const speed = Math.random() * 7 + 4;
+            const angle = -Math.PI / 2 + (Math.random() - 0.5) * (currentAtmosphere === 'oxygen' ? 1.8 : 1.4);
+            const speed = (Math.random() * 7 + 4) * (currentAtmosphere === 'oxygen' ? 1.35 : 1.0);
             this.vx = Math.cos(angle) * speed;
             this.vy = Math.sin(angle) * speed;
             this.gravity = 0.18;
-            this.size = Math.random() * 2.5 + 1.2;
+            this.size = (Math.random() * 2.5 + 1.2) * (currentAtmosphere === 'oxygen' ? 1.25 : 1.0);
             this.life = Math.random() * 35 + 20;
             this.maxLife = this.life;
         }
@@ -2111,27 +2165,30 @@ const metalCombustionData = {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const m = metalCombustionData[selectedMetalKey];
-        const isBurning = m && m.isCombustible && currentTemp >= m.ignTemp;
+        const activeThreshold = getActiveIgnitionThreshold(selectedMetalKey);
+        const isBurning = m && m.isCombustible && currentTemp >= activeThreshold;
 
         // Origin of combustion: ceramic crucible center
         const originX = canvas.width / 2;
         const originY = canvas.height * 0.72;
 
         if (isBurning) {
-            // Spawn flame particles
-            const count = Math.min(8, Math.max(3, Math.floor(m.flameScale * 5)));
+            // Spawn flame particles (more voluminous & intense in pure O2)
+            const scaleMultiplier = currentAtmosphere === 'oxygen' ? 1.35 : 1.0;
+            const count = Math.min(12, Math.max(3, Math.floor(m.flameScale * (currentAtmosphere === 'oxygen' ? 7 : 5))));
             for (let i = 0; i < count; i++) {
-                particles.push(new FlameParticle(originX, originY, m.flamePalette, m.flameScale));
+                particles.push(new FlameParticle(originX, originY, m.flamePalette, m.flameScale * scaleMultiplier));
             }
 
-            // Spawn sparks if applicable
-            if (m.hasSparks && Math.random() < 0.65) {
-                const sparkCount = Math.floor(Math.random() * 4) + 1;
+            // Spawn sparks if applicable (amplified in pure oxygen!)
+            const sparkChance = currentAtmosphere === 'oxygen' ? 0.85 : 0.65;
+            if (m.hasSparks && Math.random() < sparkChance) {
+                const sparkCount = Math.floor(Math.random() * (currentAtmosphere === 'oxygen' ? 6 : 4)) + 1;
                 for (let s = 0; s < sparkCount; s++) {
                     sparks.push(new SparkParticle(originX, originY, m.sparkColor));
                 }
             }
-        } else if (currentTemp >= 600) {
+        } else if (currentTemp >= (currentAtmosphere === 'oxygen' ? 450 : 600)) {
             // Hot incandescence heat shimmer
             if (Math.random() < 0.25) {
                 particles.push(new FlameParticle(originX, originY, ['#ff3d00', '#ff1744', '#212121'], 0.45));
@@ -2164,17 +2221,21 @@ const metalCombustionData = {
         const m = metalCombustionData[selectedMetalKey];
         if (!m) return;
 
-        const isBurning = m.isCombustible && currentTemp >= m.ignTemp;
+        const activeThreshold = getActiveIgnitionThreshold(selectedMetalKey);
+        const isBurning = m.isCombustible && currentTemp >= activeThreshold;
         const tempRatio = (currentTemp - 20) / (3500 - 20);
 
         // Blowtorch Flame Jet dynamic length and intensity
         if (torchFlameJet) {
-            const jetLength = Math.max(8, tempRatio * 155);
-            const jetWidth = Math.max(5, 7 + tempRatio * 16);
+            const jetLength = Math.max(8, tempRatio * (currentAtmosphere === 'oxygen' ? 175 : 155));
+            const jetWidth = Math.max(5, (currentAtmosphere === 'oxygen' ? 8 : 7) + tempRatio * 16);
             torchFlameJet.style.width = `${jetLength}px`;
             torchFlameJet.style.height = `${jetWidth}px`;
             
-            if (currentTemp <= 100) {
+            if (currentAtmosphere === 'oxygen') {
+                torchFlameJet.style.opacity = '1';
+                torchFlameJet.style.background = 'linear-gradient(90deg, #ffffff, #00f0ff 40%, #7928ca 80%, transparent)';
+            } else if (currentTemp <= 100) {
                 torchFlameJet.style.opacity = '0.2';
                 torchFlameJet.style.background = 'linear-gradient(90deg, #60a5fa, transparent)';
             } else if (currentTemp <= 1200) {
@@ -2191,7 +2252,8 @@ const metalCombustionData = {
             if (isBurning) {
                 const primaryColor = m.flamePalette && m.flamePalette.length > 1 ? m.flamePalette[1] : '#ff9800';
                 specimenGlow.style.opacity = '1';
-                specimenGlow.style.boxShadow = `inset 0 0 25px ${primaryColor}, 0 0 35px ${primaryColor}`;
+                const spread = currentAtmosphere === 'oxygen' ? 45 : 35;
+                specimenGlow.style.boxShadow = `inset 0 0 25px ${primaryColor}, 0 0 ${spread}px ${primaryColor}`;
             } else if (currentTemp >= 500) {
                 // Thermal incandescence (blackbody radiation)
                 const incRatio = Math.min(1, (currentTemp - 500) / 1500);
@@ -2206,7 +2268,9 @@ const metalCombustionData = {
         // Specimen image filter (heat glow / burn discoloration)
         if (specimenImg) {
             if (isBurning) {
-                specimenImg.style.filter = 'brightness(1.5) contrast(1.2) drop-shadow(0 0 15px rgba(255,255,255,0.7))';
+                specimenImg.style.filter = currentAtmosphere === 'oxygen' 
+                    ? 'brightness(1.75) contrast(1.35) drop-shadow(0 0 22px rgba(255,255,255,0.9))'
+                    : 'brightness(1.5) contrast(1.2) drop-shadow(0 0 15px rgba(255,255,255,0.7))';
             } else if (currentTemp >= 500) {
                 const b = 1 + (currentTemp - 500) / 3000;
                 const sep = Math.min(0.6, (currentTemp - 500) / 2000);
@@ -2220,8 +2284,8 @@ const metalCombustionData = {
         if (furnaceGlow) {
             if (isBurning) {
                 const primaryColor = m.flamePalette && m.flamePalette.length > 1 ? m.flamePalette[1] : '#ffaa00';
-                furnaceGlow.style.opacity = '0.85';
-                furnaceGlow.style.background = `radial-gradient(circle at 50% 65%, ${hexToRgba(primaryColor, 0.45)} 0%, ${hexToRgba(primaryColor, 0.15)} 55%, transparent 80%)`;
+                furnaceGlow.style.opacity = currentAtmosphere === 'oxygen' ? '0.95' : '0.85';
+                furnaceGlow.style.background = `radial-gradient(circle at 50% 65%, ${hexToRgba(primaryColor, currentAtmosphere === 'oxygen' ? 0.6 : 0.45)} 0%, ${hexToRgba(primaryColor, 0.18)} 55%, transparent 80%)`;
             } else {
                 const heatAlpha = Math.min(0.6, tempRatio * 0.6);
                 furnaceGlow.style.opacity = heatAlpha.toString();
@@ -2230,10 +2294,11 @@ const metalCombustionData = {
         }
 
         // Status Badge & HUD
+        const atmosName = currentAtmosphere === 'oxygen' ? 'PURE OXYGEN' : 'AIR';
         if (statusBadge && statusText) {
             if (!m.isCombustible) {
                 statusBadge.className = 'chamber-status-badge noble';
-                statusText.textContent = `NOBLE METAL: IMMUNE TO AIR IGNITION (TESTED AT ${currentTemp}°C)`;
+                statusText.textContent = `NOBLE METAL: IMMUNE TO IGNITION IN ${atmosName} (TESTED AT ${currentTemp}°C)`;
                 if (targetBadge) targetBadge.innerHTML = 'Status: <strong style="color:#c084fc;">NOBLE (IMMUNE)</strong>';
                 if (pyroIgnTemp) {
                     pyroIgnTemp.textContent = 'Immune (Does Not Burn)';
@@ -2241,18 +2306,18 @@ const metalCombustionData = {
                 }
             } else if (isBurning) {
                 statusBadge.className = 'chamber-status-badge burning';
-                statusText.textContent = `IGNITED! ACTIVE COMBUSTION AT ${currentTemp}°C (${m.flameColorName.toUpperCase()})`;
+                statusText.textContent = `IGNITED! ACTIVE COMBUSTION IN ${atmosName} AT ${currentTemp}°C (${m.flameColorName.toUpperCase()})`;
                 if (targetBadge) targetBadge.innerHTML = 'Status: <strong style="color:#ffaa00;">🔥 IGNITED & BURNING</strong>';
                 if (pyroIgnTemp) {
-                    pyroIgnTemp.textContent = `🔥 Ignited (Burns at ${currentTemp}°C)`;
+                    pyroIgnTemp.textContent = `🔥 Ignited in ${atmosName} (${currentTemp}°C)`;
                     pyroIgnTemp.style.color = '#ffaa00';
                 }
             } else {
                 statusBadge.className = 'chamber-status-badge';
-                statusText.textContent = currentTemp >= 600 ? 'HEATING UP... (GLOWING HOT, NOT YET IGNITED)' : 'UNIGNITED (INCREASE BLOWTORCH HEAT)';
+                statusText.textContent = currentTemp >= 600 ? `HEATING UP IN ${atmosName}... (INCANDESCENT, NOT YET IGNITED)` : `UNIGNITED IN ${atmosName} (INCREASE BLOWTORCH HEAT)`;
                 if (targetBadge) targetBadge.innerHTML = 'Status: <strong style="color:#8892b0;">UNIGNITED</strong>';
                 if (pyroIgnTemp) {
-                    pyroIgnTemp.textContent = currentTemp >= 600 ? 'Incandescent (Not Ignited)' : 'Unignited (Dial heat to test)';
+                    pyroIgnTemp.textContent = currentTemp >= 600 ? `Incandescent in ${atmosName} (Not Ignited)` : `Unignited in ${atmosName}`;
                     pyroIgnTemp.style.color = '#8892b0';
                 }
             }
@@ -2291,7 +2356,6 @@ const metalCombustionData = {
         function step(now) {
             const elapsed = now - startTime;
             const progress = Math.min(1, elapsed / duration);
-            // Ease out quad
             const ease = 1 - (1 - progress) * (1 - progress);
             currentTemp = Math.round(startT + diff * ease);
 
@@ -2312,4 +2376,3 @@ const metalCombustionData = {
     selectMetal('Mg');
     renderFlameLoop();
 })();
-
