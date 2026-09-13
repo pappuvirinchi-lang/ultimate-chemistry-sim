@@ -1524,11 +1524,11 @@ footer {
 }
 
 .metal-card-item {
-    flex: 0 0 100px;
+    flex: 0 0 105px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
-    padding: 0.65rem 0.4rem;
+    padding: 1.6rem 0.4rem 0.65rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1552,9 +1552,12 @@ footer {
     transform: translateY(-2px);
 }
 
+.card-metal-thumb,
 .metal-card-thumb {
-    width: 62px;
-    height: 62px;
+    width: 64px;
+    height: 64px;
+    max-width: 64px;
+    max-height: 64px;
     object-fit: contain;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
     margin-bottom: 0.4rem;
@@ -1577,19 +1580,47 @@ footer {
     width: 100%;
 }
 
+.card-atomic-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    background: rgba(0, 240, 255, 0.12);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    border-radius: 4px;
+    padding: 1px 4px;
+    line-height: 1;
+}
+
+.card-ign-tag,
 .metal-card-ign {
-    font-size: 0.68rem;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 0.62rem;
     font-weight: 700;
-    margin-top: 0.25rem;
+    padding: 1px 5px;
+    border-radius: 4px;
+    line-height: 1;
+    background: rgba(255, 170, 0, 0.15);
     color: #ffaa00;
+    border: 1px solid rgba(255, 170, 0, 0.3);
 }
 
+.card-ign-tag.noble,
 .metal-card-ign.noble {
-    color: #8892b0;
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border-color: rgba(168, 85, 247, 0.35);
 }
 
+.card-ign-tag.pyro,
 .metal-card-ign.pyro {
+    background: rgba(255, 51, 102, 0.18);
     color: #ff3366;
+    border-color: rgba(255, 51, 102, 0.4);
 }
 
 /* Main Grid Layout */
