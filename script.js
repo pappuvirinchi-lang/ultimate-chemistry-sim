@@ -1147,3 +1147,1164 @@ reactBtn.addEventListener('click', () => {
 
     }, 450);
 });
+
+
+// =========================================================================
+// SECTION: THERMAL AUTO-IGNITION & COMBUSTION LAB ENGINE
+// =========================================================================
+// =========================================================================
+// 59 Stable Metals: Thermal Auto-Ignition & Pyrotechnic Profile Compendium
+// =========================================================================
+const metalCombustionData = {
+    Li: {
+        num: 3, sym: 'Li', name: 'Lithium', series: 'Alkali Metal', img: 'assets/metals/png/li_lithium.png',
+        ignTemp: 180, isCombustible: true, flameColorName: 'Crimson Red',
+        flamePalette: ['#ffffff', '#ff1744', '#d50000', '#ff5252', '#ff8a80'],
+        sparkColor: '#ff8a80', hasSparks: false, flameScale: 1.1,
+        oxide: 'Lithium Oxide (Li₂O)', deltaH: '-598.8 kJ/mol',
+        equation: '4Li + O₂ → 2Li₂O',
+        notes: 'Ignites in air at ~180°C (near its melting point) and burns with a vivid crimson red flame into white Li₂O smoke.',
+        use: 'Used in pyrotechnic red signal stars and lithium battery electrode processing.'
+    },
+    Be: {
+        num: 4, sym: 'Be', name: 'Beryllium', series: 'Alkaline Earth Metal', img: 'assets/metals/png/be_beryllium.png',
+        ignTemp: 1200, isCombustible: true, flameColorName: 'Dazzling White Sparks',
+        flamePalette: ['#ffffff', '#e0f7fa', '#80deea', '#ffffff', '#b2ebf2'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.15,
+        oxide: 'Beryllium Oxide (BeO)', deltaH: '-609.4 kJ/mol',
+        equation: '2Be + O₂ → 2BeO',
+        notes: 'Resists oxidation due to a dense BeO passivation layer until high temperature (~1200°C), where it combusts with brilliant white sparks.',
+        use: 'Rocket nozzle ceramics, specialized aerospace mirrors, and neutron moderators.'
+    },
+    Na: {
+        num: 11, sym: 'Na', name: 'Sodium', series: 'Alkali Metal', img: 'assets/metals/png/na_sodium.png',
+        ignTemp: 115, isCombustible: true, flameColorName: 'Intense Golden Yellow (589 nm D-line)',
+        flamePalette: ['#ffffff', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722'],
+        sparkColor: '#ffeb3b', hasSparks: false, flameScale: 1.3,
+        oxide: 'Sodium Peroxide (Na₂O₂)', deltaH: '-510.9 kJ/mol',
+        equation: '2Na + O₂ → Na₂O₂',
+        notes: 'Melts at 98°C and catches fire in air around 115°C, burning with an intensely bright monochromatic yellow flame.',
+        use: 'Sodium vapor highway lamps, pyrotechnic yellow flares, and chemical reductions.'
+    },
+    Mg: {
+        num: 12, sym: 'Mg', name: 'Magnesium', series: 'Alkaline Earth Metal', img: 'assets/metals/png/mg_magnesium.png',
+        ignTemp: 473, isCombustible: true, flameColorName: 'Blinding White Ultraviolet',
+        flamePalette: ['#ffffff', '#ffffff', '#e0ffff', '#ffffff', '#80d8ff'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.45,
+        oxide: 'Magnesium Oxide (MgO)', deltaH: '-601.6 kJ/mol',
+        equation: '2Mg + O₂ → 2MgO',
+        notes: 'Famous demonstration metal: once ignited at 473°C, it burns at over 3,100°C with an unmistakable blinding ultraviolet-white brilliance.',
+        use: 'Emergency naval flares, stage sparklers, military incendiaries, and flash photography.'
+    },
+    Al: {
+        num: 13, sym: 'Al', name: 'Aluminium', series: 'Post-Transition Metal', img: 'assets/metals/png/al_aluminium.png',
+        ignTemp: 660, isCombustible: true, flameColorName: 'Brilliant Silver-White',
+        flamePalette: ['#ffffff', '#ffffff', '#cfd8dc', '#eceff1', '#90caf9'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.35,
+        oxide: 'Aluminium Oxide (Al₂O₃)', deltaH: '-1675.7 kJ/mol',
+        equation: '4Al + 3O₂ → 2Al₂O₃',
+        notes: 'Extremely exothermic combustion once the 660°C melting point disrupts its protective oxide coating, generating cascading silver starbursts.',
+        use: 'Space Shuttle solid rocket boosters, pyrotechnic flash powder, and thermite welding.'
+    },
+    K: {
+        num: 19, sym: 'K', name: 'Potassium', series: 'Alkali Metal', img: 'assets/metals/png/k_potassium.png',
+        ignTemp: 65, isCombustible: true, flameColorName: 'Lilac / Violet',
+        flamePalette: ['#ffffff', '#ea80fc', '#aa00ff', '#e040fb', '#7c4dff'],
+        sparkColor: '#ea80fc', hasSparks: false, flameScale: 1.25,
+        oxide: 'Potassium Superoxide (KO₂)', deltaH: '-284.5 kJ/mol',
+        equation: 'K + O₂ → KO₂',
+        notes: 'Pyrophoric metal: catches fire spontaneously or at slight warmth (65°C), forming potassium superoxide with a stunning lilac-violet flame.',
+        use: 'Submarine oxygen generation canisters (KO₂ scrubbers) and specialized atomic spectroscopy.'
+    },
+    Ca: {
+        num: 20, sym: 'Ca', name: 'Calcium', series: 'Alkaline Earth Metal', img: 'assets/metals/png/ca_calcium.png',
+        ignTemp: 600, isCombustible: true, flameColorName: 'Brick Red',
+        flamePalette: ['#ffffff', '#ff6d00', '#dd2c00', '#ff3d00', '#ffab91'],
+        sparkColor: '#ff6d00', hasSparks: true, flameScale: 1.2,
+        oxide: 'Calcium Oxide (CaO / Quicklime)', deltaH: '-635.1 kJ/mol',
+        equation: '2Ca + O₂ → 2CaO',
+        notes: 'Burns vigorously in hot air above 600°C with an intense brick-red flame and showers of white-hot embers, leaving quicklime ash.',
+        use: 'Steel desulfurization flux, pyrotechnic orange fire stars, and cement chemistry.'
+    },
+    Sc: {
+        num: 21, sym: 'Sc', name: 'Scandium', series: 'Transition Metal', img: 'assets/metals/png/sc_scandium.png',
+        ignTemp: 850, isCombustible: true, flameColorName: 'Yellow-Orange Sparks',
+        flamePalette: ['#ffffff', '#ffb74d', '#ff9800', '#f57c00', '#ffe0b2'],
+        sparkColor: '#ffb74d', hasSparks: true, flameScale: 1.05,
+        oxide: 'Scandium Oxide (Sc₂O₃)', deltaH: '-1908.8 kJ/mol',
+        equation: '4Sc + 3O₂ → 2Sc₂O₃',
+        notes: 'Burns in air at ~850°C to form yellowish-white Sc₂O₃ with golden sparks.',
+        use: 'High-intensity stadium metal-halide lamps and aerospace alloys.'
+    },
+    Ti: {
+        num: 22, sym: 'Ti', name: 'Titanium', series: 'Transition Metal', img: 'assets/metals/png/ti_titanium.png',
+        ignTemp: 610, isCombustible: true, flameColorName: 'Explosive White Crackling Starbursts',
+        flamePalette: ['#ffffff', '#ffffff', '#e1f5fe', '#81d4fa', '#ffffff'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.4,
+        oxide: 'Titanium Dioxide (TiO₂)', deltaH: '-944.0 kJ/mol',
+        equation: 'Ti + O₂ → TiO₂',
+        notes: 'Renowned in pyrotechnics: titanium shavings ignite with signature branching white crackling starburst sparks that pop loudly.',
+        use: 'Indoor concert pyrotechnics, stage fireworks, and titanium dioxide white pigment.'
+    },
+    V: {
+        num: 23, sym: 'V', name: 'Vanadium', series: 'Transition Metal', img: 'assets/metals/png/v_vanadium.png',
+        ignTemp: 660, isCombustible: true, flameColorName: 'Yellow-Green Sparks',
+        flamePalette: ['#ffffff', '#cddc39', '#8bc34a', '#afb42b', '#dce775'],
+        sparkColor: '#cddc39', hasSparks: true, flameScale: 1.1,
+        oxide: 'Vanadium Pentoxide (V₂O₅)', deltaH: '-1550.6 kJ/mol',
+        equation: '4V + 5O₂ → 2V₂O₅',
+        notes: 'Burns in air at ~660°C with yellow-green sparks, producing red-orange molten drops of V₂O₅.',
+        use: 'Industrial contact process catalyst for sulfuric acid and vanadium flow batteries.'
+    },
+    Cr: {
+        num: 24, sym: 'Cr', name: 'Chromium', series: 'Transition Metal', img: 'assets/metals/png/cr_chromium.png',
+        ignTemp: 1900, isCombustible: true, flameColorName: 'Silver-Blue Sparks',
+        flamePalette: ['#ffffff', '#90caf9', '#64b5f6', '#42a5f5', '#bbdefb'],
+        sparkColor: '#90caf9', hasSparks: true, flameScale: 1.0,
+        oxide: 'Chromium(III) Oxide (Cr₂O₃)', deltaH: '-1139.7 kJ/mol',
+        equation: '4Cr + 3O₂ → 2Cr₂O₃',
+        notes: 'Highly resistant to combustion; bulk chromium requires intense blowtorch heat (~1900°C) to spark and form dark green Cr₂O₃.',
+        use: 'Stainless steel oxidation resistance, hard chrome plating, and green ceramic glazes.'
+    },
+    Mn: {
+        num: 25, sym: 'Mn', name: 'Manganese', series: 'Transition Metal', img: 'assets/metals/png/mn_manganese.png',
+        ignTemp: 800, isCombustible: true, flameColorName: 'Greenish-White Sparks',
+        flamePalette: ['#ffffff', '#b2dfdb', '#80cbc4', '#4db6ac', '#e0f2f1'],
+        sparkColor: '#b2dfdb', hasSparks: true, flameScale: 1.1,
+        oxide: 'Manganese(II,III) Oxide (Mn₃O₄)', deltaH: '-1387.8 kJ/mol',
+        equation: '3Mn + 2O₂ → Mn₃O₄',
+        notes: 'Powder burns in air with bright greenish-white sparks to form brownish Mn₃O₄.',
+        use: 'Aluminium beverage cans, dry-cell batteries, and potassium permanganate oxidizers.'
+    },
+    Fe: {
+        num: 26, sym: 'Fe', name: 'Iron', series: 'Transition Metal', img: 'assets/metals/png/fe_iron.png',
+        ignTemp: 800, isCombustible: true, flameColorName: 'Golden Branching Sparks',
+        flamePalette: ['#ffffff', '#ffb300', '#ff8f00', '#ff6f00', '#ffe082'],
+        sparkColor: '#ffb300', hasSparks: true, flameScale: 1.35,
+        oxide: 'Iron(II,III) Oxide (Fe₃O₄ / Magnetite)', deltaH: '-1118.4 kJ/mol',
+        equation: '3Fe + 2O₂ → Fe₃O₄',
+        notes: 'Iron wool or filings ignite readily above 800°C, burning with the quintessential golden branching sparks seen in holiday sparklers.',
+        use: 'Traditional Fourth of July sparklers, thermite reactions, and steel metallurgy.'
+    },
+    Co: {
+        num: 27, sym: 'Co', name: 'Cobalt', series: 'Transition Metal', img: 'assets/metals/png/co_cobalt.png',
+        ignTemp: 900, isCombustible: true, flameColorName: 'Silver-White Sparks',
+        flamePalette: ['#ffffff', '#cfd8dc', '#b0bec5', '#90a4ae', '#eceff1'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.0,
+        oxide: 'Cobalt(II,III) Oxide (Co₃O₄)', deltaH: '-891.0 kJ/mol',
+        equation: '3Co + 2O₂ → Co₃O₄',
+        notes: 'Combusts at red heat (~900°C) with bright sparks, turning into black cobalt oxide.',
+        use: 'Lithium-ion EV batteries (NMC), Alnico permanent magnets, and cobalt blue pigments.'
+    },
+    Ni: {
+        num: 28, sym: 'Ni', name: 'Nickel', series: 'Transition Metal', img: 'assets/metals/png/ni_nickel.png',
+        ignTemp: 950, isCombustible: true, flameColorName: 'Silver Sparks',
+        flamePalette: ['#ffffff', '#eceff1', '#cfd8dc', '#b0bec5', '#ffffff'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 0.95,
+        oxide: 'Nickel(II) Oxide (NiO)', deltaH: '-239.7 kJ/mol',
+        equation: '2Ni + O₂ → 2NiO',
+        notes: 'Burns sluggishly in air above 950°C with silver-white sparks, forming a green-black NiO crust.',
+        use: 'Raney nickel hydrogenation catalysts, coin alloys, and rechargeable batteries.'
+    },
+    Cu: {
+        num: 29, sym: 'Cu', name: 'Copper', series: 'Transition Metal', img: 'assets/metals/png/cu_copper.png',
+        ignTemp: 1050, isCombustible: true, flameColorName: 'Emerald Green / Azure Blue',
+        flamePalette: ['#ffffff', '#00e676', '#00c853', '#00b0ff', '#1de9b6'],
+        sparkColor: '#00e676', hasSparks: false, flameScale: 1.3,
+        oxide: 'Copper(II) Oxide (CuO)', deltaH: '-157.3 kJ/mol',
+        equation: '2Cu + O₂ → 2CuO',
+        notes: 'Iconic flame test: heated copper vaporizes and tints the entire flame a brilliant, glowing emerald green and turquoise azure.',
+        use: 'Pyrotechnic green/blue firework stars, copper wiring, and architectural bronze.'
+    },
+    Zn: {
+        num: 30, sym: 'Zn', name: 'Zinc', series: 'Transition Metal', img: 'assets/metals/png/zn_zinc.png',
+        ignTemp: 500, isCombustible: true, flameColorName: 'Ghostly Cyan-Green with Dense White Smoke',
+        flamePalette: ['#ffffff', '#00e5ff', '#18ffff', '#00b8d4', '#84ffff'],
+        sparkColor: '#00e5ff', hasSparks: true, flameScale: 1.3,
+        oxide: 'Zinc Oxide (ZnO / Philosopher\'s Wool)', deltaH: '-350.5 kJ/mol',
+        equation: '2Zn + O₂ → 2ZnO',
+        notes: 'Boils at 907°C and burns vigorously with a ghostly cyan-green flame, billowing thick plumes of fluffy white ZnO smoke.',
+        use: 'Military smoke screen pots, galvanized anti-rust coatings, and sunscreen UV blockers.'
+    },
+    Ga: {
+        num: 31, sym: 'Ga', name: 'Gallium', series: 'Post-Transition Metal', img: 'assets/metals/png/ga_gallium.png',
+        ignTemp: 1000, isCombustible: true, flameColorName: 'Violet Flame',
+        flamePalette: ['#ffffff', '#ba68c8', '#ab47bc', '#8e24aa', '#e1bee7'],
+        sparkColor: '#ba68c8', hasSparks: false, flameScale: 1.0,
+        oxide: 'Gallium(III) Oxide (Ga₂O₃)', deltaH: '-1089.1 kJ/mol',
+        equation: '4Ga + 3O₂ → 2Ga₂O₃',
+        notes: 'Melts in hands at 29.8°C; liquid gallium requires blowtorch heat (~1000°C) to combust, emitting a delicate violet flame.',
+        use: 'Gallium nitride (GaN) fast chargers, blue LED lasers, and Galinstan liquid metal.'
+    },
+    Rb: {
+        num: 37, sym: 'Rb', name: 'Rubidium', series: 'Alkali Metal', img: 'assets/metals/png/rb_rubidium.png',
+        ignTemp: 20, isCombustible: true, flameColorName: 'Vivid Red-Violet',
+        flamePalette: ['#ffffff', '#ff1744', '#d500f9', '#aa00ff', '#ff4081'],
+        sparkColor: '#ff1744', hasSparks: false, flameScale: 1.35,
+        oxide: 'Rubidium Superoxide (RbO₂)', deltaH: '-279.0 kJ/mol',
+        equation: 'Rb + O₂ → RbO₂',
+        notes: 'SPONTANEOUSLY PYROPHORIC! Ignites in open room air at 20°C with an aggressive red-violet flame and reacts explosively with moisture.',
+        use: 'Global GPS atomic clocks, photocells, and quantum Bose-Einstein condensates.'
+    },
+    Sr: {
+        num: 38, sym: 'Sr', name: 'Strontium', series: 'Alkaline Earth Metal', img: 'assets/metals/png/sr_strontium.png',
+        ignTemp: 540, isCombustible: true, flameColorName: 'Deep Crimson Red',
+        flamePalette: ['#ffffff', '#ff1744', '#d50000', '#b71c1c', '#ff8a80'],
+        sparkColor: '#ff1744', hasSparks: true, flameScale: 1.35,
+        oxide: 'Strontium Oxide (SrO)', deltaH: '-592.0 kJ/mol',
+        equation: '2Sr + O₂ → 2SrO',
+        notes: 'The undisputed king of red fire: ignites around 540°C and burns with a deep, rich crimson red flame.',
+        use: 'Highway emergency road flares, fireworks crimson shells, and strontium titanate optics.'
+    },
+    Y: {
+        num: 39, sym: 'Y', name: 'Yttrium', series: 'Transition Metal', img: 'assets/metals/png/y_yttrium.png',
+        ignTemp: 700, isCombustible: true, flameColorName: 'Bright Red Sparks',
+        flamePalette: ['#ffffff', '#ff5252', '#ff1744', '#d50000', '#ff8a80'],
+        sparkColor: '#ff5252', hasSparks: true, flameScale: 1.1,
+        oxide: 'Yttrium Oxide (Y₂O₃)', deltaH: '-1905.3 kJ/mol',
+        equation: '4Y + 3O₂ → 2Y₂O₃',
+        notes: 'Burns in air at ~700°C with brilliant red sparks to yield white Y₂O₃ powder.',
+        use: 'YBCO high-temperature superconductors and Nd:YAG surgical lasers.'
+    },
+    Zr: {
+        num: 40, sym: 'Zr', name: 'Zirconium', series: 'Transition Metal', img: 'assets/metals/png/zr_zirconium.png',
+        ignTemp: 500, isCombustible: true, flameColorName: 'Blinding Golden-White Flash',
+        flamePalette: ['#ffffff', '#fff9c4', '#fff59d', '#ffffff', '#ffe082'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.45,
+        oxide: 'Zirconium Dioxide (ZrO₂)', deltaH: '-1100.6 kJ/mol',
+        equation: 'Zr + O₂ → ZrO₂',
+        notes: 'Extremely combustible when powdered: burns at ~4,400°C with a blinding sunburst flash and cascading white sparks.',
+        use: 'Photographic flashbulbs, nuclear fuel rod cladding, and cubic zirconia gems.'
+    },
+    Nb: {
+        num: 41, sym: 'Nb', name: 'Niobium', series: 'Transition Metal', img: 'assets/metals/png/nb_niobium.png',
+        ignTemp: 800, isCombustible: true, flameColorName: 'Bluish-White Sparks',
+        flamePalette: ['#ffffff', '#80d8ff', '#40c4ff', '#00b0ff', '#e1f5fe'],
+        sparkColor: '#80d8ff', hasSparks: true, flameScale: 1.05,
+        oxide: 'Niobium Pentoxide (Nb₂O₅)', deltaH: '-1899.5 kJ/mol',
+        equation: '4Nb + 5O₂ → 2Nb₂O₅',
+        notes: 'Combusts at ~800°C in oxygen with bluish-white sparks, forming dense white Nb₂O₅.',
+        use: 'Superconducting MRI magnet coils (NbTi) and jet engine rocket nozzles.'
+    },
+    Mo: {
+        num: 42, sym: 'Mo', name: 'Molybdenum', series: 'Transition Metal', img: 'assets/metals/png/mo_molybdenum.png',
+        ignTemp: 600, isCombustible: true, flameColorName: 'Yellow-Green',
+        flamePalette: ['#ffffff', '#cddc39', '#afb42b', '#d4e157', '#e8f5e9'],
+        sparkColor: '#cddc39', hasSparks: false, flameScale: 1.1,
+        oxide: 'Molybdenum Trioxide (MoO₃)', deltaH: '-745.1 kJ/mol',
+        equation: '2Mo + 3O₂ → 2MoO₃',
+        notes: 'Oxidizes to yellow MoO₃ vapor that sublimes and colors the hot gas a distinct yellow-green.',
+        use: 'Ultra-high strength alloy steels and molybdenum disulfide industrial grease.'
+    },
+    Ru: {
+        num: 44, sym: 'Ru', name: 'Ruthenium', series: 'Transition Metal', img: 'assets/metals/png/ru_ruthenium.png',
+        ignTemp: 800, isCombustible: true, flameColorName: 'White-Hot Sparks (Forms Toxic RuO₄)',
+        flamePalette: ['#ffffff', '#eceff1', '#cfd8dc', '#90a4ae', '#ffffff'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.0,
+        oxide: 'Ruthenium Dioxide (RuO₂) & Tetroxide (RuO₄)', deltaH: '-305.0 kJ/mol',
+        equation: 'Ru + O₂ → RuO₂',
+        notes: 'Burns in air at ~800°C with white sparks, generating volatile toxic RuO₄ fumes.',
+        use: 'Nobel-winning Grubbs olefin metathesis catalysts and hard disk write heads.'
+    },
+    Rh: {
+        num: 45, sym: 'Rh', name: 'Rhodium', series: 'Noble Transition Metal', img: 'assets/metals/png/rh_rhodium.png',
+        ignTemp: 9999, isCombustible: false, flameColorName: 'Non-Combustible (Noble Metal)',
+        flamePalette: ['#ffffff', '#e0f7fa', '#b2ebf2', '#80deea'],
+        sparkColor: '#ffffff', hasSparks: false, flameScale: 0,
+        oxide: 'None (Immune to oxidation)', deltaH: '0.0 kJ/mol',
+        equation: 'Rh + O₂ → No Reaction (Noble)',
+        notes: 'Completely noble: will NOT burn or oxidize even under extreme blowtorch heat.',
+        use: 'Automotive 3-way catalytic converters and corrosion-proof jewelry plating.'
+    },
+    Pd: {
+        num: 46, sym: 'Pd', name: 'Palladium', series: 'Noble Transition Metal', img: 'assets/metals/png/pd_palladium.png',
+        ignTemp: 9999, isCombustible: false, flameColorName: 'Non-Combustible (Absorbs H₂)',
+        flamePalette: ['#ffffff', '#eceff1', '#cfd8dc'],
+        sparkColor: '#ffffff', hasSparks: false, flameScale: 0,
+        oxide: 'None (Immune to open combustion)', deltaH: '0.0 kJ/mol',
+        equation: 'Pd + O₂ → No Reaction (Noble)',
+        notes: 'Noble transition metal that absorbs 900x its volume in hydrogen gas but does not burn in air.',
+        use: 'Suzuki-Miyaura carbon coupling catalysis and hydrogen fuel purification.'
+    },
+    Ag: {
+        num: 47, sym: 'Ag', name: 'Silver', series: 'Transition Metal', img: 'assets/metals/png/ag_silver.png',
+        ignTemp: 9999, isCombustible: false, flameColorName: 'Non-Combustible (Spits Oxygen When Molten)',
+        flamePalette: ['#ffffff', '#e8f5e9', '#c8e6c9'],
+        sparkColor: '#ffffff', hasSparks: false, flameScale: 0,
+        oxide: 'None (Ag₂O decomposes above 200°C)', deltaH: '-31.1 kJ/mol (Unstable)',
+        equation: 'Ag + O₂ → No Reaction (Oxide decomposes)',
+        notes: 'Silver will not burn; its oxide Ag₂O decomposes back to pure silver above 200°C. Molten silver absorbs oxygen and "spits" it out upon cooling.',
+        use: 'Highest electrical conductivity wiring, solar panels, and antimicrobial coatings.'
+    },
+    Cd: {
+        num: 48, sym: 'Cd', name: 'Cadmium', series: 'Transition Metal', img: 'assets/metals/png/cd_cadmium.png',
+        ignTemp: 350, isCombustible: true, flameColorName: 'Brick Red / Yellowish Flame',
+        flamePalette: ['#ffffff', '#ff7043', '#d84315', '#bf360c', '#ffab91'],
+        sparkColor: '#ff7043', hasSparks: false, flameScale: 1.15,
+        oxide: 'Cadmium Oxide (CdO)', deltaH: '-258.2 kJ/mol',
+        equation: '2Cd + O₂ → 2CdO',
+        notes: 'Ignites around 350°C and burns with a brick-red flame to generate toxic brown CdO fumes.',
+        use: 'Rechargeable NiCad batteries, solar panels, and neutron absorber control rods.'
+    },
+    In: {
+        num: 49, sym: 'In', name: 'Indium', series: 'Post-Transition Metal', img: 'assets/metals/png/in_indium.png',
+        ignTemp: 800, isCombustible: true, flameColorName: 'Deep Indigo Blue',
+        flamePalette: ['#ffffff', '#3d5afe', '#2979ff', '#00b0ff', '#8c9eff'],
+        sparkColor: '#3d5afe', hasSparks: false, flameScale: 1.25,
+        oxide: 'Indium(III) Oxide (In₂O₃)', deltaH: '-925.8 kJ/mol',
+        equation: '4In + 3O₂ → 2In₂O₃',
+        notes: 'Famous origin: named from the brilliant, glowing deep indigo blue spectral line it emits when burned.',
+        use: 'Indium Tin Oxide (ITO) transparent conductive screens in every smartphone.'
+    },
+    Sn: {
+        num: 50, sym: 'Sn', name: 'Tin', series: 'Post-Transition Metal', img: 'assets/metals/png/sn_tin.png',
+        ignTemp: 1000, isCombustible: true, flameColorName: 'Faint Lilac / White',
+        flamePalette: ['#ffffff', '#e1bee7', '#ce93d8', '#ba68c8', '#f3e5f5'],
+        sparkColor: '#e1bee7', hasSparks: false, flameScale: 1.0,
+        oxide: 'Tin(IV) Oxide (SnO₂ / Cassiterite)', deltaH: '-577.6 kJ/mol',
+        equation: 'Sn + O₂ → SnO₂',
+        notes: 'Melts at 232°C but requires intense heat (~1000°C) to burn with a gentle lilac-white flame.',
+        use: 'Lead-free circuit board solder, bronze alloys, and food tinplate cans.'
+    },
+    Cs: {
+        num: 55, sym: 'Cs', name: 'Caesium', series: 'Alkali Metal', img: 'assets/metals/png/cs_caesium.png',
+        ignTemp: 20, isCombustible: true, flameColorName: 'Brilliant Sky Blue (Azure)',
+        flamePalette: ['#ffffff', '#00b0ff', '#0091ea', '#00e5ff', '#80d8ff'],
+        sparkColor: '#00b0ff', hasSparks: false, flameScale: 1.4,
+        oxide: 'Caesium Superoxide (CsO₂)', deltaH: '-295.0 kJ/mol',
+        equation: 'Cs + O₂ → CsO₂',
+        notes: 'SPONTANEOUSLY PYROPHORIC! Catches fire immediately upon exposure to air at 20°C with an exquisite sky blue flame (Latin caesius).',
+        use: 'Primary SI standard for atomic clocks (defining 1 second) and ion rocket engines.'
+    },
+    Ba: {
+        num: 56, sym: 'Ba', name: 'Barium', series: 'Alkaline Earth Metal', img: 'assets/metals/png/ba_barium.png',
+        ignTemp: 400, isCombustible: true, flameColorName: 'Electric Apple Green',
+        flamePalette: ['#ffffff', '#76ff03', '#64dd17', '#00e676', '#b2ff59'],
+        sparkColor: '#76ff03', hasSparks: true, flameScale: 1.35,
+        oxide: 'Barium Oxide (BaO) & Peroxide (BaO₂)', deltaH: '-553.5 kJ/mol',
+        equation: '2Ba + O₂ → 2BaO',
+        notes: 'The pyrotechnic standard for vibrant green: ignites at ~400°C with an electric apple-green fireball.',
+        use: 'Emerald-green fireworks shells and medical barium GI contrast meals.'
+    },
+    La: {
+        num: 57, sym: 'La', name: 'Lanthanum', series: 'Lanthanide', img: 'assets/metals/png/la_lanthanum.png',
+        ignTemp: 440, isCombustible: true, flameColorName: 'White Sparks',
+        flamePalette: ['#ffffff', '#eceff1', '#cfd8dc', '#ffffff'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.1,
+        oxide: 'Lanthanum Oxide (La₂O₃)', deltaH: '-1793.7 kJ/mol',
+        equation: '4La + 3O₂ → 2La₂O₃',
+        notes: 'Ignites around 440°C in air, showering white sparks to yield white La₂O₃.',
+        use: 'Hybrid car NiMH batteries and camera lens optical glass.'
+    },
+    Ce: {
+        num: 58, sym: 'Ce', name: 'Cerium', series: 'Lanthanide', img: 'assets/metals/png/ce_cerium.png',
+        ignTemp: 160, isCombustible: true, flameColorName: 'Blinding White Lighter Flint Sparks',
+        flamePalette: ['#ffffff', '#fff9c4', '#ffffff', '#e0f7fa'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.4,
+        oxide: 'Cerium(IV) Oxide (CeO₂)', deltaH: '-1089.9 kJ/mol',
+        equation: 'Ce + O₂ → CeO₂',
+        notes: 'The pyrophoric metal inside lighter flints (Mischmetal): friction generates hot white spark showers instantly at ~160°C.',
+        use: 'Cigarette lighter flints, catalytic converter oxygen buffers, and glass polishing.'
+    },
+    Pr: {
+        num: 59, sym: 'Pr', name: 'Praseodymium', series: 'Lanthanide', img: 'assets/metals/png/pr_praseodymium.png',
+        ignTemp: 290, isCombustible: true, flameColorName: 'Pale Yellow Sparks',
+        flamePalette: ['#ffffff', '#fff59d', '#ffee58', '#fdd835'],
+        sparkColor: '#ffee58', hasSparks: true, flameScale: 1.15,
+        oxide: 'Praseodymium(III,IV) Oxide (Pr₆O₁₁)', deltaH: '-1809.6 kJ/mol',
+        equation: '12Pr + 11O₂ → 2Pr₆O₁₁',
+        notes: 'Ignites in air at 290°C with pale yellow sparks, forming dark brown Pr₆O₁₁.',
+        use: 'Didymium welder goggles (filtering sodium glare) and neodymium magnets.'
+    },
+    Nd: {
+        num: 60, sym: 'Nd', name: 'Neodymium', series: 'Lanthanide', img: 'assets/metals/png/nd_neodymium.png',
+        ignTemp: 340, isCombustible: true, flameColorName: 'Golden-Yellow Sparks',
+        flamePalette: ['#ffffff', '#ffe082', '#ffca28', '#ffb300'],
+        sparkColor: '#ffe082', hasSparks: true, flameScale: 1.2,
+        oxide: 'Neodymium Oxide (Nd₂O₃)', deltaH: '-1807.9 kJ/mol',
+        equation: '4Nd + 3O₂ → 2Nd₂O₃',
+        notes: 'Ignites at ~340°C with a shower of golden sparks, forming blue-gray Nd₂O₃.',
+        use: 'World\'s strongest permanent magnets (Nd₂Fe₁₄B) in EV motors and wind turbines.'
+    },
+    Sm: {
+        num: 62, sym: 'Sm', name: 'Samarium', series: 'Lanthanide', img: 'assets/metals/png/sm_samarium.png',
+        ignTemp: 150, isCombustible: true, flameColorName: 'Yellow Sparks',
+        flamePalette: ['#ffffff', '#fff176', '#ffee58', '#fbc02d'],
+        sparkColor: '#fff176', hasSparks: true, flameScale: 1.2,
+        oxide: 'Samarium Oxide (Sm₂O₃)', deltaH: '-1823.0 kJ/mol',
+        equation: '4Sm + 3O₂ → 2Sm₂O₃',
+        notes: 'Pyrophoric: ignites at ~150°C with brilliant yellow sparks, forming off-white Sm₂O₃.',
+        use: 'High-temperature Samarium-Cobalt (SmCo) aerospace magnets.'
+    },
+    Eu: {
+        num: 63, sym: 'Eu', name: 'Europium', series: 'Lanthanide', img: 'assets/metals/png/eu_europium.png',
+        ignTemp: 180, isCombustible: true, flameColorName: 'Crimson Red Glow',
+        flamePalette: ['#ffffff', '#ff1744', '#d50000', '#ff5252'],
+        sparkColor: '#ff1744', hasSparks: false, flameScale: 1.2,
+        oxide: 'Europium(III) Oxide (Eu₂O₃)', deltaH: '-1662.7 kJ/mol',
+        equation: '4Eu + 3O₂ → 2Eu₂O₃',
+        notes: 'Most reactive rare-earth: ignites around 180°C and oxidizes with a rich crimson glow.',
+        use: 'Anti-counterfeiting phosphors in Euro banknotes and red color phosphors.'
+    },
+    Gd: {
+        num: 64, sym: 'Gd', name: 'Gadolinium', series: 'Lanthanide', img: 'assets/metals/png/gd_gadolinium.png',
+        ignTemp: 600, isCombustible: true, flameColorName: 'White Sparks',
+        flamePalette: ['#ffffff', '#eceff1', '#cfd8dc', '#ffffff'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.05,
+        oxide: 'Gadolinium Oxide (Gd₂O₃)', deltaH: '-1819.6 kJ/mol',
+        equation: '4Gd + 3O₂ → 2Gd₂O₃',
+        notes: 'Burns in air at ~600°C with sparkling white flashes to yield white Gd₂O₃.',
+        use: 'Intravenous MRI magnetic contrast agents and magnetic refrigeration.'
+    },
+    Tb: {
+        num: 65, sym: 'Tb', name: 'Terbium', series: 'Lanthanide', img: 'assets/metals/png/tb_terbium.png',
+        ignTemp: 500, isCombustible: true, flameColorName: 'Intense Green Glow',
+        flamePalette: ['#ffffff', '#00e676', '#00c853', '#76ff03', '#b9f6ca'],
+        sparkColor: '#00e676', hasSparks: false, flameScale: 1.15,
+        oxide: 'Terbium(III,IV) Oxide (Tb₄O₇)', deltaH: '-1865.2 kJ/mol',
+        equation: '8Tb + 7O₂ → 2Tb₄O₇',
+        notes: 'Burns at ~500°C, emitting a characteristic glowing green spectral emission.',
+        use: 'Green phosphors in display tubes and naval sonar transducers.'
+    },
+    Dy: {
+        num: 66, sym: 'Dy', name: 'Dysprosium', series: 'Lanthanide', img: 'assets/metals/png/dy_dysprosium.png',
+        ignTemp: 650, isCombustible: true, flameColorName: 'Silver Sparks',
+        flamePalette: ['#ffffff', '#cfd8dc', '#b0bec5', '#ffffff'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.05,
+        oxide: 'Dysprosium Oxide (Dy₂O₃)', deltaH: '-1863.1 kJ/mol',
+        equation: '4Dy + 3O₂ → 2Dy₂O₃',
+        notes: 'Combusts at ~650°C with silver-white sparks into white Dy₂O₃.',
+        use: 'Heat stabilization of electric car drive motor magnets.'
+    },
+    Ho: {
+        num: 67, sym: 'Ho', name: 'Holmium', series: 'Lanthanide', img: 'assets/metals/png/ho_holmium.png',
+        ignTemp: 800, isCombustible: true, flameColorName: 'Yellow Sparks',
+        flamePalette: ['#ffffff', '#ffeb3b', '#fdd835', '#ffee58'],
+        sparkColor: '#ffeb3b', hasSparks: true, flameScale: 1.05,
+        oxide: 'Holmium Oxide (Ho₂O₃)', deltaH: '-1880.7 kJ/mol',
+        equation: '4Ho + 3O₂ → 2Ho₂O₃',
+        notes: 'Burns in air at ~800°C with yellow sparks, leaving pale yellow Ho₂O₃.',
+        use: 'Medical Holmium:YAG lasers for kidney stone fragmentation.'
+    },
+    Er: {
+        num: 68, sym: 'Er', name: 'Erbium', series: 'Lanthanide', img: 'assets/metals/png/er_erbium.png',
+        ignTemp: 850, isCombustible: true, flameColorName: 'Pink / Violet Glow',
+        flamePalette: ['#ffffff', '#f48fb1', '#ec407a', '#d81b60', '#f8bbd0'],
+        sparkColor: '#f48fb1', hasSparks: false, flameScale: 1.1,
+        oxide: 'Erbium Oxide (Er₂O₃)', deltaH: '-1897.9 kJ/mol',
+        equation: '4Er + 3O₂ → 2Er₂O₃',
+        notes: 'Burns in air at ~850°C, producing distinct pink-tinted Er₂O₃ oxide crystals.',
+        use: 'Erbium-doped fiber amplifiers (EDFAs) carrying global internet traffic.'
+    },
+    Tm: {
+        num: 69, sym: 'Tm', name: 'Thulium', series: 'Lanthanide', img: 'assets/metals/png/tm_thulium.png',
+        ignTemp: 900, isCombustible: true, flameColorName: 'Silver Sparks',
+        flamePalette: ['#ffffff', '#cfd8dc', '#eceff1', '#ffffff'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.0,
+        oxide: 'Thulium Oxide (Tm₂O₃)', deltaH: '-1888.7 kJ/mol',
+        equation: '4Tm + 3O₂ → 2Tm₂O₃',
+        notes: 'Burns sluggishly in air above 900°C with silver sparks, forming white Tm₂O₃.',
+        use: 'Portable medical X-ray sources and specialized tactical lasers.'
+    },
+    Yb: {
+        num: 70, sym: 'Yb', name: 'Ytterbium', series: 'Lanthanide', img: 'assets/metals/png/yb_ytterbium.png',
+        ignTemp: 400, isCombustible: true, flameColorName: 'Silver Sparks',
+        flamePalette: ['#ffffff', '#e0e0e0', '#cfd8dc', '#ffffff'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.1,
+        oxide: 'Ytterbium Oxide (Yb₂O₃)', deltaH: '-1814.6 kJ/mol',
+        equation: '4Yb + 3O₂ → 2Yb₂O₃',
+        notes: 'Combusts at ~400°C with white-silver sparks to form white Yb₂O₃.',
+        use: 'Next-generation optical atomic clocks with precision beyond 1 second in billions of years.'
+    },
+    Lu: {
+        num: 71, sym: 'Lu', name: 'Lutetium', series: 'Lanthanide', img: 'assets/metals/png/lu_lutetium.png',
+        ignTemp: 950, isCombustible: true, flameColorName: 'White Sparks',
+        flamePalette: ['#ffffff', '#eceff1', '#cfd8dc', '#ffffff'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.0,
+        oxide: 'Lutetium Oxide (Lu₂O₃)', deltaH: '-1878.2 kJ/mol',
+        equation: '4Lu + 3O₂ → 2Lu₂O₃',
+        notes: 'Heaviest lanthanide: burns at ~950°C with white sparks, yielding white Lu₂O₃.',
+        use: 'PET scan detector crystals and cancer radioligand therapy.'
+    },
+    Hf: {
+        num: 72, sym: 'Hf', name: 'Hafnium', series: 'Transition Metal', img: 'assets/metals/png/hf_hafnium.png',
+        ignTemp: 600, isCombustible: true, flameColorName: 'White Sparks',
+        flamePalette: ['#ffffff', '#eceff1', '#ffffff', '#cfd8dc'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.15,
+        oxide: 'Hafnium Dioxide (HfO₂)', deltaH: '-1144.7 kJ/mol',
+        equation: 'Hf + O₂ → HfO₂',
+        notes: 'Pyrophoric when finely powdered; bulk metal burns above 600°C with bright white sparks.',
+        use: 'High-k dielectric insulation in modern smartphone and PC processor gates.'
+    },
+    Ta: {
+        num: 73, sym: 'Ta', name: 'Tantalum', series: 'Refractory Transition Metal', img: 'assets/metals/png/ta_tantalum.png',
+        ignTemp: 9999, isCombustible: false, flameColorName: 'Non-Combustible (Extreme Refractory)',
+        flamePalette: ['#ffffff', '#90a4ae', '#78909c'],
+        sparkColor: '#ffffff', hasSparks: false, flameScale: 0,
+        oxide: 'Tantalum Pentoxide (Ta₂O₅ at extreme heat)', deltaH: '-2046.0 kJ/mol',
+        equation: 'Ta + O₂ → No Open Flame Combustion',
+        notes: 'Almost completely immune to attack by air, flames, and acids up to 1500°C. Does not burn with a flame.',
+        use: 'Miniature smartphone electrolytic capacitors and biocompatible bone implants.'
+    },
+    W: {
+        num: 74, sym: 'W', name: 'Tungsten', series: 'Transition Metal', img: 'assets/metals/png/w_tungsten.png',
+        ignTemp: 900, isCombustible: true, flameColorName: 'Incandescent White-Hot Glow',
+        flamePalette: ['#ffffff', '#ffffff', '#fff9c4', '#fff59d', '#ffe082'],
+        sparkColor: '#ffffff', hasSparks: false, flameScale: 1.2,
+        oxide: 'Tungsten Trioxide (WO₃)', deltaH: '-842.9 kJ/mol',
+        equation: '2W + 3O₂ → 2WO₃',
+        notes: 'Highest melting point of all elements (3,422°C): incandesces blindingly white-hot in air at 900°C as it slowly oxidizes into yellow WO₃ smoke.',
+        use: 'Incandescent bulb filaments, rocket engine nozzles, and armor-piercing sabots.'
+    },
+    Re: {
+        num: 75, sym: 'Re', name: 'Rhenium', series: 'Transition Metal', img: 'assets/metals/png/re_rhenium.png',
+        ignTemp: 1000, isCombustible: true, flameColorName: 'Silver Sparks',
+        flamePalette: ['#ffffff', '#eceff1', '#b0bec5', '#90a4ae'],
+        sparkColor: '#ffffff', hasSparks: true, flameScale: 1.0,
+        oxide: 'Rhenium Heptoxide (Re₂O₇)', deltaH: '-1240.0 kJ/mol',
+        equation: '4Re + 7O₂ → 2Re₂O₇',
+        notes: 'One of the rarest elements: burns above 1000°C with silver sparks, vaporizing into yellow Re₂O₇ smoke.',
+        use: 'Jet engine turbine blade superalloys and lead-free octane catalysts.'
+    },
+    Os: {
+        num: 76, sym: 'Os', name: 'Osmium', series: 'Transition Metal', img: 'assets/metals/png/os_osmium.png',
+        ignTemp: 9999, isCombustible: false, flameColorName: 'Non-Combustible (Forms Toxic OsO₄)',
+        flamePalette: ['#ffffff', '#80deea', '#4dd0e1'],
+        sparkColor: '#ffffff', hasSparks: false, flameScale: 0,
+        oxide: 'Osmium Tetroxide (OsO₄)', deltaH: '-394.1 kJ/mol',
+        equation: 'Os + 2O₂ → OsO₄ (No Open Flame)',
+        notes: 'Densest element on Earth (22.59 g/cm³); does not burn with an open flame, but slowly oxidizes to toxic, volatile OsO₄.',
+        use: 'Fountain pen tipping pellets and forensic fingerprint staining.'
+    },
+    Ir: {
+        num: 77, sym: 'Ir', name: 'Iridium', series: 'Noble Transition Metal', img: 'assets/metals/png/ir_iridium.png',
+        ignTemp: 9999, isCombustible: false, flameColorName: 'Non-Combustible (Corrosion Immune)',
+        flamePalette: ['#ffffff', '#b2ebf2', '#80deea'],
+        sparkColor: '#ffffff', hasSparks: false, flameScale: 0,
+        oxide: 'None (Immune to fire)', deltaH: '0.0 kJ/mol',
+        equation: 'Ir + O₂ → No Reaction (Noble)',
+        notes: 'The most corrosion-resistant metal known: completely immune to attack by air, fire, water, and aqua regia.',
+        use: 'High-performance aircraft spark plugs and crucible vessels for laser single crystals.'
+    },
+    Pt: {
+        num: 78, sym: 'Pt', name: 'Platinum', series: 'Noble Transition Metal', img: 'assets/metals/png/pt_platinum.png',
+        ignTemp: 9999, isCombustible: false, flameColorName: 'Non-Combustible (Noble Metal - Standard Flame Wire)',
+        flamePalette: ['#ffffff', '#eceff1', '#cfd8dc'],
+        sparkColor: '#ffffff', hasSparks: false, flameScale: 0,
+        oxide: 'None (Immune to open combustion)', deltaH: '0.0 kJ/mol',
+        equation: 'Pt + O₂ → No Reaction (Noble)',
+        notes: 'Noble metal that never oxidizes in flame. Used as the wire loop in laboratory flame tests specifically because it has zero flame color!',
+        use: 'Flame test loops, automotive catalytic converters, and cisplatin cancer drugs.'
+    },
+    Au: {
+        num: 79, sym: 'Au', name: 'Gold', series: 'Noble Transition Metal', img: 'assets/metals/png/au_gold.png',
+        ignTemp: 9999, isCombustible: false, flameColorName: 'None (Completely Noble)',
+        flamePalette: ['#ffffff', '#fff9c4', '#ffd54f'],
+        sparkColor: '#ffd54f', hasSparks: false, flameScale: 0,
+        oxide: 'None (Thermodynamically unreactive)', deltaH: '0.0 kJ/mol',
+        equation: 'Au + O₂ → No Reaction (Completely Noble)',
+        notes: 'The quintessential noble metal: completely unreactive with oxygen at any temperature. Melts into yellow liquid with zero oxidation.',
+        use: 'Gold bullion, electronics interconnect wire bonds, and James Webb Space Telescope mirrors.'
+    },
+    Hg: {
+        num: 80, sym: 'Hg', name: 'Mercury', series: 'Transition Metal', img: 'assets/metals/png/hg_mercury.png',
+        ignTemp: 350, isCombustible: true, flameColorName: 'Bluish-Green Glow with Toxic Vapor',
+        flamePalette: ['#ffffff', '#00e5ff', '#18ffff', '#00b0ff', '#80d8ff'],
+        sparkColor: '#00e5ff', hasSparks: false, flameScale: 1.0,
+        oxide: 'Mercury(II) Oxide (HgO)', deltaH: '-90.8 kJ/mol',
+        equation: '2Hg + O₂ → 2HgO',
+        notes: 'Liquid metal that reacts around 350°C with air to form red HgO scales while emitting a faint bluish-green glow.',
+        use: 'Mercury-vapor street lamps and historic thermometer barometers.'
+    },
+    Tl: {
+        num: 81, sym: 'Tl', name: 'Thallium', series: 'Post-Transition Metal', img: 'assets/metals/png/tl_thallium.png',
+        ignTemp: 300, isCombustible: true, flameColorName: 'Pure Emerald Green',
+        flamePalette: ['#ffffff', '#00e676', '#00c853', '#69f0ae', '#b9f6ca'],
+        sparkColor: '#00e676', hasSparks: false, flameScale: 1.3,
+        oxide: 'Thallium(I) Oxide (Tl₂O)', deltaH: '-178.6 kJ/mol',
+        equation: '4Tl + O₂ → 2Tl₂O',
+        notes: 'Named from Greek thallos (green twig): heated thallium burns at ~300°C with an intensely pure, beautiful emerald green flame.',
+        use: 'Low-melting optical glasses and medical cardiac perfusion scintigraphy.'
+    },
+    Pb: {
+        num: 82, sym: 'Pb', name: 'Lead', series: 'Post-Transition Metal', img: 'assets/metals/png/pb_lead.png',
+        ignTemp: 600, isCombustible: true, flameColorName: 'Faint Blue-White',
+        flamePalette: ['#ffffff', '#90caf9', '#64b5f6', '#42a5f5', '#bbdefb'],
+        sparkColor: '#90caf9', hasSparks: false, flameScale: 1.0,
+        oxide: 'Lead(II) Oxide (PbO / Litharge)', deltaH: '-217.3 kJ/mol',
+        equation: '2Pb + O₂ → 2PbO',
+        notes: 'Melts at 327°C; at red heat (~600°C), liquid lead burns sluggishly with a faint blue-white flame into yellow litharge (PbO).',
+        use: 'Lead-acid car batteries and hospital radiation X-ray aprons.'
+    },
+    Bi: {
+        num: 83, sym: 'Bi', name: 'Bismuth', series: 'Post-Transition Metal', img: 'assets/metals/png/bi_bismuth.png',
+        ignTemp: 500, isCombustible: true, flameColorName: 'Iridescent Azure Blue',
+        flamePalette: ['#ffffff', '#00b0ff', '#0091ea', '#80d8ff', '#e1f5fe'],
+        sparkColor: '#00b0ff', hasSparks: false, flameScale: 1.2,
+        oxide: 'Bismuth(III) Oxide (Bi₂O₃)', deltaH: '-573.9 kJ/mol',
+        equation: '4Bi + 3O₂ → 2Bi₂O₃',
+        notes: 'Heaviest non-toxic metal: burns in air at ~500°C with a magnificent iridescent azure blue flame into canary-yellow Bi₂O₃.',
+        use: 'Pepto-Bismol bismuth subsalicylate medicine and non-toxic shot.'
+    }
+};
+
+
+
+(function initCombustionLab() {
+    let currentTemp = 20;
+    let selectedMetalKey = 'Mg';
+    let currentFilter = 'all';
+    let isIgnited = false;
+    let animFrameId = null;
+
+    // DOM Elements
+    const tray = document.getElementById('metal-inventory-tray');
+    const filterTabs = document.querySelectorAll('.comb-tab');
+    const slider = document.getElementById('blowtorch-temp-slider');
+    const tempNum = document.getElementById('temp-val-display');
+    const tempF = document.getElementById('temp-f-display');
+    const targetBadge = document.getElementById('temp-threshold-badge');
+    const presetBtns = document.querySelectorAll('.preset-btn');
+
+    const specimenImg = document.getElementById('combustion-specimen-img');
+    const specimenGlow = document.getElementById('specimen-glow-overlay');
+    const torchRig = document.getElementById('blowtorch-rig');
+    const torchFlameJet = document.getElementById('torch-flame-jet');
+    const furnaceGlow = document.getElementById('furnace-glow');
+    const statusBadge = document.getElementById('chamber-status-badge');
+    const statusText = document.getElementById('chamber-status-text');
+
+    // Pyro Card Elements
+    const pyroNum = document.getElementById('pyro-num');
+    const pyroName = document.getElementById('pyro-name');
+    const pyroSymbol = document.getElementById('pyro-symbol');
+    const pyroStatusChip = document.getElementById('pyro-status-chip');
+    const pyroIgnTemp = document.getElementById('pyro-ign-temp');
+    const pyroFlameColor = document.getElementById('pyro-flame-color');
+    const pyroOxide = document.getElementById('pyro-oxide');
+    const pyroHeat = document.getElementById('pyro-heat');
+    const pyroEquation = document.getElementById('pyro-equation');
+    const pyroNotes = document.getElementById('pyro-notes');
+    const pyroUse = document.getElementById('pyro-use');
+
+    // Canvas Setup
+    const canvas = document.getElementById('combustion-flame-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+        if (!canvas) return;
+        canvas.width = canvas.parentElement.clientWidth || 600;
+        canvas.height = canvas.parentElement.clientHeight || 450;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Audio SFX using Web Audio API
+    let audioCtx = null;
+    let torchGain = null;
+    let fireGain = null;
+
+    function initAudio() {
+        if (audioCtx) return;
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+
+            // Blowtorch Hiss (White Noise via BufferSource)
+            const bufferSize = audioCtx.sampleRate * 2;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+
+            // Torch sound
+            const whiteNoise = audioCtx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+            whiteNoise.loop = true;
+
+            const torchFilter = audioCtx.createBiquadFilter();
+            torchFilter.type = 'bandpass';
+            torchFilter.frequency.value = 850;
+            torchFilter.Q.value = 1.2;
+
+            torchGain = audioCtx.createGain();
+            torchGain.gain.value = 0;
+
+            whiteNoise.connect(torchFilter);
+            torchFilter.connect(torchGain);
+            torchGain.connect(audioCtx.destination);
+            whiteNoise.start();
+
+            // Fire Crackle (Lowpass filtered noise with crackle pops)
+            const fireNoiseSrc = audioCtx.createBufferSource();
+            fireNoiseSrc.buffer = noiseBuffer;
+            fireNoiseSrc.loop = true;
+
+            const fireFilter = audioCtx.createBiquadFilter();
+            fireFilter.type = 'lowpass';
+            fireFilter.frequency.value = 400;
+
+            fireGain = audioCtx.createGain();
+            fireGain.gain.value = 0;
+
+            fireNoiseSrc.connect(fireFilter);
+            fireFilter.connect(fireGain);
+            fireGain.connect(audioCtx.destination);
+            fireNoiseSrc.start();
+        } catch (e) {
+            console.warn('Web Audio could not be initialized:', e);
+        }
+    }
+
+    function updateAudio(temp, burning) {
+        if (!audioCtx) return;
+        try {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Torch volume scales with temperature (0 at 20°C, max ~0.25 at 3500°C)
+            if (torchGain) {
+                const targetTorchVol = temp > 50 ? Math.min(0.22, 0.03 + (temp / 3500) * 0.19) : 0;
+                torchGain.gain.setTargetAtTime(targetTorchVol, audioCtx.currentTime, 0.1);
+            }
+
+            // Fire roar/crackle volume when ignited
+            if (fireGain) {
+                const targetFireVol = burning ? 0.28 : 0;
+                fireGain.gain.setTargetAtTime(targetFireVol, audioCtx.currentTime, 0.15);
+            }
+        } catch (e) {}
+    }
+
+    // Populate Inventory Carousel
+    function renderInventory() {
+        if (!tray) return;
+        tray.innerHTML = '';
+        const keys = Object.keys(metalCombustionData);
+
+        keys.forEach(key => {
+            const m = metalCombustionData[key];
+            const isPyrophoric = m.isCombustible && m.ignTemp <= 100;
+            const isNoble = !m.isCombustible;
+
+            let show = false;
+            if (currentFilter === 'all') show = true;
+            else if (currentFilter === 'combustible' && m.isCombustible) show = true;
+            else if (currentFilter === 'pyrophoric' && isPyrophoric) show = true;
+            else if (currentFilter === 'noble' && isNoble) show = true;
+
+            if (!show) return;
+
+            const card = document.createElement('div');
+            card.className = `metal-card-item ${key === selectedMetalKey ? 'active' : ''}`;
+            card.dataset.sym = key;
+
+            const tempTagClass = isNoble ? 'noble' : (isPyrophoric ? 'pyro' : 'comb');
+            const tempText = isNoble ? 'Non-Burning' : `${m.ignTemp}°C`;
+
+            card.innerHTML = `
+                <span class="card-atomic-badge">${m.num}</span>
+                <span class="card-ign-tag ${tempTagClass}">${tempText}</span>
+                <img src="${m.img}" alt="${m.name}" loading="lazy" class="card-metal-thumb" onerror="this.src='assets/metals/png/mg_magnesium.png'">
+                <div class="card-metal-name">${m.name}</div>
+                <div class="card-metal-sym">${m.sym}</div>
+            `;
+
+            card.addEventListener('click', () => {
+                selectMetal(key);
+            });
+
+            tray.appendChild(card);
+        });
+    }
+
+    // Filter Buttons
+    filterTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            filterTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentFilter = tab.dataset.cat;
+            renderInventory();
+        });
+    });
+
+    // Select Metal
+    function selectMetal(key) {
+        if (!metalCombustionData[key]) return;
+        selectedMetalKey = key;
+        const m = metalCombustionData[key];
+
+        // Update active class in tray
+        const cards = tray.querySelectorAll('.metal-card-item');
+        cards.forEach(c => {
+            if (c.dataset.sym === key) {
+                c.classList.add('active');
+                c.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            } else {
+                c.classList.remove('active');
+            }
+        });
+
+        // Specimen image
+        if (specimenImg) {
+            specimenImg.src = m.img;
+            specimenImg.alt = `${m.name} specimen`;
+        }
+
+        // Update Pyro Card Info
+        if (pyroNum) pyroNum.textContent = m.num;
+        if (pyroName) pyroName.textContent = m.name;
+        if (pyroSymbol) pyroSymbol.innerHTML = `${m.sym} &bull; ${m.series}`;
+        
+        if (pyroStatusChip) {
+            if (!m.isCombustible) {
+                pyroStatusChip.textContent = 'Noble / Non-Combustible';
+                pyroStatusChip.style.background = 'rgba(168, 85, 247, 0.2)';
+                pyroStatusChip.style.color = '#c084fc';
+                pyroStatusChip.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+            } else if (m.ignTemp <= 100) {
+                pyroStatusChip.textContent = 'Pyrophoric / Spontaneous';
+                pyroStatusChip.style.background = 'rgba(239, 68, 68, 0.2)';
+                pyroStatusChip.style.color = '#f87171';
+                pyroStatusChip.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            } else {
+                pyroStatusChip.textContent = 'Combustible';
+                pyroStatusChip.style.background = 'rgba(34, 197, 94, 0.2)';
+                pyroStatusChip.style.color = '#4ade80';
+                pyroStatusChip.style.borderColor = 'rgba(34, 197, 94, 0.4)';
+            }
+        }
+
+        if (pyroIgnTemp) {
+            if (!m.isCombustible) {
+                pyroIgnTemp.textContent = 'Immune (Does Not Burn in Air)';
+                pyroIgnTemp.style.color = '#a78bfa';
+            } else {
+                pyroIgnTemp.textContent = `${m.ignTemp} °C`;
+                pyroIgnTemp.style.color = m.ignTemp <= 100 ? '#ff5252' : '#ffaa00';
+            }
+        }
+
+        if (pyroFlameColor) {
+            pyroFlameColor.textContent = m.flameColorName;
+            const primaryColor = m.flamePalette && m.flamePalette.length > 1 ? m.flamePalette[1] : '#ffffff';
+            pyroFlameColor.style.color = primaryColor;
+            pyroFlameColor.style.textShadow = `0 0 10px ${primaryColor}`;
+        }
+
+        if (pyroOxide) pyroOxide.textContent = m.oxide;
+        if (pyroHeat) pyroHeat.textContent = m.deltaH;
+        if (pyroEquation) pyroEquation.textContent = m.equation;
+        if (pyroNotes) pyroNotes.textContent = m.notes;
+        if (pyroUse) pyroUse.textContent = m.use;
+
+        // Target badge
+        if (targetBadge) {
+            if (!m.isCombustible) {
+                targetBadge.innerHTML = 'Ignition Point: <strong style="color:#c084fc;">NOBLE (IMMUNE)</strong>';
+            } else {
+                targetBadge.innerHTML = `Ignition Point: <strong>${m.ignTemp} °C</strong>`;
+            }
+        }
+
+        particles = [];
+        sparks = [];
+        updateCombustionState();
+    }
+
+    // Particle Classes for Realistic Flame & Sparks
+    let particles = [];
+    let sparks = [];
+
+    class FlameParticle {
+        constructor(x, y, palette, scale) {
+            this.x = x + (Math.random() - 0.5) * 36;
+            this.y = y + (Math.random() - 0.5) * 12;
+            this.palette = palette || ['#ffffff', '#ff9800', '#f44336'];
+            this.vx = (Math.random() - 0.5) * 1.8;
+            this.vy = -(Math.random() * 3.5 + 2.5) * (scale || 1);
+            this.size = (Math.random() * 22 + 14) * (scale || 1);
+            this.maxLife = Math.random() * 32 + 25;
+            this.life = this.maxLife;
+            this.growth = (Math.random() * 0.4 + 0.2);
+            this.turbulence = Math.random() * 0.12 + 0.05;
+            this.turbPhase = Math.random() * Math.PI * 2;
+        }
+
+        update() {
+            this.turbPhase += this.turbulence;
+            this.vx += Math.sin(this.turbPhase) * 0.35;
+            this.x += this.vx;
+            this.y += this.vy;
+            this.size += this.growth;
+            this.life--;
+        }
+
+        draw(ctx) {
+            if (this.life <= 0) return;
+            const progress = 1 - (this.life / this.maxLife); // 0 (start) to 1 (death)
+            const colorIdx = Math.min(this.palette.length - 1, Math.floor(progress * this.palette.length));
+            const baseColor = this.palette[colorIdx];
+
+            const alpha = Math.max(0, (1 - progress) * 0.75);
+
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            const rad = Math.max(1, this.size);
+            const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, rad);
+            grad.addColorStop(0, hexToRgba(this.palette[0], alpha));
+            grad.addColorStop(0.4, hexToRgba(baseColor, alpha * 0.8));
+            grad.addColorStop(1, hexToRgba(baseColor, 0));
+
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, rad, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    class SparkParticle {
+        constructor(x, y, color) {
+            this.x = x + (Math.random() - 0.5) * 20;
+            this.y = y + (Math.random() - 0.5) * 10;
+            this.color = color || '#ffeb3b';
+            const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.4;
+            const speed = Math.random() * 7 + 4;
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            this.gravity = 0.18;
+            this.size = Math.random() * 2.5 + 1.2;
+            this.life = Math.random() * 35 + 20;
+            this.maxLife = this.life;
+        }
+
+        update() {
+            this.vy += this.gravity;
+            this.x += this.vx;
+            this.y += this.vy;
+            this.life--;
+        }
+
+        draw(ctx) {
+            if (this.life <= 0) return;
+            const alpha = this.life / this.maxLife;
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.strokeStyle = hexToRgba(this.color, alpha);
+            ctx.lineWidth = this.size;
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x - this.vx * 1.8, this.y - this.vy * 1.8);
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+
+    function hexToRgba(hex, alpha) {
+        if (!hex || hex[0] !== '#') return `rgba(255, 200, 50, ${alpha})`;
+        let c = hex.substring(1);
+        if (c.length === 3) c = c.split('').map(x => x + x).join('');
+        const num = parseInt(c, 16);
+        const r = (num >> 16) & 255;
+        const g = (num >> 8) & 255;
+        const b = num & 255;
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    // Animation Loop
+    function renderFlameLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const m = metalCombustionData[selectedMetalKey];
+        const isBurning = m && m.isCombustible && currentTemp >= m.ignTemp;
+
+        // Origin of combustion: ceramic crucible center
+        const originX = canvas.width / 2;
+        const originY = canvas.height * 0.72;
+
+        if (isBurning) {
+            // Spawn flame particles
+            const count = Math.min(8, Math.max(3, Math.floor(m.flameScale * 5)));
+            for (let i = 0; i < count; i++) {
+                particles.push(new FlameParticle(originX, originY, m.flamePalette, m.flameScale));
+            }
+
+            // Spawn sparks if applicable
+            if (m.hasSparks && Math.random() < 0.65) {
+                const sparkCount = Math.floor(Math.random() * 4) + 1;
+                for (let s = 0; s < sparkCount; s++) {
+                    sparks.push(new SparkParticle(originX, originY, m.sparkColor));
+                }
+            }
+        } else if (currentTemp >= 600) {
+            // Hot incandescence heat shimmer
+            if (Math.random() < 0.25) {
+                particles.push(new FlameParticle(originX, originY, ['#ff3d00', '#ff1744', '#212121'], 0.45));
+            }
+        }
+
+        // Update and draw flame particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+            particles[i].update();
+            particles[i].draw(ctx);
+            if (particles[i].life <= 0) {
+                particles.splice(i, 1);
+            }
+        }
+
+        // Update and draw sparks
+        for (let i = sparks.length - 1; i >= 0; i--) {
+            sparks[i].update();
+            sparks[i].draw(ctx);
+            if (sparks[i].life <= 0) {
+                sparks.splice(i, 1);
+            }
+        }
+
+        animFrameId = requestAnimationFrame(renderFlameLoop);
+    }
+
+    // Update Combustion Status & Visuals based on Temperature
+    function updateCombustionState() {
+        const m = metalCombustionData[selectedMetalKey];
+        if (!m) return;
+
+        const isBurning = m.isCombustible && currentTemp >= m.ignTemp;
+        const tempRatio = (currentTemp - 20) / (3500 - 20);
+
+        // Blowtorch Flame Jet dynamic length and intensity
+        if (torchFlameJet) {
+            const jetLength = Math.max(8, tempRatio * 155);
+            const jetWidth = Math.max(5, 7 + tempRatio * 16);
+            torchFlameJet.style.width = `${jetLength}px`;
+            torchFlameJet.style.height = `${jetWidth}px`;
+            
+            if (currentTemp <= 100) {
+                torchFlameJet.style.opacity = '0.2';
+                torchFlameJet.style.background = 'linear-gradient(90deg, #60a5fa, transparent)';
+            } else if (currentTemp <= 1200) {
+                torchFlameJet.style.opacity = '0.75';
+                torchFlameJet.style.background = 'linear-gradient(90deg, #38bdf8, #0284c7 60%, transparent)';
+            } else {
+                torchFlameJet.style.opacity = '1';
+                torchFlameJet.style.background = 'linear-gradient(90deg, #ffffff, #67e8f9 35%, #0284c7 75%, transparent)';
+            }
+        }
+
+        // Specimen incandescence glow
+        if (specimenGlow) {
+            if (isBurning) {
+                const primaryColor = m.flamePalette && m.flamePalette.length > 1 ? m.flamePalette[1] : '#ff9800';
+                specimenGlow.style.opacity = '1';
+                specimenGlow.style.boxShadow = `inset 0 0 25px ${primaryColor}, 0 0 35px ${primaryColor}`;
+            } else if (currentTemp >= 500) {
+                // Thermal incandescence (blackbody radiation)
+                const incRatio = Math.min(1, (currentTemp - 500) / 1500);
+                specimenGlow.style.opacity = (incRatio * 0.85).toString();
+                specimenGlow.style.boxShadow = `inset 0 0 20px #ff3d00, 0 0 ${10 + incRatio * 20}px #ff5722`;
+            } else {
+                specimenGlow.style.opacity = '0';
+                specimenGlow.style.boxShadow = 'none';
+            }
+        }
+
+        // Specimen image filter (heat glow / burn discoloration)
+        if (specimenImg) {
+            if (isBurning) {
+                specimenImg.style.filter = 'brightness(1.5) contrast(1.2) drop-shadow(0 0 15px rgba(255,255,255,0.7))';
+            } else if (currentTemp >= 500) {
+                const b = 1 + (currentTemp - 500) / 3000;
+                const sep = Math.min(0.6, (currentTemp - 500) / 2000);
+                specimenImg.style.filter = `brightness(${b}) sepia(${sep}) hue-rotate(-25deg)`;
+            } else {
+                specimenImg.style.filter = 'none';
+            }
+        }
+
+        // Furnace chamber ambient glow
+        if (furnaceGlow) {
+            if (isBurning) {
+                const primaryColor = m.flamePalette && m.flamePalette.length > 1 ? m.flamePalette[1] : '#ffaa00';
+                furnaceGlow.style.opacity = '0.85';
+                furnaceGlow.style.background = `radial-gradient(circle at 50% 65%, ${hexToRgba(primaryColor, 0.45)} 0%, ${hexToRgba(primaryColor, 0.15)} 55%, transparent 80%)`;
+            } else {
+                const heatAlpha = Math.min(0.6, tempRatio * 0.6);
+                furnaceGlow.style.opacity = heatAlpha.toString();
+                furnaceGlow.style.background = `radial-gradient(circle at 50% 65%, rgba(255, 69, 0, ${heatAlpha}) 0%, rgba(255, 140, 0, ${heatAlpha * 0.4}) 50%, transparent 75%)`;
+            }
+        }
+
+        // Status Badge
+        if (statusBadge && statusText) {
+            if (!m.isCombustible) {
+                statusBadge.className = 'chamber-status-badge noble';
+                statusText.textContent = `NOBLE / NON-COMBUSTIBLE (IMMUNE TO AIR IGNITION AT ${currentTemp}°C)`;
+            } else if (isBurning) {
+                statusBadge.className = 'chamber-status-badge burning';
+                statusText.textContent = `ACTIVE COMBUSTION: BURNING AT ${currentTemp}°C (${m.flameColorName.toUpperCase()})`;
+            } else {
+                statusBadge.className = 'chamber-status-badge';
+                const diff = m.ignTemp - currentTemp;
+                statusText.textContent = `UNIGNITED (BELOW AUTO-IGNITION THRESHOLD - NEEDS +${diff}°C TO IGNITE)`;
+            }
+        }
+
+        // Audio
+        updateAudio(currentTemp, isBurning);
+    }
+
+    // Slider Event
+    if (slider) {
+        slider.addEventListener('input', (e) => {
+            initAudio();
+            currentTemp = parseInt(e.target.value, 10);
+            if (tempNum) tempNum.textContent = currentTemp;
+            if (tempF) tempF.textContent = `(${Math.round(currentTemp * 9 / 5 + 32)} °F)`;
+            updateCombustionState();
+        });
+    }
+
+    // Preset Buttons
+    presetBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            initAudio();
+            const targetT = parseInt(btn.dataset.temp, 10);
+            animateSliderTo(targetT);
+        });
+    });
+
+    function animateSliderTo(targetT) {
+        const startT = currentTemp;
+        const diff = targetT - startT;
+        const duration = 400; // ms
+        const startTime = performance.now();
+
+        function step(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(1, elapsed / duration);
+            // Ease out quad
+            const ease = 1 - (1 - progress) * (1 - progress);
+            currentTemp = Math.round(startT + diff * ease);
+
+            if (slider) slider.value = currentTemp;
+            if (tempNum) tempNum.textContent = currentTemp;
+            if (tempF) tempF.textContent = `(${Math.round(currentTemp * 9 / 5 + 32)} °F)`;
+            updateCombustionState();
+
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    // Initial boot
+    renderInventory();
+    selectMetal('Mg');
+    renderFlameLoop();
+})();
+

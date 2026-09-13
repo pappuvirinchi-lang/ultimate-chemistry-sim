@@ -47,6 +47,8 @@
         <div class="nav-links">
             <a href="#features">Features</a>
             <a href="#periodic-table">Periodic Table</a>
+            <a href="#alkali-minigame">Detonation Lab</a>
+            <a href="#combustion-lab">Combustion Lab</a>
             <a href="#pricing">Pricing</a>
             <a href="#download" class="nav-btn">Download</a>
         </div>
@@ -493,6 +495,151 @@
                     2Li + 2H<sub>2</sub>O &rarr; 2LiOH + H<sub>2</sub>&uarr; + <strong>Heat!</strong>
                 </div>
                 <button id="react-btn" class="cta-btn react-trigger-btn">🔥 React Metal with Liquid!</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Metal Thermal Ignition & Combustion Chamber Minigame -->
+    <section id="combustion-lab" class="combustion-lab-section">
+        <div class="minigame-header">
+            <span class="minigame-tag" style="background: rgba(255, 102, 0, 0.15); color: #ff7700; border-color: rgba(255, 102, 0, 0.4);">🔥 Thermal Pyrotechnics Sandbox</span>
+            <h2>Thermal Ignition Chamber: Elemental Metal Combustion in Air</h2>
+            <p>Select any of the 59 nuclearly stable metals, adjust the air & blowtorch temperature, and observe exact real-life ignition thresholds, authentic flame emission colors, and reaction thermodynamics!</p>
+        </div>
+
+        <div class="combustion-workbench">
+            <!-- Filter & Category Bar -->
+            <div class="combustion-category-tabs" id="combustion-category-tabs">
+                <button class="comb-tab active" data-cat="all">All Metals (59)</button>
+                <button class="comb-tab" data-cat="combustible">Combustible Only (49)</button>
+                <button class="comb-tab" data-cat="pyrophoric">Spontaneous / Pyrophoric (≤100°C)</button>
+                <button class="comb-tab" data-cat="noble">Noble / Non-Burning (10)</button>
+            </div>
+
+            <!-- Metal Grid Carousel Picker -->
+            <div class="metal-inventory-tray" id="metal-inventory-tray">
+                <!-- Injected dynamically via script.js -->
+            </div>
+
+            <!-- Main Interactive Combustion Chamber -->
+            <div class="combustion-main-grid">
+                <!-- Left: Interactive Furnace & Blowtorch Stage -->
+                <div class="furnace-viewport">
+                    <div class="furnace-housing" id="furnace-housing">
+                        <!-- Background Heating Glow -->
+                        <div class="furnace-ambient-glow" id="furnace-glow"></div>
+                        
+                        <!-- Blowtorch Graphic & Flame Jet -->
+                        <div class="blowtorch-rig" id="blowtorch-rig">
+                            <div class="torch-body">
+                                <div class="torch-nozzle"></div>
+                                <div class="torch-flame-jet" id="torch-flame-jet"></div>
+                            </div>
+                        </div>
+
+                        <!-- Metal Specimen Pedestal & Ceramic Crucible -->
+                        <div class="crucible-stand">
+                            <div class="ceramic-crucible" id="ceramic-crucible">
+                                <img id="combustion-specimen-img" src="assets/metals/png/mg_magnesium.png" alt="Metal specimen" class="specimen-metal-img">
+                                <div class="specimen-glow-overlay" id="specimen-glow-overlay"></div>
+                            </div>
+                            <div class="crucible-base"></div>
+                        </div>
+
+                        <!-- Physics Flame & Spark Particle Canvas -->
+                        <canvas id="combustion-flame-canvas" class="combustion-flame-canvas"></canvas>
+
+                        <!-- HUD Status Badge Overlay -->
+                        <div class="chamber-status-badge" id="chamber-status-badge">
+                            <span class="status-dot"></span>
+                            <span id="chamber-status-text">UNIGNITED (BELOW AUTO-IGNITION THRESHOLD)</span>
+                        </div>
+                    </div>
+
+                    <!-- Temperature Blowtorch Control Console -->
+                    <div class="temp-control-console">
+                        <div class="temp-display-row">
+                            <div class="temp-readout">
+                                <span class="temp-num" id="temp-val-display">20</span>
+                                <span class="temp-unit">°C</span>
+                                <span class="temp-f" id="temp-f-display">(68 °F)</span>
+                            </div>
+                            <div class="temp-target-badge" id="temp-threshold-badge">
+                                Ignition Point: <strong>473 °C</strong>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Blowtorch Slider Meter -->
+                        <div class="temp-slider-wrap">
+                            <input type="range" id="blowtorch-temp-slider" min="20" max="3500" value="20" step="5" class="blowtorch-slider">
+                            <div class="slider-milestones">
+                                <span style="left: 0%;">20°C (Room Air)</span>
+                                <span style="left: 17%;">600°C (Dull Red)</span>
+                                <span style="left: 40%;">1400°C (Bunsen Torch)</span>
+                                <span style="left: 68%;">2400°C (MAPP Gas)</span>
+                                <span style="left: 100%;">3500°C (Oxy-Acetylene)</span>
+                            </div>
+                        </div>
+
+                        <!-- Quick Temperature Presets -->
+                        <div class="temp-quick-presets">
+                            <button class="preset-btn" data-temp="20">❄️ Room Temp (20°C)</button>
+                            <button class="preset-btn" data-temp="100">♨️ Boiling (100°C)</button>
+                            <button class="preset-btn" data-temp="600">🔥 Match Flame (600°C)</button>
+                            <button class="preset-btn" data-temp="1200">🧪 Bunsen Torch (1200°C)</button>
+                            <button class="preset-btn" data-temp="2200">⚡ Oxy-Propane (2200°C)</button>
+                            <button class="preset-btn blast-preset" data-temp="3500">💥 Max Blast (3500°C)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Scientific Metal Profile & Reaction Thermodynamics Card -->
+                <div class="metal-pyro-card" id="metal-pyro-card">
+                    <div class="pyro-card-header">
+                        <div class="metal-title-wrap">
+                            <span class="pyro-atomic-num" id="pyro-num">12</span>
+                            <div>
+                                <h3 id="pyro-name">Magnesium</h3>
+                                <span class="pyro-formula" id="pyro-symbol">Mg &bull; Alkaline Earth Metal</span>
+                            </div>
+                        </div>
+                        <div class="pyro-status-chip" id="pyro-status-chip">Combustible</div>
+                    </div>
+
+                    <div class="pyro-spec-grid">
+                        <div class="pyro-stat">
+                            <span class="lbl">Auto-Ignition Temp:</span>
+                            <span class="val" id="pyro-ign-temp" style="color: #ffaa00;">473 °C</span>
+                        </div>
+                        <div class="pyro-stat">
+                            <span class="lbl">Combustion Flame Color:</span>
+                            <span class="val" id="pyro-flame-color" style="color: #ffffff; text-shadow: 0 0 8px #ffffff;">Blinding White</span>
+                        </div>
+                        <div class="pyro-stat">
+                            <span class="lbl">Oxide Product:</span>
+                            <span class="val" id="pyro-oxide">Magnesium Oxide (MgO)</span>
+                        </div>
+                        <div class="pyro-stat">
+                            <span class="lbl">Enthalpy &Delta;H&deg; (Heat):</span>
+                            <span class="val" id="pyro-heat">-601.6 kJ/mol (Extremely Exothermic)</span>
+                        </div>
+                    </div>
+
+                    <div class="pyro-equation-box">
+                        <span class="lbl">Balanced Oxidation Reaction in Air:</span>
+                        <div class="equation-text" id="pyro-equation">2Mg + O<sub>2</sub> &rarr; 2MgO + <strong>Blinding Light & Heat!</strong></div>
+                    </div>
+
+                    <div class="pyro-notes-box">
+                        <span class="lbl">Pyrotechnic & Combustion Profile:</span>
+                        <p id="pyro-notes">Burns with a famous, blinding ultraviolet-white flame at over 3,100°C. Once ignited, it burns so aggressively that it can strip oxygen from water and CO₂, making it impossible to extinguish with ordinary fire extinguishers.</p>
+                    </div>
+
+                    <div class="pyro-fun-fact">
+                        <span>💡 Real-World Use:</span>
+                        <strong id="pyro-use">Used in emergency naval flares, stage sparklers, and vintage photographer flashbulbs.</strong>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

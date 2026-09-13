@@ -1440,3 +1440,657 @@ footer {
     cursor: pointer;
     border: none;
 }
+
+/* =========================================================================
+   Thermal Metal Combustion & Ignition Chamber Minigame
+   ========================================================================= */
+.combustion-lab-section {
+    padding: 5rem 5%;
+    background: radial-gradient(circle at 50% 20%, #15131b 0%, #0c0d12 100%);
+    border-top: 1px solid rgba(255, 102, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.combustion-workbench {
+    max-width: 1240px;
+    margin: 0 auto;
+    background: rgba(20, 22, 32, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2.2rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 102, 0, 0.1);
+}
+
+/* Category Filter Tabs */
+.combustion-category-tabs {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.3rem;
+}
+
+.comb-tab {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text-secondary);
+    padding: 0.55rem 1.1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.comb-tab:hover {
+    background: rgba(255, 102, 0, 0.15);
+    color: #fff;
+    border-color: rgba(255, 102, 0, 0.4);
+}
+
+.comb-tab.active {
+    background: linear-gradient(135deg, #ff6600 0%, #d50000 100%);
+    color: #fff;
+    border-color: #ff8833;
+    box-shadow: 0 0 15px rgba(255, 102, 0, 0.45);
+}
+
+/* Metal Inventory Tray */
+.metal-inventory-tray {
+    display: flex;
+    gap: 0.8rem;
+    overflow-x: auto;
+    padding: 0.6rem 0.4rem 1.2rem;
+    margin-bottom: 2rem;
+    scroll-behavior: smooth;
+}
+
+.metal-inventory-tray::-webkit-scrollbar {
+    height: 8px;
+}
+
+.metal-inventory-tray::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 4px;
+}
+
+.metal-inventory-tray::-webkit-scrollbar-thumb {
+    background: rgba(255, 102, 0, 0.4);
+    border-radius: 4px;
+}
+
+.metal-inventory-tray::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 102, 0, 0.7);
+}
+
+.metal-card-item {
+    flex: 0 0 100px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 0.65rem 0.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.4, 1);
+    position: relative;
+    user-select: none;
+}
+
+.metal-card-item:hover {
+    transform: translateY(-4px);
+    border-color: #ffaa00;
+    background: rgba(255, 170, 0, 0.08);
+    box-shadow: 0 6px 16px rgba(255, 102, 0, 0.25);
+}
+
+.metal-card-item.active {
+    border-color: #ff6600;
+    background: rgba(255, 102, 0, 0.16);
+    box-shadow: 0 0 18px rgba(255, 102, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.metal-card-thumb {
+    width: 62px;
+    height: 62px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    margin-bottom: 0.4rem;
+}
+
+.metal-card-sym {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+}
+
+.metal-card-name {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.metal-card-ign {
+    font-size: 0.68rem;
+    font-weight: 700;
+    margin-top: 0.25rem;
+    color: #ffaa00;
+}
+
+.metal-card-ign.noble {
+    color: #8892b0;
+}
+
+.metal-card-ign.pyro {
+    color: #ff3366;
+}
+
+/* Main Grid Layout */
+.combustion-main-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 2rem;
+    align-items: stretch;
+}
+
+@media (max-width: 960px) {
+    .combustion-main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Furnace Viewport */
+.furnace-viewport {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.furnace-housing {
+    height: 380px;
+    background: radial-gradient(circle at 50% 65%, #181112 0%, #090a0e 100%);
+    border: 2px solid rgba(255, 102, 0, 0.3);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 102, 0, 0.15);
+}
+
+.furnace-ambient-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 70%, rgba(255, 80, 0, 0) 0%, transparent 70%);
+    transition: background 0.2s ease-out;
+    pointer-events: none;
+}
+
+/* Blowtorch Rig */
+.blowtorch-rig {
+    position: absolute;
+    top: 55px;
+    left: 80px;
+    transform: rotate(38deg);
+    z-index: 10;
+    pointer-events: none;
+}
+
+.torch-body {
+    width: 120px;
+    height: 22px;
+    background: linear-gradient(180deg, #555 0%, #222 100%);
+    border-radius: 6px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+.torch-nozzle {
+    position: absolute;
+    right: -18px;
+    top: 3px;
+    width: 18px;
+    height: 16px;
+    background: #c28830;
+    border-radius: 2px 5px 5px 2px;
+}
+
+.torch-flame-jet {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 80px;
+    height: 14px;
+    background: radial-gradient(ellipse at 15% 50%, #ffffff 0%, #00f0ff 35%, rgba(0, 150, 255, 0.8) 70%, rgba(0, 100, 255, 0) 100%);
+    filter: drop-shadow(0 0 10px #00f0ff);
+    border-radius: 50% 100% 100% 50%;
+    opacity: 0.85;
+    transition: width 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
+}
+
+/* Crucible & Specimen Stand */
+.crucible-stand {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 5;
+}
+
+.ceramic-crucible {
+    width: 170px;
+    height: 75px;
+    background: linear-gradient(180deg, #2a2c35 0%, #17181e 100%);
+    border-radius: 0 0 85px 85px;
+    border: 3px solid #444855;
+    border-top: none;
+    box-shadow: inset 0 10px 18px rgba(0, 0, 0, 0.7), 0 8px 25px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.crucible-base {
+    width: 110px;
+    height: 18px;
+    background: #111216;
+    border-radius: 4px;
+    border: 1px solid #333;
+    margin-top: -2px;
+}
+
+.specimen-metal-img {
+    max-width: 105px;
+    max-height: 80px;
+    object-fit: contain;
+    position: absolute;
+    bottom: 25px;
+    filter: drop-shadow(0 5px 12px rgba(0, 0, 0, 0.7));
+    transition: filter 0.2s ease, transform 0.2s ease;
+    z-index: 6;
+}
+
+.specimen-glow-overlay {
+    position: absolute;
+    bottom: 22px;
+    width: 100px;
+    height: 75px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease, background 0.2s ease;
+    mix-blend-mode: screen;
+    z-index: 7;
+}
+
+/* Combustion Flame & Spark Particle Canvas */
+.combustion-flame-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 12;
+}
+
+/* Chamber Status Badge */
+.chamber-status-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 5px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #8892b0;
+    backdrop-filter: blur(8px);
+    z-index: 15;
+}
+
+.chamber-status-badge .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #8892b0;
+    box-shadow: 0 0 6px #8892b0;
+}
+
+.chamber-status-badge.burning {
+    border-color: #ff6600;
+    color: #ffaa00;
+}
+
+.chamber-status-badge.burning .status-dot {
+    background: #ff6600;
+    box-shadow: 0 0 10px #ff6600;
+    animation: statusPulse 0.8s infinite alternate;
+}
+
+.chamber-status-badge.noble-state {
+    border-color: #00f0ff;
+    color: #00f0ff;
+}
+
+.chamber-status-badge.noble-state .status-dot {
+    background: #00f0ff;
+    box-shadow: 0 0 8px #00f0ff;
+}
+
+@keyframes statusPulse {
+    from { transform: scale(0.9); opacity: 0.7; }
+    to { transform: scale(1.3); opacity: 1; }
+}
+
+/* Temperature Controls */
+.temp-control-console {
+    background: rgba(14, 16, 24, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 1.4rem;
+}
+
+.temp-display-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.temp-readout {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+}
+
+.temp-num {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #ffaa00;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 15px rgba(255, 170, 0, 0.4);
+}
+
+.temp-unit {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.temp-f {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-left: 0.4rem;
+}
+
+.temp-target-badge {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.temp-target-badge strong {
+    color: #fff;
+}
+
+/* Slider Track & Milestones */
+.temp-slider-wrap {
+    position: relative;
+    margin-bottom: 2.2rem;
+}
+
+.blowtorch-slider {
+    width: 100%;
+    height: 12px;
+    border-radius: 6px;
+    outline: none;
+    -webkit-appearance: none;
+    background: linear-gradient(90deg, #00f0ff 0%, #ffbb00 25%, #ff5500 55%, #d50000 85%, #ffffff 100%);
+    cursor: pointer;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.blowtorch-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #ff5500;
+    box-shadow: 0 0 15px #ff5500, 0 4px 8px rgba(0, 0, 0, 0.6);
+    cursor: grab;
+    transition: transform 0.1s ease;
+}
+
+.blowtorch-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.18);
+}
+
+.blowtorch-slider::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.25);
+}
+
+.slider-milestones {
+    position: absolute;
+    width: 100%;
+    top: 20px;
+    display: flex;
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.slider-milestones span {
+    position: absolute;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+/* Presets */
+.temp-quick-presets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+    gap: 0.5rem;
+}
+
+.preset-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.5rem 0.6rem;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.preset-btn:hover {
+    background: rgba(255, 102, 0, 0.2);
+    border-color: #ffaa00;
+    transform: translateY(-2px);
+}
+
+.preset-btn.blast-preset {
+    background: rgba(213, 0, 0, 0.2);
+    border-color: rgba(213, 0, 0, 0.4);
+    color: #ff6666;
+}
+
+.preset-btn.blast-preset:hover {
+    background: #d50000;
+    color: #fff;
+    box-shadow: 0 0 15px #d50000;
+}
+
+/* Metal Profile Card (Right Column) */
+.metal-pyro-card {
+    background: rgba(14, 16, 24, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.pyro-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 1rem;
+}
+
+.metal-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.pyro-atomic-num {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    background: rgba(0, 240, 255, 0.1);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    border-radius: 8px;
+    padding: 4px 10px;
+}
+
+.metal-title-wrap h3 {
+    margin: 0;
+    font-size: 1.45rem;
+    color: #fff;
+}
+
+.pyro-formula {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.pyro-status-chip {
+    padding: 4px 12px;
+    border-radius: 14px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(255, 102, 0, 0.18);
+    color: #ffaa00;
+    border: 1px solid rgba(255, 102, 0, 0.4);
+}
+
+.pyro-status-chip.noble {
+    background: rgba(0, 240, 255, 0.12);
+    color: var(--accent-cyan);
+    border-color: rgba(0, 240, 255, 0.35);
+}
+
+.pyro-status-chip.pyrophoric {
+    background: rgba(255, 0, 85, 0.2);
+    color: #ff0055;
+    border-color: rgba(255, 0, 85, 0.45);
+}
+
+.pyro-spec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+}
+
+.pyro-stat {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.pyro-stat .lbl {
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pyro-stat .val {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.pyro-equation-box, .pyro-notes-box {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+}
+
+.pyro-equation-box .lbl, .pyro-notes-box .lbl {
+    font-size: 0.74rem;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 700;
+}
+
+.equation-text {
+    font-size: 1.05rem;
+    color: #fff;
+    font-weight: 600;
+}
+
+.equation-text strong {
+    color: #ffaa00;
+}
+
+.pyro-notes-box p {
+    margin: 0;
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.pyro-fun-fact {
+    background: rgba(0, 240, 255, 0.06);
+    border-left: 3px solid var(--accent-cyan);
+    padding: 0.7rem 1rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--text-secondary);
+}
+
+.pyro-fun-fact strong {
+    color: #fff;
+    display: block;
+    margin-top: 0.2rem;
+}
