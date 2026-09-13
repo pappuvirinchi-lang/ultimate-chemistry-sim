@@ -1089,7 +1089,6 @@ reactBtn.addEventListener('click', () => {
         else if (activeMetal === 'Fr') speedMult = 2.8;
         else if (activeMetal === 'Cs') speedMult = 2.2;
 
-        const isCataclysm = activeMetal === 'Fr' && activeLiquid === 'hsbf6';
         const totalParticles = isCataclysm ? 120 : Math.floor(data.particleCount * (1 + (shakeTiers.indexOf(details.shakeLevel) * 0.18)));
         for (let i = 0; i < totalParticles; i++) {
             particles.push(new BlastParticle(originX, originY, data.color, speedMult));
