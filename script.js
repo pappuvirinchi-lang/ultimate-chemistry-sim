@@ -2485,7 +2485,7 @@ const metalOxygenIgnitionData = {
     });
 
     // Update active pill on scroll
-    const sections = ['alkali-minigame', 'combustion-lab'].map(id => document.getElementById(id)).filter(Boolean);
+    const sections = ['alkali-minigame', 'combustion-lab', 'redox-crucible'].map(id => document.getElementById(id)).filter(Boolean);
     if ('IntersectionObserver' in window && sections.length) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -2504,4 +2504,655 @@ const metalOxygenIgnitionData = {
 
         sections.forEach(s => observer.observe(s));
     }
+})();
+
+
+// =========================================================================
+// MINIGAME 3: HYPER-REDOX FLASH CRUCIBLE ENGINE & PARTICLE SYSTEM
+// =========================================================================
+(function initRedoxCrucible() {
+    // 1. Reagents & Combustion Data Matrix
+    const REDUCERS = {
+        Li: {
+            name: 'Lithium',
+            sym: 'Li',
+            e0: '-3.04 V',
+            color: '#ff2255',
+            flameColor: 'Crimson Red (670.8 nm)',
+            electrons: '1e⁻ per Li atom',
+            powderBg: '#b0bcc8',
+            baseTemp: 180,
+            baseLux: 45000,
+            flameGlow: 'rgba(255, 34, 85, 0.85)',
+            sparkType: 'crimson_jets',
+            sparks: 60,
+            audioProfile: 'sub_crack'
+        },
+        Mg: {
+            name: 'Magnesium Ribbon / Powder',
+            sym: 'Mg',
+            e0: '-2.37 V',
+            color: '#ffffff',
+            flameColor: 'Blinding UV-White (Continuous spectrum)',
+            electrons: '2e⁻ per Mg atom',
+            powderBg: '#d6dde4',
+            baseTemp: 3100,
+            baseLux: 120000,
+            flameGlow: 'rgba(255, 255, 255, 0.95)',
+            sparkType: 'white_shower',
+            sparks: 140,
+            audioProfile: 'electric_crackle'
+        },
+        Al: {
+            name: 'Aluminum Pyrotechnic Powder',
+            sym: 'Al',
+            e0: '-1.66 V',
+            color: '#ffaa00',
+            flameColor: 'Golden Yellow / White Slag',
+            electrons: '3e⁻ per Al atom',
+            powderBg: '#8c95a0',
+            baseTemp: 2450,
+            baseLux: 75000,
+            flameGlow: 'rgba(255, 170, 0, 0.9)',
+            sparkType: 'molten_spatter',
+            sparks: 110,
+            audioProfile: 'thermite_whoosh'
+        },
+        Fe: {
+            name: 'Reduced Iron Filings',
+            sym: 'Fe',
+            e0: '-0.44 V',
+            color: '#ff7700',
+            flameColor: 'Sparkler Amber / Golden Stars',
+            electrons: '2e⁻ / 3e⁻ per Fe atom',
+            powderBg: '#4a4f56',
+            baseTemp: 1520,
+            baseLux: 35000,
+            flameGlow: 'rgba(255, 119, 0, 0.8)',
+            sparkType: 'branching_stars',
+            sparks: 150,
+            audioProfile: 'firework_branch'
+        },
+        C: {
+            name: 'Activated Carbon / Charcoal',
+            sym: 'C',
+            e0: '+0.21 V (Combustion)',
+            color: '#ff4400',
+            flameColor: 'Incandescent Orange Embers & Black Smoke',
+            electrons: '4e⁻ per C atom',
+            powderBg: '#1f2226',
+            baseTemp: 1180,
+            baseLux: 18000,
+            flameGlow: 'rgba(255, 68, 0, 0.75)',
+            sparkType: 'heavy_embers',
+            sparks: 50,
+            audioProfile: 'hiss_smoke'
+        }
+    };
+
+    const OXIDIZERS = {
+        h2o2: {
+            name: 'Hydrogen Peroxide (H₂O₂)',
+            sym: 'H₂O₂',
+            reactionType: 'Catalytic Flash Vaporization & Radical Oxidation',
+            liquidColor: 'rgba(230, 245, 255, 0.8)',
+            dropperColor: '#bde0fe',
+            steamBonus: 1.5,
+            getEquation: (r) => {
+                if (r === 'Li') return '2Li + H₂O₂ &rarr; 2LiOH + <strong>Violent Boiling & Crimson Flare</strong>';
+                if (r === 'Mg') return 'Mg + H₂O₂ &rarr; MgO + H₂O&uarr; + <strong>Blinding White Flash</strong>';
+                if (r === 'Al') return '2Al + 3H₂O₂ &rarr; Al₂O₃ + 3H₂O&uarr; + <strong>Molten Slag Fountain</strong>';
+                if (r === 'Fe') return 'Fe + H₂O₂ &rarr; FeO + H₂O&uarr; + <strong>Boiling Orange Spark Spray</strong>';
+                return 'C + 2H₂O₂ &rarr; CO₂&uarr; + 2H₂O&uarr; + <strong>Steam & Hissing Embers</strong>';
+            },
+            getNotes: (r) => {
+                if (r === 'Li') return 'Lithium reacts with catastrophic driving force, stripping peroxide oxygens while boiling the liquid phase into superheated alkaline aerosol.';
+                if (r === 'Mg') return 'Finely divided magnesium decomposes peroxide instantaneously at the contact boundary, creating an ultraviolet incandescent flare.';
+                if (r === 'Al') return 'Once the surface oxide barrier is breached, aluminum undergoes aggressive oxidation, ejecting incandescent molten alumina sparks.';
+                if (r === 'Fe') return 'Triggers a Fenton-like catalytic cascade, rapidly liberating oxygen gas and showering branching orange iron sparks.';
+                return 'Charcoal provides high-surface porous active sites that nucleate rapid boiling and incandescent carbon micro-bursts.';
+            }
+        },
+        kmno4: {
+            name: 'Potassium Permanganate (KMnO₄)',
+            sym: 'KMnO₄',
+            reactionType: 'Hyper-Energetic Manganate Redox Eruption',
+            liquidColor: 'rgba(191, 85, 236, 0.95)',
+            dropperColor: '#bf55ec',
+            steamBonus: 1.2,
+            getEquation: (r) => {
+                if (r === 'Li') return '3Li + KMnO₄ &rarr; Li₂O + LiMnO₄ + <strong>Intense Violet Shockwave</strong>';
+                if (r === 'Mg') return '3Mg + 2KMnO₄ &rarr; 3MgO + 2MnO + K₂O + <strong>Flash Torch Eruption</strong>';
+                if (r === 'Al') return '2Al + 2KMnO₄ &rarr; Al₂O₃ + 2MnO₂ + K₂O + <strong>Superheated Golden Blast</strong>';
+                if (r === 'Fe') return '10Fe + 6KMnO₄ &rarr; 5Fe₂O₃ + 6MnO + 3K₂O + <strong>Cascading Spark Cascade</strong>';
+                return '3C + 4KMnO₄ &rarr; 3CO₂&uarr; + 4MnO₂ + 2K₂O + <strong>Dense Purple Smoke Plume</strong>';
+            },
+            getNotes: (r) => {
+                if (r === 'Li') return 'The Mn(VII) center in permanganate has an enormous oxidation potential (+1.51 V), oxidizing Li with explosive kinetic energy release.';
+                if (r === 'Mg') return 'Combines the blinding flash of magnesium with the deep violet/magenta hue of excited manganese species.';
+                if (r === 'Al') return 'Forms a devastatingly hot pyrotechnic mixture similar to military flash compositions, releasing molten alumina.';
+                if (r === 'Fe') return 'Creates continuous branching thermal sparks as incandescent iron oxide and manganese slag fuse in mid-air.';
+                return 'Releases rapid carbon dioxide gas and a thick cloud of purple-tinged manganese dioxide smoke.';
+            }
+        },
+        o2: {
+            name: 'Pure Oxygen Jet (O₂ Stream)',
+            sym: 'O₂ Jet',
+            reactionType: 'Pressurized Direct Gas-Phase Pyrotechnic Burn',
+            liquidColor: 'rgba(0, 242, 254, 0.75)',
+            dropperColor: '#00f2fe',
+            steamBonus: 0.8,
+            getEquation: (r) => {
+                if (r === 'Li') return '4Li + O₂ &rarr; 2Li₂O + <strong>Supersonic Crimson Flare Jet</strong>';
+                if (r === 'Mg') return '2Mg + O₂ &rarr; 2MgO + <strong>3,100°C Blinding UV White Arc</strong>';
+                if (r === 'Al') return '4Al + 3O₂ &rarr; 2Al₂O₃ + <strong>White-Hot Molten Fire Torch</strong>';
+                if (r === 'Fe') return '4Fe + 3O₂ &rarr; 2Fe₂O₃ + <strong>Thermal Lance Spark Fountain</strong>';
+                return 'C + O₂ &rarr; CO₂&uarr; + <strong>Incandescent Melting Carbon Slag</strong>';
+            },
+            getNotes: (r) => {
+                if (r === 'Li') return 'Continuous oxygen injection sustains an ultra-clean, high-temperature lithium flame with sharp 670.8 nm crimson emission.';
+                if (r === 'Mg') return 'Emulates the brilliance of underwater torch welding and aerospace flares, reaching blinding luminescence.';
+                if (r === 'Al') return 'Mimics solid rocket booster combustion (Al + pure oxidizer), generating micro-molten droplets of glowing alumina.';
+                if (r === 'Fe') return 'Classic thermal lance reaction used in heavy construction to slice through thick bank vault doors and granite.';
+                return 'Carbon burns completely without soot formation, generating maximum heat output and bright yellow-white radiance.';
+            }
+        },
+        naclo: {
+            name: 'Sodium Hypochlorite (NaClO Halogen)',
+            sym: 'NaClO',
+            reactionType: 'Halogen Radical Chlorination & Exothermic Cleavage',
+            liquidColor: 'rgba(255, 245, 170, 0.85)',
+            dropperColor: '#ffea75',
+            steamBonus: 1.3,
+            getEquation: (r) => {
+                if (r === 'Li') return '2Li + NaClO + H₂O &rarr; 2LiOH + NaCl + <strong>Violent Halogen Pop</strong>';
+                if (r === 'Mg') return 'Mg + NaClO &rarr; MgO + NaCl + <strong>Crackling White Flash Blast</strong>';
+                if (r === 'Al') return '2Al + 3NaClO &rarr; Al₂O₃ + 3NaCl + <strong>Molten Chlorine Spark Cascade</strong>';
+                if (r === 'Fe') return '2Fe + 3NaClO &rarr; Fe₂O₃ + 3NaCl + <strong>Golden Spark Geyser</strong>';
+                return 'C + 2NaClO &rarr; CO₂&uarr; + 2NaCl + <strong>Hissing Halogen Smoke Blast</strong>';
+            },
+            getNotes: (r) => {
+                if (r === 'Li') return 'Hypochlorite rapidly cleaves its O-Cl bond on contact with lithium, liberating singlet oxygen and chlorine radicals.';
+                if (r === 'Mg') return 'Triggers a series of micro-pops and crackling sound waves as chlorine and oxygen simultaneously oxidize the magnesium.';
+                if (r === 'Al') return 'Generates high-velocity sparks accompanied by salt aerosol smoke, exhibiting rapid exothermic self-heating.';
+                if (r === 'Fe') return 'Corrosive halogen oxidation accelerates iron consumption, firing bursts of sparkling stars into the crucible air.';
+                return 'Carbon rapidly reduces the halogen compound, discharging steam, carbon dioxide, and fine vapor clouds.';
+            }
+        }
+    };
+
+    // 2. DOM Elements
+    const reducerBtns = document.querySelectorAll('.reducer-btn');
+    const oxidizerBtns = document.querySelectorAll('.oxidizer-btn');
+    const concSlider = document.getElementById('redox-conc-slider');
+    const concDisplay = document.getElementById('redox-conc-display');
+    const modGlycerin = document.getElementById('mod-glycerin');
+    const modAcid = document.getElementById('mod-acid');
+    const modSurfactant = document.getElementById('mod-surfactant');
+
+    const tempValEl = document.getElementById('redox-temp-val');
+    const luxValEl = document.getElementById('redox-lux-val');
+    const stateValEl = document.getElementById('redox-state-val');
+
+    const viewportEl = document.getElementById('crucible-viewport');
+    const bloomEl = document.getElementById('crucible-bloom-overlay');
+    const screenFlareEl = document.getElementById('redox-screen-flare');
+    const canvas = document.getElementById('redox-canvas');
+    const ctx = canvas ? canvas.getContext('2d') : null;
+    const triggerBtn = document.getElementById('redox-trigger-btn');
+    const resetBtn = document.getElementById('redox-reset-btn');
+    const reagentPowderEl = document.getElementById('reagent-powder');
+    const dropperStreamEl = document.getElementById('dropper-stream');
+    const potEl = document.getElementById('crucible-pot');
+
+    const rxTypeEl = document.getElementById('redox-rx-type');
+    const rxElectronsEl = document.getElementById('redox-rx-electrons');
+    const rxColorEl = document.getElementById('redox-rx-color');
+    const equationEl = document.getElementById('redox-equation');
+    const notesEl = document.getElementById('redox-notes');
+
+    if (!canvas || !ctx || !triggerBtn) return;
+
+    // 3. State
+    let currentReducer = 'Li';
+    let currentOxidizer = 'h2o2';
+    let currentConc = 35;
+    let isReacting = false;
+    let particles = [];
+    let smokeParticles = [];
+    let animFrameId = null;
+
+    // Resize canvas to match display size
+    function resizeCanvas() {
+        if (!viewportEl || !canvas) return;
+        const rect = viewportEl.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // 4. Procedural Audio Synthesis Engine for Redox Reactions
+    function playRedoxAudio(reducerKey, oxidizerKey, conc, modG, modA, modS) {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const actx = new AudioContext();
+            if (actx.state === 'suspended') actx.resume();
+
+            const now = actx.currentTime;
+            const duration = 1.6 + (conc / 100) * 1.4;
+            const volumeScale = Math.min(1.0, 0.35 + (conc / 100) * 0.65);
+
+            // Master Limiter to avoid clipping
+            const compressor = actx.createDynamicsCompressor();
+            compressor.threshold.setValueAtTime(-12, now);
+            compressor.knee.setValueAtTime(8, now);
+            compressor.ratio.setValueAtTime(14, now);
+            compressor.attack.setValueAtTime(0.002, now);
+            compressor.release.setValueAtTime(0.15, now);
+            compressor.connect(actx.destination);
+
+            // Audio Sub-Engine 1: Sizzling Chemical Effervescence / Hiss
+            const hissBuffer = actx.createBuffer(1, Math.floor(actx.sampleRate * duration), actx.sampleRate);
+            const hissData = hissBuffer.getChannelData(0);
+            for (let i = 0; i < hissData.length; i++) {
+                hissData[i] = (Math.random() * 2 - 1) * (1 - i / hissData.length);
+            }
+            const hissSource = actx.createBufferSource();
+            hissSource.buffer = hissBuffer;
+
+            const hissFilter = actx.createBiquadFilter();
+            hissFilter.type = oxidizerKey === 'o2' ? 'bandpass' : 'highpass';
+            hissFilter.frequency.setValueAtTime(oxidizerKey === 'o2' ? 1200 : 2500, now);
+            if (oxidizerKey === 'o2') hissFilter.Q.setValueAtTime(3.5, now);
+
+            const hissGain = actx.createGain();
+            hissGain.gain.setValueAtTime(0.001, now);
+            hissGain.gain.linearRampToValueAtTime(0.45 * volumeScale, now + 0.08);
+            hissGain.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.9);
+
+            hissSource.connect(hissFilter);
+            hissFilter.connect(hissGain);
+            hissGain.connect(compressor);
+            hissSource.start(now);
+            hissSource.stop(now + duration);
+
+            // Audio Sub-Engine 2: Sharp Spark Pops & Crackles (Mg, Fe, Al)
+            const rData = REDUCERS[reducerKey];
+            if (rData && (rData.audioProfile === 'electric_crackle' || rData.audioProfile === 'firework_branch' || modA)) {
+                const popCount = Math.floor(12 + (conc / 100) * 25);
+                for (let p = 0; p < popCount; p++) {
+                    const popTime = now + 0.05 + Math.random() * (duration * 0.7);
+                    const popOsc = actx.createOscillator();
+                    const popGain = actx.createGain();
+
+                    popOsc.type = Math.random() > 0.5 ? 'triangle' : 'sawtooth';
+                    const startFreq = 1600 + Math.random() * 2200;
+                    popOsc.frequency.setValueAtTime(startFreq, popTime);
+                    popOsc.frequency.exponentialRampToValueAtTime(80, popTime + 0.04);
+
+                    popGain.gain.setValueAtTime(0.28 * volumeScale, popTime);
+                    popGain.gain.exponentialRampToValueAtTime(0.001, popTime + 0.04);
+
+                    popOsc.connect(popGain);
+                    popGain.connect(compressor);
+                    popOsc.start(popTime);
+                    popOsc.stop(popTime + 0.045);
+                }
+            }
+
+            // Audio Sub-Engine 3: Sub-Bass Boom & Shockwave Pop (High Concentration or Li)
+            if (conc > 45 || reducerKey === 'Li' || modA) {
+                const boomOsc = actx.createOscillator();
+                const boomGain = actx.createGain();
+                boomOsc.type = 'sine';
+                boomOsc.frequency.setValueAtTime(reducerKey === 'Li' ? 140 : 110, now + 0.02);
+                boomOsc.frequency.exponentialRampToValueAtTime(32, now + 0.5);
+
+                const boomVol = Math.min(0.85, 0.35 + (conc / 100) * 0.5);
+                boomGain.gain.setValueAtTime(boomVol * volumeScale, now + 0.02);
+                boomGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+                boomOsc.connect(boomGain);
+                boomGain.connect(compressor);
+                boomOsc.start(now + 0.02);
+                boomOsc.stop(now + 0.6);
+            }
+
+            // Audio Sub-Engine 4: Surfactant Foaming / Bubbling Pops
+            if (modS) {
+                const bubbleCount = 18;
+                for (let b = 0; b < bubbleCount; b++) {
+                    const bTime = now + 0.1 + Math.random() * (duration * 0.85);
+                    const bOsc = actx.createOscillator();
+                    const bGain = actx.createGain();
+
+                    bOsc.type = 'sine';
+                    const basePitch = 400 + Math.random() * 500;
+                    bOsc.frequency.setValueAtTime(basePitch, bTime);
+                    bOsc.frequency.exponentialRampToValueAtTime(basePitch * 1.8, bTime + 0.05);
+
+                    bGain.gain.setValueAtTime(0.2 * volumeScale, bTime);
+                    bGain.gain.exponentialRampToValueAtTime(0.001, bTime + 0.06);
+
+                    bOsc.connect(bGain);
+                    bGain.connect(compressor);
+                    bOsc.start(bTime);
+                    bOsc.stop(bTime + 0.065);
+                }
+            }
+        } catch (e) {
+            console.warn('Web Audio synthesis error:', e);
+        }
+    }
+
+    // 5. Update UI Controls & Text Readout
+    function updateReadout() {
+        const r = REDUCERS[currentReducer];
+        const ox = OXIDIZERS[currentOxidizer];
+        if (!r || !ox) return;
+
+        // Reagent Powder Color in Crucible
+        if (reagentPowderEl) {
+            reagentPowderEl.style.background = r.powderBg;
+        }
+
+        // Slider Concentration text
+        let gradeName = 'Dilute (5%)';
+        if (currentConc > 75) gradeName = 'Hyper-Pure / Max Flow (' + currentConc + '%)';
+        else if (currentConc > 50) gradeName = 'Supercharged Concentration (' + currentConc + '%)';
+        else if (currentConc > 20) gradeName = 'Standard Industrial (' + currentConc + '%)';
+        if (concDisplay) concDisplay.textContent = currentConc + '% (' + gradeName + ')';
+
+        // Chemistry Fact Sheet
+        if (rxTypeEl) rxTypeEl.textContent = ox.reactionType;
+        if (rxElectronsEl) rxElectronsEl.textContent = r.electrons;
+        if (rxColorEl) rxColorEl.textContent = r.flameColor;
+        if (equationEl) equationEl.innerHTML = ox.getEquation(currentReducer);
+        if (notesEl) notesEl.innerHTML = ox.getNotes(currentReducer);
+    }
+
+    // 6. Particle System Physics
+    class RedoxSpark {
+        constructor(x, y, rData, conc, isFoam) {
+            this.x = x;
+            this.y = y;
+            const angle = -Math.PI / 2 + (Math.random() - 0.5) * (isFoam ? 0.6 : 1.5);
+            const speed = (isFoam ? 3 : 6) + Math.random() * ((conc / 100) * 14);
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            this.gravity = 0.18;
+            this.friction = 0.985;
+            this.life = 1.0;
+            this.decay = 0.012 + Math.random() * 0.025;
+            this.size = 1.5 + Math.random() * (rData.sym === 'Al' ? 3.5 : 2.2);
+            this.color = rData.color;
+            this.sparkType = rData.sparkType;
+            this.branched = false;
+        }
+
+        update() {
+            this.vx *= this.friction;
+            this.vy += this.gravity;
+            this.x += this.vx;
+            this.y += this.vy;
+            this.life -= this.decay;
+
+            // Branching star physics for Fe
+            if (this.sparkType === 'branching_stars' && !this.branched && this.life < 0.55 && Math.random() < 0.15) {
+                this.branched = true;
+                for (let b = 0; b < 3; b++) {
+                    const child = new RedoxSpark(this.x, this.y, REDUCERS['Fe'], 40, false);
+                    child.life = 0.4;
+                    child.decay = 0.04;
+                    child.size = 1.2;
+                    particles.push(child);
+                }
+            }
+        }
+
+        draw(ctx) {
+            if (this.life <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, this.life);
+            ctx.fillStyle = this.color;
+            ctx.shadowColor = this.color;
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    class RedoxSmoke {
+        constructor(x, y, color, isPurple, isFoam) {
+            this.x = x + (Math.random() - 0.5) * 20;
+            this.y = y;
+            this.vx = (Math.random() - 0.5) * 1.5;
+            this.vy = -(1.5 + Math.random() * (isFoam ? 1.0 : 3.0));
+            this.radius = 8 + Math.random() * 8;
+            this.maxRadius = 35 + Math.random() * 25;
+            this.life = 1.0;
+            this.decay = 0.008 + Math.random() * 0.012;
+            this.color = isPurple ? 'rgba(180, 80, 220, ' : (color === '#ffffff' ? 'rgba(230, 235, 245, ' : 'rgba(90, 95, 105, ');
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.radius += (this.maxRadius - this.radius) * 0.02;
+            this.life -= this.decay;
+        }
+
+        draw(ctx) {
+            if (this.life <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, this.life * 0.45);
+            ctx.fillStyle = this.color + (this.life * 0.45) + ')';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    // 7. Render Loop
+    function render() {
+        if (!ctx || !canvas) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Update & draw smoke (background)
+        for (let i = smokeParticles.length - 1; i >= 0; i--) {
+            const sm = smokeParticles[i];
+            sm.update();
+            sm.draw(ctx);
+            if (sm.life <= 0) smokeParticles.splice(i, 1);
+        }
+
+        // Update & draw sparks
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.update();
+            p.draw(ctx);
+            if (p.life <= 0) particles.splice(i, 1);
+        }
+
+        if (particles.length > 0 || smokeParticles.length > 0) {
+            animFrameId = requestAnimationFrame(render);
+        } else {
+            animFrameId = null;
+        }
+    }
+
+    // 8. Fire Reaction Logic
+    function triggerReaction() {
+        if (isReacting) return;
+        isReacting = true;
+        triggerBtn.disabled = true;
+
+        const rData = REDUCERS[currentReducer];
+        const oxData = OXIDIZERS[currentOxidizer];
+        const conc = currentConc;
+        const modG = modGlycerin.checked;
+        const modA = modAcid.checked;
+        const modS = modSurfactant.checked;
+
+        // Visual Dropper Stream animation
+        if (dropperStreamEl) {
+            dropperStreamEl.style.background = 'linear-gradient(180deg, rgba(255,255,255,0.95), ' + oxData.dropperColor + ')';
+            dropperStreamEl.style.boxShadow = '0 0 12px ' + oxData.dropperColor;
+            dropperStreamEl.style.height = '160px';
+            dropperStreamEl.style.opacity = '1';
+        }
+
+        if (stateValEl) {
+            stateValEl.className = 'hud-val';
+            stateValEl.textContent = modG && currentOxidizer === 'kmno4' ? 'INDUCTION DELAY...' : 'INJECTING...';
+        }
+
+        // Delay handling: If Glycerin + KMnO4, delay 1.2 seconds for realistic spontaneous induction!
+        const delayMs = (modG && currentOxidizer === 'kmno4') ? 1200 : (modA ? 150 : 350);
+
+        setTimeout(() => {
+            if (dropperStreamEl) {
+                dropperStreamEl.style.height = '0';
+                dropperStreamEl.style.opacity = '0';
+            }
+
+            // Trigger Pyrotechnic Burst!
+            executePyrotechnicBurst(rData, oxData, conc, modG, modA, modS);
+        }, delayMs);
+    }
+
+    function executePyrotechnicBurst(rData, oxData, conc, modG, modA, modS) {
+        resizeCanvas();
+
+        // 1. Play procedural audio
+        playRedoxAudio(rData.sym, currentOxidizer, conc, modG, modA, modS);
+
+        // 2. Camera Shake
+        viewportEl.classList.remove('crucible-shake-mild', 'crucible-shake-violent', 'crucible-shake-cataclysm');
+        void viewportEl.offsetWidth; // force reflow
+        if (conc > 70 || modA || rData.sym === 'Li') {
+            viewportEl.classList.add('crucible-shake-cataclysm');
+        } else if (conc > 35) {
+            viewportEl.classList.add('crucible-shake-violent');
+        } else {
+            viewportEl.classList.add('crucible-shake-mild');
+        }
+
+        // 3. Bloom & Flash Screen Overlay
+        if (bloomEl) {
+            bloomEl.style.background = 'radial-gradient(circle at 50% 68%, ' + rData.flameGlow + ' 0%, transparent 70%)';
+            bloomEl.style.opacity = Math.min(1.0, 0.4 + (conc / 100) * 0.6);
+            setTimeout(() => { bloomEl.style.opacity = '0'; }, 300 + (conc / 100) * 400);
+        }
+
+        if (screenFlareEl && (conc > 50 || rData.sym === 'Mg' || modA)) {
+            screenFlareEl.style.opacity = rData.sym === 'Mg' ? '0.95' : '0.65';
+            setTimeout(() => { screenFlareEl.style.opacity = '0'; }, 180);
+        }
+
+        // 4. Pot Incandescence
+        if (potEl) {
+            potEl.classList.add('incandescent');
+            setTimeout(() => { potEl.classList.remove('incandescent'); }, 2500);
+        }
+
+        // 5. Update Telemetry HUD
+        const targetTemp = Math.floor((rData.baseTemp * (0.3 + (conc / 100) * 0.7)) * (modA ? 1.25 : 1.0));
+        const targetLux = Math.floor((rData.baseLux * (0.3 + (conc / 100) * 0.7)) * (rData.sym === 'Mg' ? 1.4 : 1.0));
+
+        if (tempValEl) tempValEl.textContent = targetTemp.toLocaleString() + '°C';
+        if (luxValEl) luxValEl.textContent = targetLux.toLocaleString() + ' Lux';
+        if (stateValEl) {
+            stateValEl.className = 'hud-val badge-erupting';
+            stateValEl.textContent = '💥 ERUPTING!';
+        }
+
+        // 6. Spawn Particles inside canvas
+        const originX = canvas.width / 2;
+        const originY = canvas.height - 70;
+
+        const sparkCount = Math.floor(rData.sparks * (0.4 + (conc / 100) * 0.9) * (modS ? 0.6 : 1.0));
+        for (let i = 0; i < sparkCount; i++) {
+            particles.push(new RedoxSpark(originX, originY, rData, conc, modS));
+        }
+
+        const smokeCount = Math.floor(25 + (conc / 100) * 40 * (modS ? 2.2 : 1.0));
+        const isPurple = currentOxidizer === 'kmno4';
+        for (let s = 0; s < smokeCount; s++) {
+            smokeParticles.push(new RedoxSmoke(originX, originY, rData.color, isPurple, modS));
+        }
+
+        if (!animFrameId) {
+            render();
+        }
+
+        // 7. Reset state after reaction completes
+        setTimeout(() => {
+            isReacting = false;
+            triggerBtn.disabled = false;
+            if (stateValEl) {
+                stateValEl.className = 'hud-val badge-armed';
+                stateValEl.textContent = 'ACTIVE RESIDUE';
+            }
+        }, 2200);
+    }
+
+    function resetCrucible() {
+        particles = [];
+        smokeParticles = [];
+        if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (viewportEl) viewportEl.classList.remove('crucible-shake-mild', 'crucible-shake-violent', 'crucible-shake-cataclysm');
+        if (bloomEl) bloomEl.style.opacity = '0';
+        if (screenFlareEl) screenFlareEl.style.opacity = '0';
+        if (potEl) potEl.classList.remove('incandescent');
+
+        if (tempValEl) tempValEl.textContent = '24°C';
+        if (luxValEl) luxValEl.textContent = '0 Lux';
+        if (stateValEl) {
+            stateValEl.className = 'hud-val badge-armed';
+            stateValEl.textContent = 'ARMED';
+        }
+        isReacting = false;
+        triggerBtn.disabled = false;
+    }
+
+    // 9. Event Listeners
+    reducerBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (isReacting) return;
+            reducerBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentReducer = btn.getAttribute('data-reducer');
+            updateReadout();
+        });
+    });
+
+    oxidizerBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (isReacting) return;
+            oxidizerBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentOxidizer = btn.getAttribute('data-oxidizer');
+            updateReadout();
+        });
+    });
+
+    if (concSlider) {
+        concSlider.addEventListener('input', (e) => {
+            currentConc = parseInt(e.target.value, 10);
+            updateReadout();
+        });
+    }
+
+    triggerBtn.addEventListener('click', triggerReaction);
+    if (resetBtn) resetBtn.addEventListener('click', resetCrucible);
+
+    // Initial setup
+    updateReadout();
+    resetCrucible();
 })();

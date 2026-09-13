@@ -2382,3 +2382,714 @@ footer {
     display: block;
     margin-top: 0.2rem;
 }
+
+/* =========================================================================
+   Minigame 3: Hyper-Redox Flash Crucible
+   ========================================================================= */
+.redox-crucible-section {
+    padding: 3rem 2rem 4rem;
+    background: radial-gradient(circle at 50% 30%, rgba(18, 24, 38, 0.95) 0%, rgba(8, 10, 16, 0.98) 100%);
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 242, 254, 0.1);
+}
+
+.redox-workbench {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 2.2rem;
+    align-items: start;
+    margin-top: 1.5rem;
+}
+
+.redox-controls-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+}
+
+.redox-control-block {
+    background: rgba(14, 18, 28, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.3rem 1.4rem;
+    backdrop-filter: blur(12px);
+    transition: border-color 0.25s ease;
+}
+
+.redox-control-block:hover {
+    border-color: rgba(0, 242, 254, 0.3);
+}
+
+.redox-block-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1rem;
+    letter-spacing: 0.3px;
+}
+
+.redox-block-title .step-num {
+    background: linear-gradient(135deg, #00f2fe, #4facfe);
+    color: #050b14;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+/* Reducer Pill Group */
+.reducer-pill-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.reducer-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.65rem 0.95rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    color: var(--text-primary);
+}
+
+.reducer-btn:hover {
+    background: rgba(0, 242, 254, 0.08);
+    border-color: rgba(0, 242, 254, 0.35);
+    transform: translateX(4px);
+}
+
+.reducer-btn.active {
+    background: linear-gradient(90deg, rgba(0, 242, 254, 0.18) 0%, rgba(79, 172, 254, 0.08) 100%);
+    border-color: #00f2fe;
+    box-shadow: 0 0 16px rgba(0, 242, 254, 0.25);
+}
+
+.reducer-sym {
+    font-size: 1.25rem;
+    font-weight: 800;
+    font-family: 'Space Grotesk', monospace, sans-serif;
+    color: #00f2fe;
+    min-width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(0, 242, 254, 0.12);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reducer-btn.active .reducer-sym {
+    background: #00f2fe;
+    color: #07101e;
+    box-shadow: 0 0 12px rgba(0, 242, 254, 0.6);
+}
+
+.reducer-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.reducer-info strong {
+    font-size: 0.92rem;
+    color: #fff;
+}
+
+.reducer-info small {
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    margin-top: 1px;
+}
+
+/* Oxidizer Buttons Grid */
+.oxidizer-pill-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-bottom: 1.2rem;
+}
+
+.oxidizer-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.75rem 0.85rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    color: var(--text-primary);
+}
+
+.oxidizer-btn:hover {
+    background: rgba(191, 85, 236, 0.08);
+    border-color: rgba(191, 85, 236, 0.35);
+    transform: translateY(-2px);
+}
+
+.oxidizer-btn.active {
+    background: linear-gradient(135deg, rgba(191, 85, 236, 0.2) 0%, rgba(255, 0, 128, 0.1) 100%);
+    border-color: #bf55ec;
+    box-shadow: 0 0 16px rgba(191, 85, 236, 0.3);
+}
+
+.ox-sym {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #bf55ec;
+    margin-bottom: 0.25rem;
+}
+
+.oxidizer-btn.active .ox-sym {
+    color: #ff77f8;
+    text-shadow: 0 0 8px rgba(255, 119, 248, 0.6);
+}
+
+.ox-info strong {
+    font-size: 0.85rem;
+    color: #fff;
+    display: block;
+}
+
+.ox-info small {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    line-height: 1.2;
+    display: block;
+    margin-top: 2px;
+}
+
+/* Concentration Slider */
+.redox-conc-slider-wrap {
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.conc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+}
+
+.conc-label {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.conc-val {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #ffaa00;
+}
+
+.redox-range {
+    width: 100%;
+    accent-color: #ff8800;
+    cursor: pointer;
+}
+
+.conc-ticks {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 0.4rem;
+}
+
+/* Modifier Toggles */
+.modifier-toggles-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.modifier-toggle-card {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.7rem 0.95rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.modifier-toggle-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.modifier-toggle-card input[type="checkbox"] {
+    display: none;
+}
+
+.mod-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.4);
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.modifier-toggle-card input[type="checkbox"]:checked + .mod-indicator {
+    background: #00f2fe;
+    border-color: #00f2fe;
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+}
+
+.modifier-toggle-card input[type="checkbox"]:checked + .mod-indicator::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: #050b14;
+}
+
+.mod-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.mod-text strong {
+    font-size: 0.88rem;
+    color: #fff;
+}
+
+.mod-text small {
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    margin-top: 1px;
+}
+
+/* 2. Simulation Stage Container */
+.redox-stage-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* Sensor Telemetry HUD */
+.redox-hud-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 0.8rem;
+    background: rgba(10, 14, 22, 0.85);
+    border: 1px solid rgba(0, 242, 254, 0.2);
+    border-radius: 12px;
+    padding: 0.75rem 1.1rem;
+    backdrop-filter: blur(10px);
+}
+
+.hud-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.hud-lbl {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hud-val {
+    font-size: 1.15rem;
+    font-weight: 800;
+    font-family: 'Space Grotesk', monospace, sans-serif;
+    color: #00f2fe;
+}
+
+.hud-val.badge-armed {
+    color: #00ff88;
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+}
+
+.hud-val.badge-erupting {
+    color: #ff3344;
+    animation: pulseErupt 0.4s infinite alternate;
+}
+
+@keyframes pulseErupt {
+    from { opacity: 0.7; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1.03); }
+}
+
+/* Crucible Viewport Area */
+.crucible-viewport {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    background: radial-gradient(circle at 50% 65%, #182236 0%, #090c14 75%, #05060a 100%);
+    border: 2px solid rgba(0, 242, 254, 0.35);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.85), 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.blast-glass-sheen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 40%, rgba(0, 242, 254, 0.03) 100%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.blast-glass-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: 30px 30px;
+    background-image: 
+        linear-gradient(to right, rgba(0, 242, 254, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 242, 254, 0.04) 1px, transparent 1px);
+    pointer-events: none;
+    z-index: 4;
+}
+
+.crucible-bloom-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 6;
+    opacity: 0;
+    transition: opacity 0.06s ease;
+    mix-blend-mode: screen;
+}
+
+.redox-screen-flare {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 7;
+    opacity: 0;
+    background: radial-gradient(circle at 50% 65%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 200, 100, 0.5) 45%, transparent 75%);
+    transition: opacity 0.08s ease;
+}
+
+.redox-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* Crucible Graphic Stand */
+.redox-crucible-stand {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+}
+
+.redox-crucible-pedestal {
+    width: 150px;
+    height: 20px;
+    background: linear-gradient(180deg, #374158 0%, #1a1f2c 100%);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid #0a0d14;
+}
+
+.redox-crucible-pot {
+    width: 124px;
+    height: 80px;
+    background: linear-gradient(180deg, #505a72 0%, #303747 40%, #1b202c 100%);
+    border-radius: 8px 8px 28px 28px;
+    position: relative;
+    margin-bottom: -2px;
+    box-shadow: inset 0 6px 16px rgba(0, 0, 0, 0.8), 0 10px 30px rgba(0, 0, 0, 0.8);
+    transition: filter 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.redox-crucible-pot.incandescent {
+    filter: drop-shadow(0 0 25px #ff4400) drop-shadow(0 0 50px #ffaa00);
+}
+
+.redox-crucible-rim {
+    position: absolute;
+    top: -2px;
+    left: 5%;
+    width: 90%;
+    height: 14px;
+    background: linear-gradient(180deg, #717d9b 0%, #444d62 100%);
+    border-radius: 50%;
+    box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.4), 0 2px 4px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.redox-crucible-core {
+    position: absolute;
+    top: 3px;
+    left: 12%;
+    width: 76%;
+    height: 28px;
+    background: #090c12;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.98);
+}
+
+.redox-crucible-reagent-bed {
+    position: absolute;
+    bottom: 2px;
+    left: 10%;
+    width: 80%;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reagent-powder {
+    width: 85%;
+    height: 14px;
+    border-radius: 50%;
+    background: #8e99a8;
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), 0 0 10px rgba(0, 0, 0, 0.9);
+    transition: background 0.3s ease;
+}
+
+.dropper-stream {
+    position: absolute;
+    top: -160px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(191, 85, 236, 0.85) 100%);
+    border-radius: 2px;
+    opacity: 0;
+    transition: height 0.15s ease, opacity 0.15s ease;
+    box-shadow: 0 0 14px rgba(191, 85, 236, 0.7);
+}
+
+/* Action Controls */
+.redox-actions-bar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.redox-trigger-btn {
+    flex: 2;
+    padding: 1rem 1.5rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    color: #030812;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
+    transition: all 0.25s ease;
+}
+
+.redox-trigger-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 35px rgba(0, 242, 254, 0.65);
+}
+
+.redox-trigger-btn:active {
+    transform: translateY(1px);
+}
+
+.redox-trigger-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.redox-reset-btn {
+    flex: 1;
+    padding: 1rem 1.2rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.redox-reset-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Chemistry Data Readout */
+.redox-data-card {
+    background: rgba(14, 18, 28, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.3rem 1.4rem;
+    backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.redox-meta-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+}
+
+.redox-meta-pill {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.meta-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.meta-value {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #00f2fe;
+    margin-top: 2px;
+}
+
+.redox-equation-box, .redox-notes-box {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0.85rem 1rem;
+}
+
+.eq-label {
+    font-size: 0.72rem;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 700;
+}
+
+.redox-equation-box .equation-text {
+    font-size: 1.02rem;
+    color: #fff;
+    font-weight: 600;
+}
+
+.redox-notes-box p {
+    margin: 0;
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Camera Shake Effects for Violent Reactions */
+.crucible-shake-mild {
+    animation: crShakeMild 0.4s ease-in-out;
+}
+
+.crucible-shake-violent {
+    animation: crShakeViolent 0.75s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.crucible-shake-cataclysm {
+    animation: crShakeCataclysm 1.2s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes crShakeMild {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-3px, 2px); }
+    40% { transform: translate(3px, -2px); }
+    60% { transform: translate(-2px, -1px); }
+    80% { transform: translate(2px, 1px); }
+}
+
+@keyframes crShakeViolent {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-7px, -5px) rotate(-0.5deg); }
+    25% { transform: translate(8px, 6px) rotate(0.6deg); }
+    40% { transform: translate(-6px, 4px) rotate(-0.4deg); }
+    60% { transform: translate(5px, -4px) rotate(0.3deg); }
+    80% { transform: translate(-3px, 2px); }
+}
+
+@keyframes crShakeCataclysm {
+    0%, 100% { transform: translate(0, 0); }
+    8% { transform: translate(-15px, -10px) rotate(-1.2deg); }
+    20% { transform: translate(16px, 12px) rotate(1.4deg); }
+    35% { transform: translate(-12px, 9px) rotate(-0.8deg); }
+    50% { transform: translate(10px, -8px) rotate(0.6deg); }
+    70% { transform: translate(-6px, 4px); }
+    85% { transform: translate(3px, -2px); }
+}
+
+@media (max-width: 980px) {
+    .redox-workbench {
+        grid-template-columns: 1fr;
+    }
+    .redox-meta-row {
+        grid-template-columns: 1fr;
+    }
+    .crucible-viewport {
+        height: 320px;
+    }
+}
+

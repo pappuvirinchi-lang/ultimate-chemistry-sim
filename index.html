@@ -429,6 +429,10 @@
                     <span class="pill-icon">🔥⚡</span>
                     <span class="pill-text"><strong>Thermal Combustion Chamber</strong><small>59 metals & oxygen blowtorch ignition</small></span>
                 </a>
+                <a href="#redox-crucible" class="minigame-pill" data-target="redox-crucible">
+                    <span class="pill-icon">⚡✨</span>
+                    <span class="pill-text"><strong>Hyper-Redox Flash Crucible</strong><small>Extreme reducers, oxidizers & flash flares</small></span>
+                </a>
             </div>
         </div>
 
@@ -685,6 +689,219 @@
             </div>
         </div>
     </div><!-- end #combustion-lab -->
+
+    <!-- Minigame 3: Hyper-Redox Flash Crucible -->
+    <div id="redox-crucible" class="minigame-subcard redox-crucible-section">
+        <div class="minigame-header">
+            <span class="minigame-tag" style="background: rgba(0, 242, 254, 0.15); color: #00f2fe; border-color: rgba(0, 242, 254, 0.4);">⚡ Minigame 3: Hyper-Redox Crucible</span>
+            <h2>Hyper-Redox Flash Crucible: High-Energy Pyrotechnic Lab</h2>
+            <p>Select ultra-powerful electron donors (reducing agents), combine them with aggressive oxidizers at custom concentrations, apply catalytic modifiers, and trigger intense pyrotechnic flash flares and violent kinetic eruptions!</p>
+        </div>
+
+        <div class="redox-workbench">
+            <!-- 1. Selection Columns -->
+            <div class="redox-controls-panel">
+                <!-- Reducer Selector -->
+                <div class="redox-control-block">
+                    <span class="redox-block-title"><span class="step-num">1</span> Select Reducing Agent (Fuel / Electron Donor)</span>
+                    <div class="reducer-pill-group" id="reducer-pill-group">
+                        <button class="reducer-btn active" data-reducer="Li">
+                            <span class="reducer-sym">Li</span>
+                            <span class="reducer-info">
+                                <strong>Lithium</strong>
+                                <small>E° = -3.04V &bull; Crimson Flare</small>
+                            </span>
+                        </button>
+                        <button class="reducer-btn" data-reducer="Mg">
+                            <span class="reducer-sym">Mg</span>
+                            <span class="reducer-info">
+                                <strong>Magnesium</strong>
+                                <small>E° = -2.37V &bull; Blinding White</small>
+                            </span>
+                        </button>
+                        <button class="reducer-btn" data-reducer="Al">
+                            <span class="reducer-sym">Al</span>
+                            <span class="reducer-info">
+                                <strong>Aluminum</strong>
+                                <small>E° = -1.66V &bull; Molten Golden Spatter</small>
+                            </span>
+                        </button>
+                        <button class="reducer-btn" data-reducer="Fe">
+                            <span class="reducer-sym">Fe</span>
+                            <span class="reducer-info">
+                                <strong>Iron Filings</strong>
+                                <small>E° = -0.44V &bull; Firework Star Bursts</small>
+                            </span>
+                        </button>
+                        <button class="reducer-btn" data-reducer="C">
+                            <span class="reducer-sym">C</span>
+                            <span class="reducer-info">
+                                <strong>Activated Charcoal</strong>
+                                <small>Incandescent Embers & Deep Smoke</small>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Oxidizer Selector -->
+                <div class="redox-control-block">
+                    <span class="redox-block-title"><span class="step-num">2</span> Select Oxidizer (Electron Acceptor)</span>
+                    <div class="oxidizer-pill-group" id="oxidizer-pill-group">
+                        <button class="oxidizer-btn active" data-oxidizer="h2o2">
+                            <span class="ox-sym">H₂O₂</span>
+                            <span class="ox-info"><strong>Hydrogen Peroxide</strong><small>Effervescent Oxygen Vapor Blast</small></span>
+                        </button>
+                        <button class="oxidizer-btn" data-oxidizer="kmno4">
+                            <span class="ox-sym">KMnO₄</span>
+                            <span class="ox-info"><strong>Potassium Permanganate</strong><small>Deep Violet Reactive Salt</small></span>
+                        </button>
+                        <button class="oxidizer-btn" data-oxidizer="o2">
+                            <span class="ox-sym">O₂ Jet</span>
+                            <span class="ox-info"><strong>Pure Oxygen Stream</strong><small>Pressurized Gas Flare Accelerator</small></span>
+                        </button>
+                        <button class="oxidizer-btn" data-oxidizer="naclo">
+                            <span class="ox-sym">NaClO</span>
+                            <span class="ox-info"><strong>Sodium Hypochlorite</strong><small>Halogen Rapid Radical Emitter</small></span>
+                        </button>
+                    </div>
+
+                    <!-- Concentration Slider -->
+                    <div class="redox-conc-slider-wrap">
+                        <div class="conc-header">
+                            <span class="conc-label">Oxidizer Concentration / Flow:</span>
+                            <span class="conc-val" id="redox-conc-display">35% (Industrial Grade)</span>
+                        </div>
+                        <input type="range" id="redox-conc-slider" min="5" max="95" value="35" step="1" class="custom-range redox-range">
+                        <div class="conc-ticks">
+                            <span>Dilute (5%)</span>
+                            <span>Standard (30%)</span>
+                            <span>Supercharged (65%)</span>
+                            <span>Hyper-Pure (95%)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modifiers / Catalytic Additives -->
+                <div class="redox-control-block">
+                    <span class="redox-block-title"><span class="step-num">3</span> Reaction Modifiers & Catalytic Additives</span>
+                    <div class="modifier-toggles-grid">
+                        <label class="modifier-toggle-card" for="mod-glycerin">
+                            <input type="checkbox" id="mod-glycerin">
+                            <span class="mod-indicator"></span>
+                            <span class="mod-text">
+                                <strong>💧 Glycerin Contact Drop</strong>
+                                <small>Adds organic fuel delay & spontaneous purple thermal eruption</small>
+                            </span>
+                        </label>
+                        <label class="modifier-toggle-card" for="mod-acid">
+                            <input type="checkbox" id="mod-acid">
+                            <span class="mod-indicator"></span>
+                            <span class="mod-text">
+                                <strong>🧪 Acid De-passivator</strong>
+                                <small>Strips metal oxide skin instantly for zero-delay shock pop</small>
+                            </span>
+                        </label>
+                        <label class="modifier-toggle-card" for="mod-surfactant">
+                            <input type="checkbox" id="mod-surfactant">
+                            <span class="mod-indicator"></span>
+                            <span class="mod-text">
+                                <strong>🫧 Surfactant Foamer</strong>
+                                <small>Traps reaction gas into a towering volcano of crackling foam sparks</small>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Simulation Crucible Stage & Visualizer -->
+            <div class="redox-stage-container">
+                <!-- Sensor Telemetry HUD -->
+                <div class="redox-hud-bar">
+                    <div class="hud-item">
+                        <span class="hud-lbl">Crucible Temp:</span>
+                        <span class="hud-val" id="redox-temp-val">24°C</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-lbl">Flash Luminance:</span>
+                        <span class="hud-val" id="redox-lux-val">0 Lux</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-lbl">Reaction State:</span>
+                        <span class="hud-val badge-armed" id="redox-state-val">ARMED</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Reaction Crucible Viewport -->
+                <div class="crucible-viewport" id="crucible-viewport">
+                    <!-- Glass blast reflections -->
+                    <div class="blast-glass-sheen"></div>
+                    <div class="blast-glass-grid"></div>
+
+                    <!-- Flash Bloom Layer -->
+                    <div class="crucible-bloom-overlay" id="crucible-bloom-overlay"></div>
+
+                    <!-- Screen Flash Flare Overlay -->
+                    <div class="redox-screen-flare" id="redox-screen-flare"></div>
+
+                    <!-- Canvas Particle Engine for Sparks, Molten Splatters & Smoke -->
+                    <canvas id="redox-canvas" class="redox-canvas"></canvas>
+
+                    <!-- Physical Ceramic Blast Crucible Graphics -->
+                    <div class="redox-crucible-stand">
+                        <div class="redox-crucible-pot" id="crucible-pot">
+                            <div class="redox-crucible-rim"></div>
+                            <div class="redox-crucible-core">
+                                <div class="redox-crucible-reagent-bed" id="crucible-reagent-bed">
+                                    <div class="reagent-powder" id="reagent-powder"></div>
+                                    <div class="dropper-stream" id="dropper-stream"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="redox-crucible-pedestal"></div>
+                    </div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="redox-actions-bar">
+                    <button class="cta-btn redox-trigger-btn" id="redox-trigger-btn">
+                        <span class="btn-icon">⚡</span>
+                        <span class="btn-label">INITIATE REDOX REACTION!</span>
+                    </button>
+                    <button class="redox-reset-btn" id="redox-reset-btn" title="Clear Crucible & Reset">
+                        <span>🔄 Reset Crucible</span>
+                    </button>
+                </div>
+
+                <!-- Chemistry Data & Pyrotechnic Fact Sheet -->
+                <div class="redox-data-card">
+                    <div class="redox-meta-row">
+                        <div class="redox-meta-pill">
+                            <span class="meta-label">Reaction Type:</span>
+                            <span class="meta-value" id="redox-rx-type">Violent Exothermic Redox</span>
+                        </div>
+                        <div class="redox-meta-pill">
+                            <span class="meta-label">Electron Exchange:</span>
+                            <span class="meta-value" id="redox-rx-electrons">2e⁻ per atom</span>
+                        </div>
+                        <div class="redox-meta-pill">
+                            <span class="meta-label">Flame / Flash Spectra:</span>
+                            <span class="meta-value" id="redox-rx-color">Crimson Red (670.8 nm)</span>
+                        </div>
+                    </div>
+
+                    <div class="redox-equation-box">
+                        <span class="eq-label">Chemical Reaction Equation:</span>
+                        <div class="equation-text" id="redox-equation">2Li + H₂O₂ &rarr; 2LiOH + Rapid Heat & Crimson Flash!</div>
+                    </div>
+
+                    <div class="redox-notes-box">
+                        <span class="eq-label">Pyrotechnic & Thermodynamic Profile:</span>
+                        <p id="redox-notes">Lithium transfers its 2s¹ valence electron with tremendous thermodynamic driving force (E° = -3.04 V), violently decomposing peroxide and releasing boiling steam and blinding crimson atomic emission.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- end #redox-crucible -->
     </div><!-- end .minigames-container -->
     </section><!-- end #minigames-hub -->
 
