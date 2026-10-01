@@ -168,11 +168,88 @@
     <section id="download" class="download-section">
         <h2>Ready to start experimenting?</h2>
         <p>Download the latest release for Windows. Completely free.</p>
-        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
-            <a href="https://github.com/pappuvirinchi-lang/ultimate-chemistry-sim/releases/download/v1.0.0/UltimateChemistrySimulator-v1.0-Win64.zip" target="_blank" class="cta-btn download-btn">Download v1.0.0 for Windows (.ZIP - 526 MB)</a>
+        
+        <!-- Dual Release Downloads: v1.1.0 (Latest) & v1.0.0 (Legacy) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto 2.5rem; text-align: left;">
+            <!-- v1.1.0 Latest Release -->
+            <div style="background: linear-gradient(145deg, rgba(0, 240, 255, 0.08) 0%, rgba(10, 15, 28, 0.95) 100%); border: 2px solid var(--accent-cyan); border-radius: 14px; padding: 1.8rem; box-shadow: 0 10px 30px rgba(0, 240, 255, 0.15); display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+                <div style="position: absolute; top: -12px; right: 20px; background: var(--accent-cyan); color: #0a0b10; font-weight: 800; font-size: 0.75rem; padding: 3px 12px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    ✨ Latest Release
+                </div>
+                <div>
+                    <div style="display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 0.5rem;">
+                        <h3 style="color: #fff; font-size: 1.6rem; margin: 0; font-weight: 800;">v1.1.0</h3>
+                        <span style="color: var(--accent-cyan); font-weight: 700; font-size: 0.9rem;">Windows 64-bit (.ZIP — 517 MB)</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem; margin: 0 0 1rem 0; line-height: 1.5;">
+                        Interactive Reaction Collision Physics & Kinematic Molecular Reorganization Engine.
+                    </p>
+                    
+                    <!-- What's New in 1.1.0 -->
+                    <div style="background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 8px; padding: 0.9rem 1rem; margin-bottom: 1.4rem;">
+                        <div style="color: var(--accent-cyan); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+                            <span>⚡</span> What's New Compared to v1.0.0:
+                        </div>
+                        <ul style="margin: 0; padding-left: 1.2rem; color: #e2e8f0; font-size: 0.86rem; line-height: 1.6;">
+                            <li><strong>Interactive 3D Collision Simulation:</strong> Ask about any chemical reaction in chat and click the new <code>[ ⚡ SIMULATE REACTION ]</code> button to watch molecules collide in real 3D space!</li>
+                            <li><strong>Automatic Stoichiometric Reaction Balancer:</strong> Linear mass conservation solver automatically balances unbalanced reactions into lowest positive integers and spawns the exact stoichiometric molecular counts.</li>
+                            <li><strong>Universal Multi-Bond Orders:</strong> True double and triple bonds (\(\text{N}\equiv\text{N}\), \(\text{O}=\text{O}\), \(\text{C}\equiv\text{O}\), carbonyls) physically rendered with camera-aligned 3D cylinder arrays.</li>
+                            <li><strong>Pure Temperature-Driven Kinematics:</strong> Collision velocity (\(v \propto \sqrt{T}\)) and vibrational thermal jitter scale directly from scientific temperature (\(K\) / \(^\circ\text{C}\)).</li>
+                            <li><strong>Dynamic Energetic Impact:</strong> Visual impact flash, explosive bond rearrangement, and kinetic product recoil settling into VSEPR relaxation.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <a href="https://github.com/pappuvirinchi-lang/ultimate-chemistry-sim/releases/download/v1.1.0/UltimateChemistrySimulator-v1.1.0-Win64.zip" target="_blank" class="cta-btn download-btn" style="text-align: center; display: block; padding: 1rem 1.5rem; font-size: 1.05rem; font-weight: 700;">
+                    Download v1.1.0 (Latest)
+                </a>
+            </div>
+
+            <!-- v1.0.0 Previous Release -->
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; padding: 1.8rem; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div style="display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 0.5rem;">
+                        <h3 style="color: #cbd5e1; font-size: 1.5rem; margin: 0; font-weight: 800;">v1.0.0</h3>
+                        <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.85rem;">Windows 64-bit (.ZIP — 526 MB)</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem; margin: 0 0 1rem 0; line-height: 1.5;">
+                        Foundational launch edition of the Ultimate Chemistry Simulator.
+                    </p>
+
+                    <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 0.9rem 1rem; margin-bottom: 1.4rem;">
+                        <div style="color: var(--text-secondary); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
+                            Included Features:
+                        </div>
+                        <ul style="margin: 0; padding-left: 1.2rem; color: var(--text-secondary); font-size: 0.86rem; line-height: 1.6;">
+                            <li>Full 3D VSEPR molecular sandbox & force-directed relaxation</li>
+                            <li>Real-time chemical nomenclature & 100,000+ Compendium database</li>
+                            <li>Local AI Chemistry Research Assistant & Piper neural TTS voice</li>
+                            <li>Blender 3D OBJ model export & Periodic Board Game</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <a href="https://github.com/pappuvirinchi-lang/ultimate-chemistry-sim/releases/download/v1.0.0/UltimateChemistrySimulator-v1.0-Win64.zip" target="_blank" class="cta-btn" style="text-align: center; display: block; padding: 1rem 1.5rem; font-size: 1rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: none; color: #e2e8f0;">
+                    Download v1.0.0 (Legacy)
+                </a>
+            </div>
         </div>
 
-        
+        <!-- Video Showcase Embed -->
+        <div style="max-width: 800px; margin: 0 auto 2.5rem; text-align: center;">
+            <h3 style="color: var(--accent-cyan); font-size: 1.4rem; margin-bottom: 0.8rem;">🎬 Watch Full Walkthrough & Feature Showcase</h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.2rem;">
+                See all features in action: VSEPR auto-relaxation, forming bonds, local AI chemistry research, reaction prediction, and 3D Blender export!
+            </p>
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 2px solid rgba(0, 240, 255, 0.4); box-shadow: 0 8px 32px rgba(0, 240, 255, 0.15);">
+                <iframe style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0;" src="https://www.youtube.com/embed/gn8MSM4eci4" title="Ultimate Chemistry Simulator Showcase" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <div style="margin-top: 0.8rem;">
+                <a href="https://www.youtube.com/watch?v=gn8MSM4eci4" target="_blank" style="color: var(--accent-cyan); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
+                    Watch directly on YouTube ↗
+                </a>
+            </div>
+        </div>
         <div style="max-width: 650px; margin: 0 auto 2rem; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 8px; padding: 1.2rem; text-align: left;">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; color: var(--accent-cyan); font-weight: 600;">
                 <span style="font-size: 1.2rem;">⚡</span> 1-Click AI Setup Included:
@@ -195,7 +272,7 @@
                 <div style="background: rgba(255, 255, 255, 0.03); padding: 1.2rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
                     <div style="color: var(--accent-cyan); font-weight: 800; font-size: 1.1rem; margin-bottom: 0.5rem;">Step 1: Download & Extract</div>
                     <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
-                        Click the download button above to get <strong>UltimateChemistrySimulator-v1.0-Win64.zip</strong> (526 MB) and extract it anywhere on your PC.
+                        Click either download button above to get the Windows release zip (e.g. <strong>UltimateChemistrySimulator-v1.1.0-Win64.zip</strong> or v1.0.0) and extract it anywhere on your PC.
                     </p>
                 </div>
                 <div style="background: rgba(255, 255, 255, 0.03); padding: 1.2rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
