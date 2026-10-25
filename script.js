@@ -1995,7 +1995,11 @@ const metalOxygenIgnitionData = {
         cards.forEach(c => {
             if (c.dataset.sym === key) {
                 c.classList.add('active');
-                c.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                // Scroll horizontally within the tray container without moving the whole webpage
+                if (tray) {
+                    const offsetLeft = c.offsetLeft - tray.offsetLeft;
+                    tray.scrollTo({ left: offsetLeft - (tray.clientWidth / 2) + (c.clientWidth / 2), behavior: 'smooth' });
+                }
             } else {
                 c.classList.remove('active');
             }
